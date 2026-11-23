@@ -10,7 +10,7 @@
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg-paper: #F8F7F4;
@@ -22,7 +22,7 @@
       --accent: #0F766E;
       --accent-hover: #115E59;
       --accent-soft: rgba(15, 118, 110, 0.08);
-      --accent-mid: rgba(15, 118, 110, 0.18);
+      --accent-mid: rgba(15, 118, 110, 0.16);
       --grid-minor: rgba(30, 41, 59, 0.045);
       --grid-major: rgba(30, 41, 59, 0.09);
       --border-ink: #1E293B;
@@ -54,7 +54,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Skip link for keyboard users */
     .skip-link {
       position: absolute;
       left: -9999px;
@@ -74,10 +73,10 @@
     .app-shell {
       max-width: 1380px;
       margin: 0 auto;
-      padding: 12px 20px 18px;
+      padding: 10px 20px 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     /* Academic Top Bar */
@@ -85,10 +84,10 @@
       background: var(--bg-surface);
       border: 1.5px solid var(--border-ink);
       border-radius: var(--radius);
-      padding: 10px 16px;
+      padding: 9px 16px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
     }
 
     .academic-institution {
@@ -108,7 +107,7 @@
 
     .academic-title {
       margin: 0;
-      font-size: clamp(18px, 1.8vw, 22px);
+      font-size: clamp(18px, 1.75vw, 21px);
       font-weight: 700;
       color: var(--ink-primary);
       letter-spacing: -0.015em;
@@ -134,7 +133,7 @@
     }
 
     .panel-header {
-      padding: 8px 14px;
+      padding: 7px 14px;
       border-bottom: 1px solid var(--border-hairline);
       background: var(--bg-subtle);
       display: flex;
@@ -160,48 +159,51 @@
     }
 
     .panel-body {
-      padding: 12px 14px;
+      padding: 11px 14px;
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 9px;
       min-width: 0;
     }
 
-    /* Controls & Circuit Toolbar */
-    .workbench-bar {
+    /* =====================================================================
+     * 1. Quirk-Style Horizontal Qubit Wire Workbench
+     * ===================================================================== */
+    .circuit-workbench {
       background: var(--bg-surface);
       border: 1px solid var(--border-ink);
       border-radius: var(--radius);
-      display: grid;
-      grid-template-columns: auto auto 1fr;
-      align-items: stretch;
-    }
-
-    .control-group {
-      padding: 10px 14px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      border-right: 1px solid var(--border-hairline);
-      min-width: 0;
     }
 
-    .control-group:last-child {
-      border-right: none;
-    }
-
-    .control-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--ink-secondary);
+    .palette-bar {
+      padding: 8px 14px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-hairline);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .btn-row {
+    .palette-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .palette-heading {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-primary);
+      white-space: nowrap;
+    }
+
+    .palette-actions {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -212,15 +214,15 @@
     .btn {
       appearance: none;
       font-family: var(--font-sans);
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
       line-height: 1;
       color: var(--ink-primary);
       background: var(--bg-surface);
       border: 1px solid var(--border-ink);
       border-radius: var(--radius);
-      padding: 9px 14px;
-      min-height: 36px;
+      padding: 8px 12px;
+      min-height: 34px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -231,34 +233,22 @@
       transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease, transform 80ms ease;
     }
 
-    .btn:hover {
+    .btn:hover:not(:disabled) {
       background: var(--bg-subtle);
     }
 
-    .btn:active {
+    .btn:active:not(:disabled) {
       transform: translateY(1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
     }
 
     .btn:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
-    }
-
-    .btn-mono {
-      font-family: var(--font-mono);
-    }
-
-    .btn-active,
-    .btn[aria-pressed="true"] {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #FFFFFF;
-    }
-
-    .btn-active:hover,
-    .btn[aria-pressed="true"]:hover {
-      background: var(--accent-hover);
-      border-color: var(--accent-hover);
     }
 
     .btn-gate {
@@ -273,20 +263,20 @@
       color: var(--accent);
     }
 
-    .btn-gate .gate-code {
+    .btn-gate .gate-sym {
       font-family: var(--font-mono);
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13.5px;
       color: var(--accent);
     }
 
-    .btn-gate .gate-name {
+    .btn-gate .gate-label {
       font-weight: 500;
       font-size: 12px;
       color: var(--ink-secondary);
     }
 
-    .btn-gate:hover .gate-name {
+    .btn-gate:hover .gate-label {
       color: var(--accent);
     }
 
@@ -296,101 +286,320 @@
       color: #FFFFFF;
     }
 
-    .btn-primary:hover {
+    .btn-primary:hover:not(:disabled) {
       background: var(--accent-hover);
       border-color: var(--accent-hover);
     }
 
-    .btn-reset {
-      background: var(--bg-subtle);
+    .btn-secondary {
+      background: var(--bg-surface);
       color: var(--ink-primary);
       border-color: var(--border-ink);
     }
 
-    .btn-reset:hover {
-      background: #E2E0D8;
+    /* Horizontal Qubit Wire Stage */
+    .wire-stage {
+      padding: 12px 14px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
-    /* Horizontal Circuit Wire Trail */
-    .circuit-trail-viewport {
+    .wire-row {
       display: flex;
       align-items: center;
-      min-height: 36px;
-      overflow-x: auto;
-      padding: 2px 0;
-      scrollbar-width: thin;
+      gap: 0;
+      min-height: 62px;
+      position: relative;
     }
 
-    .circuit-wire {
-      display: inline-flex;
+    /* Left: Toggleable Initial State Block */
+    .init-block-btn {
+      appearance: none;
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+      width: 68px;
+      height: 54px;
+      background: var(--bg-subtle);
+      border: 1.5px solid var(--border-ink);
+      border-radius: var(--radius);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 4px;
+      color: var(--ink-primary);
+      transition: background-color 140ms ease, border-color 140ms ease, transform 80ms ease;
+    }
+
+    .init-block-btn:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    .init-block-btn:active {
+      transform: translateY(1px);
+    }
+
+    .init-block-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .init-ket {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--accent);
+    }
+
+    .init-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-secondary);
+      line-height: 1;
+    }
+
+    /* Center: Scrollable Horizontal Wire Track */
+    .wire-track-scroll {
+      flex: 1;
+      min-width: 0;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      display: flex;
       align-items: center;
       position: relative;
-      padding: 0 2px;
+      padding: 6px 0;
+    }
+
+    .wire-track-inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-width: 100%;
+      min-height: 54px;
+      padding: 0 18px;
+      gap: 18px;
+    }
+
+    /* Continuous horizontal quantum wire line */
+    .wire-track-inner::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 2px;
+      background: var(--border-ink);
+      transform: translateY(-50%);
+      z-index: 0;
+    }
+
+    .wire-empty-hint {
+      position: relative;
+      z-index: 1;
+      background: var(--bg-surface);
+      padding: 2px 10px;
       font-family: var(--font-mono);
-      font-size: 13px;
-    }
-
-    .circuit-node-ket {
-      font-weight: 600;
-      color: var(--ink-primary);
-      padding: 4px 8px;
-      background: var(--bg-subtle);
-      border: 1px solid var(--border-ink);
+      font-size: 11.5px;
+      color: var(--ink-muted);
+      border: 1px dashed var(--border-hairline);
       border-radius: 2px;
       white-space: nowrap;
+      margin: 0 auto;
     }
 
-    .circuit-node-out {
-      font-weight: 600;
-      color: var(--accent);
-      padding: 4px 8px;
-      background: var(--accent-soft);
-      border: 1px solid var(--accent);
-      border-radius: 2px;
-      white-space: nowrap;
-    }
-
-    .circuit-arrow {
+    /* Placed Square Gate Tile on the Wire */
+    .wire-tile-wrap {
+      position: relative;
+      z-index: 1;
+      flex-shrink: 0;
       display: inline-flex;
       align-items: center;
-      color: var(--ink-secondary);
-      padding: 0 6px;
-      font-size: 12px;
-      user-select: none;
     }
 
-    .circuit-gate-box {
-      font-weight: 700;
-      color: var(--ink-primary);
+    .wire-gate-tile {
+      appearance: none;
+      width: 48px;
+      height: 48px;
       background: var(--bg-surface);
       border: 1.5px solid var(--border-ink);
+      border-radius: var(--radius);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      color: var(--ink-primary);
+      font-family: var(--font-mono);
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 80ms ease;
+    }
+
+    .wire-gate-tile:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .wire-gate-tile:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .wire-gate-tile.is-inspected {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #FFFFFF;
+    }
+
+    .wire-gate-tile.is-inspected .tile-step-num {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .tile-symbol {
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .tile-step-num {
+      font-size: 9.5px;
+      font-weight: 500;
+      color: var(--ink-muted);
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    .tile-remove-btn {
+      appearance: none;
+      position: absolute;
+      top: -7px;
+      right: -7px;
+      width: 19px;
+      height: 19px;
       border-radius: 2px;
-      min-width: 28px;
-      height: 28px;
-      padding: 0 7px;
+      border: 1px solid var(--border-ink);
+      background: var(--bg-surface);
+      color: var(--ink-primary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 0;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      z-index: 3;
+      transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
     }
 
-    .circuit-gate-box.is-latest {
-      border-color: var(--accent);
+    .tile-remove-btn:hover {
+      background: var(--border-ink);
       color: #FFFFFF;
-      background: var(--accent);
     }
 
-    /* Main 2-Column Workbench Grid */
+    .tile-remove-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    /* Right: Live Compact Probability Readout Box */
+    .wire-readout-box {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+      min-width: 186px;
+      height: 54px;
+      background: var(--bg-subtle);
+      border: 1.5px solid var(--border-ink);
+      border-radius: var(--radius);
+      padding: 6px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .readout-row {
+      display: grid;
+      grid-template-columns: 34px 1fr 42px;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .readout-lbl {
+      font-weight: 600;
+      color: var(--ink-primary);
+    }
+
+    .readout-val {
+      text-align: right;
+      font-weight: 600;
+      color: var(--ink-primary);
+    }
+
+    .readout-mini-track {
+      height: 7px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-ink);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .readout-fill-0 {
+      height: 100%;
+      background: var(--accent);
+      transition: width 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .readout-fill-1 {
+      height: 100%;
+      background: var(--ink-primary);
+      transition: width 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .wire-caption-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 11.5px;
+      color: var(--ink-secondary);
+      border-top: 1px solid #E2E8F0;
+      padding-top: 6px;
+    }
+
+    .wire-sequence-text {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--ink-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* =====================================================================
+     * Main 2-Column Technical Workbench Grid
+     * ===================================================================== */
     .workbench-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.02fr) minmax(0, 1.18fr);
-      gap: 12px;
+      gap: 10px;
       align-items: stretch;
     }
 
     .col-stack {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       min-width: 0;
     }
 
@@ -415,7 +624,7 @@
       display: block;
       width: 100%;
       max-width: 410px;
-      height: 292px;
+      height: 278px;
       cursor: crosshair;
     }
 
@@ -428,7 +637,7 @@
       font-size: 11.5px;
       color: var(--ink-secondary);
       border-top: 1px solid var(--border-hairline);
-      padding-top: 8px;
+      padding-top: 7px;
     }
 
     .legend-items {
@@ -446,14 +655,14 @@
 
     .swatch-line {
       display: inline-block;
-      width: 16px;
+      width: 15px;
       height: 2px;
       background: var(--accent);
     }
 
     .swatch-dashed {
       display: inline-block;
-      width: 16px;
+      width: 15px;
       height: 0;
       border-top: 1.5px dashed #64748B;
     }
@@ -469,14 +678,14 @@
     /* Step-by-Step Matrix Calculation Panel */
     .matrix-equation-wrap {
       overflow-x: auto;
-      padding: 8px 4px;
+      padding: 6px 4px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
       gap: 8px;
       font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
-      min-height: 112px;
+      min-height: 104px;
     }
 
     .matrix-block {
@@ -595,7 +804,7 @@
     .step-note {
       font-size: 12.5px;
       color: var(--ink-secondary);
-      padding-top: 8px;
+      padding-top: 7px;
       border-top: 1px solid var(--border-hairline);
       line-height: 1.45;
     }
@@ -605,14 +814,14 @@
       font-weight: 600;
     }
 
-    /* Output, Amplitudes & Probabilities Panel */
+    /* Output, Amplitudes & Normalization Panel */
     .ket-banner {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
-      padding: 10px 12px;
+      padding: 9px 12px;
       background: var(--bg-subtle);
       border: 1px solid var(--border-hairline);
       border-radius: 2px;
@@ -676,11 +885,10 @@
       color: var(--ink-secondary);
     }
 
-    /* Probability Bars */
     .prob-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 9px;
     }
 
     .prob-item {
@@ -740,7 +948,7 @@
       justify-content: space-between;
       gap: 12px;
       margin-top: auto;
-      padding-top: 10px;
+      padding-top: 9px;
       border-top: 1px solid var(--border-hairline);
       font-family: var(--font-mono);
       font-size: 12.5px;
@@ -799,7 +1007,7 @@
       display: flex;
       flex-direction: column;
       gap: 3px;
-      min-width: 90px;
+      min-width: 88px;
     }
 
     .mini-track {
@@ -826,7 +1034,7 @@
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--ink-secondary);
       padding-top: 4px;
     }
@@ -834,47 +1042,39 @@
     .measure-empty {
       font-size: 12.5px;
       color: var(--ink-secondary);
-      padding: 10px 0;
+      padding: 8px 0;
     }
 
     /* Responsive Breakpoints */
     @media (max-width: 1080px) {
-      .workbench-bar {
-        grid-template-columns: 1fr 1fr;
-      }
-      .control-group:nth-child(2) {
-        border-right: none;
-      }
-      .control-group:nth-child(3) {
-        grid-column: 1 / -1;
-        border-top: 1px solid var(--border-hairline);
-      }
       .workbench-grid {
         grid-template-columns: 1fr;
       }
       #stateCanvas {
         max-width: 420px;
-        height: 330px;
+        height: 310px;
       }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 680px) {
       .app-shell {
-        padding: 10px 12px 20px;
-      }
-      .workbench-bar {
-        grid-template-columns: 1fr;
-      }
-      .control-group {
-        border-right: none;
-        border-bottom: 1px solid var(--border-hairline);
-      }
-      .control-group:last-child {
-        border-bottom: none;
+        padding: 10px 12px 18px;
       }
       .btn {
-        min-height: 44px;
-        padding: 10px 14px;
+        min-height: 40px;
+        padding: 9px 12px;
+      }
+      .wire-row {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .wire-track-scroll {
+        order: 3;
+        flex: 1 0 100%;
+      }
+      .wire-readout-box {
+        margin-left: auto;
+        min-width: 172px;
       }
       .amp-grid {
         grid-template-columns: 1fr;
@@ -883,14 +1083,19 @@
         display: none;
       }
       #stateCanvas {
-        height: 290px;
+        height: 280px;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .btn,
+      .init-block-btn,
+      .wire-gate-tile,
+      .tile-remove-btn,
       .bar-fill-0,
-      .bar-fill-1 {
+      .bar-fill-1,
+      .readout-fill-0,
+      .readout-fill-1 {
         transition: none;
       }
     }
@@ -912,82 +1117,111 @@
     </header>
 
     <main id="simulator-main" aria-label="Single-Qubit Quantum Gate Simulator">
-      <!-- 1. Input, Gate Controls & Live Circuit Trail -->
-      <section class="workbench-bar" aria-label="Input State, Gate Controls, and Quantum Circuit">
-        <div class="control-group">
-          <div class="control-label">
-            <span>1. Initial Qubit State</span>
+      <!-- 1. Quirk-Style Horizontal Qubit Wire Workbench -->
+      <section class="circuit-workbench" aria-label="Quantum Circuit Wire and Gate Palette">
+        <div class="palette-bar">
+          <div class="palette-left">
+            <span class="palette-heading">Gate Palette:</span>
+            <div class="palette-actions" role="group" aria-label="Append quantum gate to qubit wire">
+              <button
+                type="button"
+                id="btn-gate-X"
+                class="btn btn-gate"
+                aria-label="Append Pauli-X bit-flip gate to circuit wire"
+              ><span class="gate-sym">X</span><span class="gate-label">Pauli-X</span></button>
+              <button
+                type="button"
+                id="btn-gate-H"
+                class="btn btn-gate"
+                aria-label="Append Hadamard superposition gate to circuit wire"
+              ><span class="gate-sym">H</span><span class="gate-label">Hadamard</span></button>
+              <button
+                type="button"
+                id="btn-gate-I"
+                class="btn btn-gate"
+                aria-label="Append Identity gate to circuit wire"
+              ><span class="gate-sym">I</span><span class="gate-label">Identity</span></button>
+            </div>
           </div>
-          <div class="btn-row" role="group" aria-label="Initialize computational basis state">
+
+          <div class="palette-actions" role="group" aria-label="Circuit history controls">
             <button
               type="button"
-              id="btn-init-0"
-              class="btn btn-mono"
-              aria-pressed="true"
-              aria-label="Initialize qubit to ket 0, vector 1, 0"
-            >|0&#10217; [1, 0]&#7488;</button>
-            <button
-              type="button"
-              id="btn-init-1"
-              class="btn btn-mono"
-              aria-pressed="false"
-              aria-label="Initialize qubit to ket 1, vector 0, 1"
-            >|1&#10217; [0, 1]&#7488;</button>
+              id="btn-undo"
+              class="btn btn-secondary"
+              disabled
+              aria-label="Undo last placed gate on the circuit wire"
+            >Undo Last</button>
             <button
               type="button"
               id="btn-reset"
-              class="btn btn-reset"
-              aria-label="Reset qubit to ket 0 and clear applied gate sequence"
-            >Reset</button>
+              class="btn btn-secondary"
+              aria-label="Reset circuit to ket 0 and remove all gates"
+            >Reset Circuit</button>
           </div>
         </div>
 
-        <div class="control-group">
-          <div class="control-label">
-            <span>2. Apply Quantum Gate</span>
-          </div>
-          <div class="btn-row" role="group" aria-label="Apply single-qubit quantum gate">
+        <div class="wire-stage">
+          <div class="wire-row" aria-label="Horizontal single-qubit circuit wire">
+            <!-- Toggleable Initial State Block -->
             <button
               type="button"
-              id="btn-gate-X"
-              class="btn btn-gate"
-              aria-label="Apply Pauli-X bit-flip gate"
-            ><span class="gate-code">X</span><span class="gate-name">Pauli-X</span></button>
-            <button
-              type="button"
-              id="btn-gate-H"
-              class="btn btn-gate"
-              aria-label="Apply Hadamard superposition gate"
-            ><span class="gate-code">H</span><span class="gate-name">Hadamard</span></button>
-            <button
-              type="button"
-              id="btn-gate-I"
-              class="btn btn-gate"
-              aria-label="Apply Identity gate"
-            ><span class="gate-code">I</span><span class="gate-name">Identity</span></button>
-          </div>
-        </div>
+              id="btn-toggle-init"
+              class="init-block-btn"
+              aria-label="Toggle initial qubit state, currently ket 0. Click to switch to ket 1."
+              title="Click to toggle initial state between |0&#10217; and |1&#10217;"
+            >
+              <span class="init-ket" id="init-ket-label">|0&#10217;</span>
+              <span class="init-sub" id="init-vec-label">[1, 0]&#7488;</span>
+            </button>
 
-        <div class="control-group">
-          <div class="control-label">
-            <span>Live Quantum Circuit Sequence</span>
-            <span id="circuit-step-count" class="panel-meta">Gates applied: 0</span>
+            <!-- Horizontal Wire with Placed Square Gate Tiles -->
+            <div
+              class="wire-track-scroll"
+              id="wire-scroll"
+              role="region"
+              aria-label="Placed quantum gates on the wire"
+            >
+              <div class="wire-track-inner" id="wire-gates-track"></div>
+            </div>
+
+            <!-- Live Compact Probability Readout Box -->
+            <div
+              class="wire-readout-box"
+              id="wire-readout"
+              role="status"
+              aria-live="polite"
+              aria-label="Live circuit output probability readout"
+            >
+              <div class="readout-row">
+                <span class="readout-lbl">P(0)</span>
+                <div class="readout-mini-track" aria-hidden="true">
+                  <div class="readout-fill-0" id="readout-fill-0" style="width: 100%;"></div>
+                </div>
+                <span class="readout-val" id="readout-val-0">100%</span>
+              </div>
+              <div class="readout-row">
+                <span class="readout-lbl">P(1)</span>
+                <div class="readout-mini-track" aria-hidden="true">
+                  <div class="readout-fill-1" id="readout-fill-1" style="width: 0%;"></div>
+                </div>
+                <span class="readout-val" id="readout-val-1">0%</span>
+              </div>
+            </div>
           </div>
-          <div
-            id="circuit-trail"
-            class="circuit-trail-viewport"
-            role="status"
-            aria-live="polite"
-            aria-label="Sequence of applied quantum gates"
-          ></div>
+
+          <div class="wire-caption-bar">
+            <span id="wire-sequence-summary" class="wire-sequence-text">Circuit: |0&#10217; &rarr; |0&#10217;</span>
+            <span>Click |0&#10217;/|1&#10217; block to toggle input &middot; Click any placed gate tile to inspect step &middot; Click &times; to remove gate</span>
+          </div>
         </div>
       </section>
 
       <!-- Main 2-Column Technical Workbench -->
-      <div class="workbench-grid" style="margin-top: 12px;">
+      <div class="workbench-grid" style="margin-top: 10px;">
         <!-- Left Column: 2D State-Vector Plot + Measurement Simulator -->
         <div class="col-stack">
-          <!-- 4. Interactive 2D State-Vector Plot -->
+          <!-- 3. Interactive 2D State-Vector Plot -->
           <section class="panel" aria-labelledby="plot-heading">
             <div class="panel-header">
               <h2 id="plot-heading" class="panel-title">2D State-Vector Plot (Real |0&#10217;&#8211;|1&#10217; Plane)</h2>
@@ -1004,7 +1238,7 @@
               </div>
               <div class="plot-legend">
                 <div class="legend-items">
-                  <span class="legend-item"><span class="swatch-line" aria-hidden="true"></span>Current |&#968;&#10217;</span>
+                  <span class="legend-item"><span class="swatch-line" aria-hidden="true"></span>Final |&#968;&#10217;</span>
                   <span class="legend-item"><span class="swatch-dashed" aria-hidden="true"></span>Prior state &amp; projections</span>
                   <span class="legend-item"><span class="swatch-circle" aria-hidden="true"></span>Unit circle (|&#945;|&sup2;+|&#946;|&sup2;=1)</span>
                 </div>
@@ -1012,7 +1246,7 @@
             </div>
           </section>
 
-          <!-- 6. Measurement Simulator -->
+          <!-- 5. Measurement Simulator -->
           <section class="panel" aria-labelledby="measure-heading">
             <div class="panel-header">
               <h2 id="measure-heading" class="panel-title">Measurement Simulator (Wavefunction Collapse)</h2>
@@ -1021,24 +1255,20 @@
                 id="btn-simulate"
                 class="btn btn-primary"
                 style="min-height: 30px; padding: 6px 12px; font-size: 12.5px;"
-                aria-label="Simulate 100 projective measurements on the current qubit state"
+                aria-label="Simulate 100 projective measurements on the final qubit state"
               >Simulate 100 Shots</button>
             </div>
-            <div class="panel-body" id="measurement-container" aria-live="polite">
-              <div class="measure-empty">
-                Click <strong>Simulate 100 Shots</strong> to sample 100 random computational-basis measurements using P(0) = |&#945;|&sup2; and P(1) = |&#946;|&sup2;.
-              </div>
-            </div>
+            <div class="panel-body" id="measurement-container" aria-live="polite"></div>
           </section>
         </div>
 
-        <!-- Right Column: Matrix Calculation + Output Amplitudes & Probabilities -->
+        <!-- Right Column: Step-by-Step Matrix Calculation + Output Amplitudes & Normalization -->
         <div class="col-stack">
-          <!-- 3. Step-by-Step Matrix Calculation Panel -->
+          <!-- 2. Step-by-Step Matrix Calculation Panel -->
           <section class="panel" aria-labelledby="matrix-heading">
             <div class="panel-header">
               <h2 id="matrix-heading" class="panel-title">Step-by-Step Matrix Calculation</h2>
-              <span id="matrix-step-label" class="panel-meta">Prepared initial state</span>
+              <span id="matrix-step-label" class="panel-meta">Initial state prepared</span>
             </div>
             <div class="panel-body">
               <div
@@ -1051,10 +1281,10 @@
             </div>
           </section>
 
-          <!-- 5. Output, Amplitudes & Probabilities Panel -->
+          <!-- 4. Output, Amplitudes & Normalization Panel -->
           <section class="panel" aria-labelledby="output-heading">
             <div class="panel-header">
-              <h2 id="output-heading" class="panel-title">Output State, Amplitudes &amp; Probabilities</h2>
+              <h2 id="output-heading" class="panel-title">Output State, Amplitudes &amp; Normalization</h2>
               <span id="output-state-type" class="panel-meta">Computational basis</span>
             </div>
             <div class="panel-body" aria-live="polite">
@@ -1110,7 +1340,7 @@
 
               <div class="norm-check" id="normalization-check">
                 <span class="norm-equation">P(0) + P(1) = |&#945;|&sup2; + |&#946;|&sup2; = <strong>1.0000</strong></span>
-                <span class="norm-status">Normalized (Valid Qubit)</span>
+                <span class="norm-status">Normalized (Unit Vector)</span>
               </div>
             </div>
           </section>
@@ -1255,7 +1485,9 @@
           p0Fraction: toFrac(p0),
           p1Fraction: toFrac(p1),
           p0Percent: (p0 * 100).toFixed(1) + '%',
-          p1Percent: (p1 * 100).toFixed(1) + '%'
+          p1Percent: (p1 * 100).toFixed(1) + '%',
+          p0ShortPct: Math.round(p0 * 100) + '%',
+          p1ShortPct: Math.round(p1 * 100) + '%'
         };
       }
 
@@ -1319,9 +1551,9 @@
         if (inIsBasis) {
           var ang = getStateAngleDegrees(output);
           var angStr = ang > 0 ? '+' + ang + '\u00B0' : ang + '\u00B0';
-          return 'Hadamard (H) transforms basis state ' + inLabel + ' into an equal superposition ' + outLabel + ' at ' + angStr + '.';
+          return 'Hadamard (H) rotates basis state ' + inLabel + ' into an equal superposition ' + outLabel + ' at ' + angStr + '.';
         }
-        return 'Applying Hadamard (H) again produces quantum interference: equal terms reinforce while opposite signs cancel, returning ' + inLabel + ' to ' + outLabel + '.';
+        return 'Applying Hadamard (H) again causes constructive/destructive interference, returning ' + inLabel + ' to basis state ' + outLabel + '.';
       }
 
       function applyGate(state, gateId) {
@@ -1360,6 +1592,26 @@
           row0Simplified: [formatExactAmp(p00), formatExactAmp(p01)],
           row1Simplified: [formatExactAmp(p10), formatExactAmp(p11)],
           interpretation: describeStep(gateId, state, output)
+        };
+      }
+
+      function evaluateCircuit(initialBasis, gateSequence) {
+        var initialState = createBasisState(initialBasis);
+        var steps = [];
+        var cursor = initialState;
+
+        for (var i = 0; i < gateSequence.length; i += 1) {
+          var step = applyGate(cursor, gateSequence[i]);
+          steps.push(step);
+          cursor = step.output;
+        }
+
+        return {
+          initialBasis: initialBasis,
+          initialState: initialState,
+          steps: steps,
+          finalState: cursor,
+          previousState: steps.length > 0 ? steps[steps.length - 1].input : null
         };
       }
 
@@ -1404,6 +1656,7 @@
           formatKetNotation: formatKetNotation,
           getStateAngleDegrees: getStateAngleDegrees,
           applyGate: applyGate,
+          evaluateCircuit: evaluateCircuit,
           simulateMeasurements: simulateMeasurements
         };
       }
@@ -1417,10 +1670,9 @@
        * ===================================================================== */
       var appState = {
         initialBasis: '0',
-        current: createBasisState('0'),
-        previous: null,
         gateSequence: [],
-        lastStep: null,
+        inspectedIndex: -1,
+        evaluation: evaluateCircuit('0', []),
         measurement: null,
         measurementRunCount: 0
       };
@@ -1428,16 +1680,24 @@
       /* =====================================================================
        * DOM References
        * ===================================================================== */
-      var btnInit0 = document.getElementById('btn-init-0');
-      var btnInit1 = document.getElementById('btn-init-1');
-      var btnReset = document.getElementById('btn-reset');
+      var btnToggleInit = document.getElementById('btn-toggle-init');
+      var elInitKet = document.getElementById('init-ket-label');
+      var elInitVec = document.getElementById('init-vec-label');
       var btnGateX = document.getElementById('btn-gate-X');
       var btnGateH = document.getElementById('btn-gate-H');
       var btnGateI = document.getElementById('btn-gate-I');
+      var btnUndo = document.getElementById('btn-undo');
+      var btnReset = document.getElementById('btn-reset');
       var btnSimulate = document.getElementById('btn-simulate');
 
-      var elCircuitTrail = document.getElementById('circuit-trail');
-      var elCircuitCount = document.getElementById('circuit-step-count');
+      var elWireScroll = document.getElementById('wire-scroll');
+      var elWireTrack = document.getElementById('wire-gates-track');
+      var elReadoutFill0 = document.getElementById('readout-fill-0');
+      var elReadoutFill1 = document.getElementById('readout-fill-1');
+      var elReadoutVal0 = document.getElementById('readout-val-0');
+      var elReadoutVal1 = document.getElementById('readout-val-1');
+      var elWireSummary = document.getElementById('wire-sequence-summary');
+
       var elMatrixStepLabel = document.getElementById('matrix-step-label');
       var elMatrixEq = document.getElementById('matrix-equation');
       var elMatrixInterp = document.getElementById('matrix-interpretation');
@@ -1461,9 +1721,6 @@
       var elMeasureContainer = document.getElementById('measurement-container');
       var canvas = document.getElementById('stateCanvas');
 
-      /* =====================================================================
-       * Helpers for Safe DOM Creation
-       * ===================================================================== */
       function el(tag, className, text) {
         var node = document.createElement(tag);
         if (className) node.className = className;
@@ -1472,39 +1729,97 @@
       }
 
       /* =====================================================================
-       * Render: Circuit Trail
+       * Render: Quirk-Style Horizontal Wire & Live Readout
        * ===================================================================== */
-      function renderCircuit() {
-        elCircuitTrail.innerHTML = '';
-        elCircuitCount.textContent = 'Gates applied: ' + appState.gateSequence.length;
+      function renderWire() {
+        var ev = appState.evaluation;
+        var probs = getStateProbabilities(ev.finalState);
 
-        var wire = el('div', 'circuit-wire');
-        wire.appendChild(el('span', 'circuit-node-ket', '|' + appState.initialBasis + '\u27E9'));
+        // Toggleable initial state block
+        elInitKet.textContent = '|' + appState.initialBasis + '\u27E9';
+        elInitVec.textContent = appState.initialBasis === '0' ? '[1, 0]\u1D40' : '[0, 1]\u1D40';
+        var nextBasis = appState.initialBasis === '0' ? '1' : '0';
+        btnToggleInit.setAttribute(
+          'aria-label',
+          'Toggle initial qubit state, currently ket ' + appState.initialBasis + '. Click to switch to ket ' + nextBasis + '.'
+        );
 
-        for (var i = 0; i < appState.gateSequence.length; i += 1) {
-          wire.appendChild(el('span', 'circuit-arrow', '\u2192'));
-          var isLatest = i === appState.gateSequence.length - 1;
-          var box = el('span', 'circuit-gate-box' + (isLatest ? ' is-latest' : ''), appState.gateSequence[i]);
-          box.setAttribute('title', GATES[appState.gateSequence[i]].name + ' gate (step ' + (i + 1) + ')');
-          wire.appendChild(box);
+        // Undo button state
+        btnUndo.disabled = appState.gateSequence.length === 0;
+
+        // Placed square gate tiles
+        elWireTrack.innerHTML = '';
+        if (appState.gateSequence.length === 0) {
+          var hint = el('span', 'wire-empty-hint', 'Wire ready \u2014 click X, H, or I above to place gates');
+          elWireTrack.appendChild(hint);
+        } else {
+          for (var i = 0; i < appState.gateSequence.length; i += 1) {
+            (function (idx, gateId) {
+              var wrap = el('div', 'wire-tile-wrap');
+              var isInspected = idx === appState.inspectedIndex;
+
+              var tileBtn = el('button', 'wire-gate-tile' + (isInspected ? ' is-inspected' : ''));
+              tileBtn.type = 'button';
+              tileBtn.setAttribute('data-gate-index', String(idx));
+              tileBtn.setAttribute('aria-pressed', isInspected ? 'true' : 'false');
+              tileBtn.setAttribute(
+                'aria-label',
+                'Inspect step ' + (idx + 1) + ': ' + GATES[gateId].name + ' gate'
+              );
+              tileBtn.setAttribute('title', 'Click to inspect Step ' + (idx + 1) + ' (' + GATES[gateId].name + ')');
+              tileBtn.appendChild(el('span', 'tile-symbol', gateId));
+              tileBtn.appendChild(el('span', 'tile-step-num', '#' + (idx + 1)));
+              tileBtn.addEventListener('click', function () {
+                handleInspectStep(idx);
+              });
+
+              var rmBtn = el('button', 'tile-remove-btn', '\u00D7');
+              rmBtn.type = 'button';
+              rmBtn.setAttribute('data-remove-index', String(idx));
+              rmBtn.setAttribute(
+                'aria-label',
+                'Remove step ' + (idx + 1) + ' ' + GATES[gateId].name + ' gate from circuit'
+              );
+              rmBtn.setAttribute('title', 'Remove ' + GATES[gateId].name + ' gate');
+              rmBtn.addEventListener('click', function (evt) {
+                evt.stopPropagation();
+                handleRemoveGateAt(idx);
+              });
+
+              wrap.appendChild(tileBtn);
+              wrap.appendChild(rmBtn);
+              elWireTrack.appendChild(wrap);
+            })(i, appState.gateSequence[i]);
+          }
         }
 
-        if (appState.gateSequence.length > 0) {
-          var ketInfo = formatKetNotation(appState.current);
-          var compactOut = ketInfo.alias ? ketInfo.alias.replace(/^=\s*/, '') : ketInfo.ket;
-          wire.appendChild(el('span', 'circuit-arrow', '='));
-          wire.appendChild(el('span', 'circuit-node-out', compactOut));
+        // Compact readout box at right end of wire
+        elReadoutFill0.style.width = (probs.p0 * 100).toFixed(1) + '%';
+        elReadoutFill1.style.width = (probs.p1 * 100).toFixed(1) + '%';
+        elReadoutVal0.textContent = probs.p0ShortPct;
+        elReadoutVal1.textContent = probs.p1ShortPct;
+
+        // Wire sequence summary line
+        var ketInfo = formatKetNotation(ev.finalState);
+        var compactOut = ketInfo.alias ? ketInfo.alias.replace(/^=\s*/, '') : ketInfo.ket;
+        if (appState.gateSequence.length === 0) {
+          elWireSummary.textContent = 'Circuit: |' + appState.initialBasis + '\u27E9 (0 gates)';
+        } else {
+          elWireSummary.textContent =
+            'Circuit: |' +
+            appState.initialBasis +
+            '\u27E9 \u2192 ' +
+            appState.gateSequence.join(' \u2192 ') +
+            ' = ' +
+            compactOut +
+            ' (' +
+            appState.gateSequence.length +
+            (appState.gateSequence.length === 1 ? ' gate)' : ' gates)');
         }
-
-        elCircuitTrail.appendChild(wire);
-        elCircuitTrail.scrollLeft = elCircuitTrail.scrollWidth;
-
-        btnInit0.setAttribute('aria-pressed', appState.initialBasis === '0' && appState.gateSequence.length === 0 ? 'true' : 'false');
-        btnInit1.setAttribute('aria-pressed', appState.initialBasis === '1' && appState.gateSequence.length === 0 ? 'true' : 'false');
       }
 
       /* =====================================================================
-       * Render: Step-by-Step Matrix Calculation
+       * Render: Step-by-Step Matrix Calculation (Supports Step Inspection)
        * ===================================================================== */
       function buildMatrix2x2(gate) {
         var block = el('div', 'matrix-block');
@@ -1545,40 +1860,53 @@
 
       function renderMatrixCalculation() {
         elMatrixEq.innerHTML = '';
+        var ev = appState.evaluation;
 
-        if (!appState.lastStep) {
+        if (ev.steps.length === 0 || appState.inspectedIndex < 0) {
           elMatrixStepLabel.textContent = 'Initial state prepared (Step 0)';
           elMatrixEq.appendChild(buildMatrix2x2(GATES.I));
           elMatrixEq.appendChild(el('span', 'mat-op', '\u00D7'));
-          elMatrixEq.appendChild(buildVector2x1(appState.current, 'Initial |' + appState.initialBasis + '\u27E9', false));
+          elMatrixEq.appendChild(buildVector2x1(ev.initialState, 'Initial |' + appState.initialBasis + '\u27E9', false));
           elMatrixEq.appendChild(el('span', 'mat-op', '='));
 
           var initBlock = el('div', 'matrix-block');
           initBlock.appendChild(el('div', 'matrix-caption', 'Row \u00D7 Column Expansion'));
           var initGrid = el('div', 'matrix-brackets mat-expanded');
-          var aExact = formatExactAmp(appState.current.alpha);
-          var bExact = formatExactAmp(appState.current.beta);
+          var aExact = formatExactAmp(ev.initialState.alpha);
+          var bExact = formatExactAmp(ev.initialState.beta);
           initGrid.appendChild(el('span', 'mat-cell', '(1)(' + aExact + ') + (0)(' + bExact + ')'));
           initGrid.appendChild(el('span', 'mat-cell', '(0)(' + aExact + ') + (1)(' + bExact + ')'));
           initBlock.appendChild(initGrid);
           elMatrixEq.appendChild(initBlock);
 
           elMatrixEq.appendChild(el('span', 'mat-op', '='));
-          elMatrixEq.appendChild(buildVector2x1(appState.current, 'Current |\u03C8\u27E9', true));
+          elMatrixEq.appendChild(buildVector2x1(ev.initialState, 'Current |\u03C8\u27E9', true));
 
           elMatrixInterp.innerHTML =
             '<strong>Ready:</strong> Qubit initialized to <strong>|' +
             appState.initialBasis +
-            '\u27E9</strong>. Select <strong>X</strong>, <strong>H</strong>, or <strong>I</strong> above to apply a unitary transformation |&#968;<sub>out</sub>&#10217; = U |&#968;<sub>in</sub>&#10217;.';
+            '\u27E9</strong>. Place <strong>X</strong>, <strong>H</strong>, or <strong>I</strong> gates on the horizontal wire to inspect |&#968;<sub>out</sub>&#10217; = U |&#968;<sub>in</sub>&#10217;.';
           return;
         }
 
-        var step = appState.lastStep;
-        elMatrixStepLabel.textContent = 'Step ' + appState.gateSequence.length + ': ' + step.gate.name + ' (' + step.gateId + ')';
+        var idx = Math.min(appState.inspectedIndex, ev.steps.length - 1);
+        var step = ev.steps[idx];
+        var isFinalStep = idx === ev.steps.length - 1;
+        elMatrixStepLabel.textContent =
+          'Step ' +
+          (idx + 1) +
+          ' of ' +
+          ev.steps.length +
+          ': ' +
+          step.gate.name +
+          ' (' +
+          step.gateId +
+          ')' +
+          (isFinalStep ? '' : ' \u00B7 Inspecting');
 
         elMatrixEq.appendChild(buildMatrix2x2(step.gate));
         elMatrixEq.appendChild(el('span', 'mat-op', '\u00D7'));
-        elMatrixEq.appendChild(buildVector2x1(step.input, 'Input |\u03C8\u1D62\u2099\u27E9', false));
+        elMatrixEq.appendChild(buildVector2x1(step.input, 'Input |\u03C8' + idx + '\u27E9', false));
         elMatrixEq.appendChild(el('span', 'mat-op', '='));
 
         var expBlock = el('div', 'matrix-block');
@@ -1594,29 +1922,30 @@
         elMatrixEq.appendChild(expBlock);
 
         elMatrixEq.appendChild(el('span', 'mat-op', '='));
-        elMatrixEq.appendChild(buildVector2x1(step.output, 'Output |\u03C8\u2092\u1D64\u209C\u27E9', true));
+        elMatrixEq.appendChild(buildVector2x1(step.output, 'Output |\u03C8' + (idx + 1) + '\u27E9', true));
 
         elMatrixInterp.textContent = '';
-        var strong = el('strong', null, 'Physical effect: ');
+        var strong = el('strong', null, 'Step ' + (idx + 1) + ' effect: ');
         elMatrixInterp.appendChild(strong);
         elMatrixInterp.appendChild(document.createTextNode(step.interpretation));
       }
 
       /* =====================================================================
-       * Render: Output Ket, Amplitudes & Probabilities
+       * Render: Output Ket, Amplitudes & Normalization
        * ===================================================================== */
       function renderOutputAndProbabilities() {
-        var ketInfo = formatKetNotation(appState.current);
-        var probs = getStateProbabilities(appState.current);
+        var finalState = appState.evaluation.finalState;
+        var ketInfo = formatKetNotation(finalState);
+        var probs = getStateProbabilities(finalState);
 
         elKetOutput.textContent = '|\u03C8\u27E9 = ' + ketInfo.ket;
         elKetAlias.textContent = ketInfo.alias || '';
         elOutputType.textContent = ketInfo.kind;
 
-        elAlphaExact.textContent = formatExactAmp(appState.current.alpha);
-        elAlphaDec.textContent = formatSignedDecimal(appState.current.alpha);
-        elBetaExact.textContent = formatExactAmp(appState.current.beta);
-        elBetaDec.textContent = formatSignedDecimal(appState.current.beta);
+        elAlphaExact.textContent = formatExactAmp(finalState.alpha);
+        elAlphaDec.textContent = formatSignedDecimal(finalState.alpha);
+        elBetaExact.textContent = formatExactAmp(finalState.beta);
+        elBetaDec.textContent = formatSignedDecimal(finalState.beta);
 
         elProb0Text.innerHTML = 'Fraction: <strong>' + probs.p0Fraction + '</strong> &middot; <strong>' + probs.p0Percent + '</strong>';
         elProb1Text.innerHTML = 'Fraction: <strong>' + probs.p1Fraction + '</strong> &middot; <strong>' + probs.p1Percent + '</strong>';
@@ -1644,13 +1973,14 @@
       }
 
       function renderMeasurement() {
+        var finalState = appState.evaluation.finalState;
         elMeasureContainer.innerHTML = '';
         if (!appState.measurement) {
           var empty = el('div', 'measure-empty');
           empty.innerHTML =
             'Ready to measure <strong>|\u03C8\u27E9 = ' +
-            formatKetNotation(appState.current).ket +
-            '</strong>. Click <strong>Simulate 100 Shots</strong> to compare empirical collapse counts against theoretical Born-rule probabilities.';
+            formatKetNotation(finalState).ket +
+            '</strong>. Click <strong>Simulate 100 Shots</strong> to compare observed collapse counts against theoretical probabilities.';
           elMeasureContainer.appendChild(empty);
           return;
         }
@@ -1770,9 +2100,13 @@
       }
 
       function renderCanvas() {
+        var ev = appState.evaluation;
+        var current = ev.finalState;
+        var previous = ev.previousState;
+
         var rect = canvas.getBoundingClientRect();
         var width = Math.max(260, Math.round(rect.width || 390));
-        var height = Math.max(240, Math.round(rect.height || 292));
+        var height = Math.max(240, Math.round(rect.height || 278));
         var dpr = window.devicePixelRatio || 1;
 
         if (canvas.width !== Math.round(width * dpr) || canvas.height !== Math.round(height * dpr)) {
@@ -1824,7 +2158,7 @@
         ctx.stroke();
         ctx.restore();
 
-        // Superposition guide labels (+45° and -45°) placed cleanly outside circle
+        // Superposition guide labels (+45° and -45°)
         ctx.save();
         ctx.font = '500 10.5px "IBM Plex Mono", monospace';
         ctx.fillStyle = '#64748B';
@@ -1850,7 +2184,6 @@
         ctx.stroke();
 
         // Axis ticks at ±1
-        ctx.lineWidth = 1.25;
         [
           [cx + radius, cy - 4, cx + radius, cy + 4],
           [cx - radius, cy - 4, cx - radius, cy + 4],
@@ -1889,22 +2222,21 @@
         ctx.fillText('-|1\u27E9', cx, cy + axisExt + 4);
         ctx.restore();
 
-        var alpha = ampToFloat(appState.current.alpha);
-        var beta = ampToFloat(appState.current.beta);
+        var alpha = ampToFloat(current.alpha);
+        var beta = ampToFloat(current.beta);
         var tipX = cx + alpha * radius;
         var tipY = cy - beta * radius;
 
         // Previous state ghost vector & transition arc (if changed)
-        if (appState.previous) {
-          var prevA = ampToFloat(appState.previous.alpha);
-          var prevB = ampToFloat(appState.previous.beta);
+        if (previous) {
+          var prevA = ampToFloat(previous.alpha);
+          var prevB = ampToFloat(previous.beta);
           var sameState = Math.abs(prevA - alpha) < 1e-9 && Math.abs(prevB - beta) < 1e-9;
           if (!sameState) {
             var pTipX = cx + prevA * radius;
             var pTipY = cy - prevB * radius;
             drawArrow(ctx, cx, cy, pTipX, pTipY, '#94A3B8', 1.5, true);
 
-            // Shortest arc from previous angle to current angle (canvas y is inverted)
             var a1 = Math.atan2(-prevB, prevA);
             var a2 = Math.atan2(-beta, alpha);
             var diff = a2 - a1;
@@ -1938,14 +2270,14 @@
         ctx.restore();
 
         // Angle arc from +|0> axis if non-zero
-        var deg = getStateAngleDegrees(appState.current);
+        var deg = getStateAngleDegrees(current);
         if (deg !== 0) {
           var canvasAng = Math.atan2(-beta, alpha);
           ctx.save();
           ctx.strokeStyle = '#0F766E';
           ctx.lineWidth = 1.25;
           ctx.beginPath();
-          ctx.arc(cx, cy, 24, 0, canvasAng, canvasAng < 0);
+          ctx.arc(cx, cy, 22, 0, canvasAng, canvasAng < 0);
           ctx.stroke();
           ctx.restore();
         }
@@ -1969,15 +2301,17 @@
         ctx.stroke();
         ctx.restore();
 
-        // Coordinate callout positioned in the upper-left drafting corner to never collide with axes or ±45° labels
-        var coordText = '(\u03B1, \u03B2) = (' + formatExactAmp(appState.current.alpha) + ', ' + formatExactAmp(appState.current.beta) + ')';
+        // Coordinate callout in upper-left corner (zero overlap with axes or ±45° labels)
+        var coordText = compact
+          ? '(' + formatExactAmp(current.alpha) + ', ' + formatExactAmp(current.beta) + ')'
+          : '(\u03B1, \u03B2) = (' + formatExactAmp(current.alpha) + ', ' + formatExactAmp(current.beta) + ')';
         ctx.save();
-        ctx.font = '600 11px "IBM Plex Mono", monospace';
+        ctx.font = compact ? '600 10px "IBM Plex Mono", monospace' : '600 11px "IBM Plex Mono", monospace';
         var tw = ctx.measureText(coordText).width;
-        var boxW = tw + 12;
-        var boxH = 22;
-        var bx = 8;
-        var by = 8;
+        var boxW = tw + 10;
+        var boxH = compact ? 20 : 22;
+        var bx = 6;
+        var by = 6;
 
         ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
         ctx.strokeStyle = '#0F766E';
@@ -1991,20 +2325,20 @@
         ctx.fillText(coordText, bx + 6, by + boxH / 2 + 0.5);
         ctx.restore();
 
-        // Update canvas data attributes & header metadata
+        // Update canvas attributes & header readout
         var degSign = deg > 0 ? '+' + deg + '\u00B0' : deg + '\u00B0';
         var aDec = alpha.toFixed(4);
         var bDec = beta.toFixed(4);
         elPlotAngle.textContent = '\u03B8 = ' + degSign + ' \u00B7 (' + aDec + ', ' + bDec + ')';
 
-        canvas.setAttribute('data-alpha', formatExactAmp(appState.current.alpha));
-        canvas.setAttribute('data-beta', formatExactAmp(appState.current.beta));
+        canvas.setAttribute('data-alpha', formatExactAmp(current.alpha));
+        canvas.setAttribute('data-beta', formatExactAmp(current.beta));
         canvas.setAttribute('data-angle-deg', String(deg));
-        canvas.setAttribute('data-ket', formatKetNotation(appState.current).ket);
+        canvas.setAttribute('data-ket', formatKetNotation(current).ket);
         canvas.setAttribute(
           'aria-label',
-          '2D state vector plot: current state ' +
-            formatKetNotation(appState.current).ket +
+          '2D state vector plot: final state ' +
+            formatKetNotation(current).ket +
             ' at angle ' +
             degSign +
             ' with coordinates alpha ' +
@@ -2015,63 +2349,94 @@
       }
 
       /* =====================================================================
-       * Master Render & Actions
+       * State Mutations & Recompute
        * ===================================================================== */
-      function renderAll() {
-        renderCircuit();
+      function recomputeAndRender(clearMeasurement, scrollWireToEnd) {
+        appState.evaluation = evaluateCircuit(appState.initialBasis, appState.gateSequence);
+        if (appState.gateSequence.length === 0) {
+          appState.inspectedIndex = -1;
+        } else if (appState.inspectedIndex >= appState.gateSequence.length || appState.inspectedIndex < 0) {
+          appState.inspectedIndex = appState.gateSequence.length - 1;
+        }
+        if (clearMeasurement) {
+          appState.measurement = null;
+          appState.measurementRunCount = 0;
+        }
+        renderWire();
         renderMatrixCalculation();
         renderOutputAndProbabilities();
         renderMeasurement();
         renderCanvas();
+        if (scrollWireToEnd) {
+          elWireScroll.scrollLeft = elWireScroll.scrollWidth;
+        }
       }
 
-      function initBasis(basis) {
-        appState.initialBasis = basis;
-        appState.current = createBasisState(basis);
-        appState.previous = null;
-        appState.gateSequence = [];
-        appState.lastStep = null;
-        appState.measurement = null;
-        appState.measurementRunCount = 0;
-        renderAll();
+      function handleToggleInitialBasis() {
+        appState.initialBasis = appState.initialBasis === '0' ? '1' : '0';
+        recomputeAndRender(true, false);
       }
 
-      function handleApplyGate(gateId) {
-        var step = applyGate(appState.current, gateId);
-        appState.previous = appState.current;
-        appState.current = step.output;
+      function handleAppendGate(gateId) {
         appState.gateSequence.push(gateId);
-        appState.lastStep = step;
-        appState.measurement = null;
-        appState.measurementRunCount = 0;
-        renderAll();
+        appState.inspectedIndex = appState.gateSequence.length - 1;
+        recomputeAndRender(true, true);
+      }
+
+      function handleInspectStep(idx) {
+        if (idx >= 0 && idx < appState.gateSequence.length) {
+          appState.inspectedIndex = idx;
+          renderWire();
+          renderMatrixCalculation();
+        }
+      }
+
+      function handleRemoveGateAt(idx) {
+        if (idx < 0 || idx >= appState.gateSequence.length) return;
+        appState.gateSequence.splice(idx, 1);
+        if (appState.gateSequence.length === 0) {
+          appState.inspectedIndex = -1;
+        } else if (appState.inspectedIndex >= appState.gateSequence.length) {
+          appState.inspectedIndex = appState.gateSequence.length - 1;
+        } else if (idx < appState.inspectedIndex) {
+          appState.inspectedIndex -= 1;
+        }
+        recomputeAndRender(true, false);
+      }
+
+      function handleUndoLast() {
+        if (appState.gateSequence.length === 0) return;
+        appState.gateSequence.pop();
+        appState.inspectedIndex = appState.gateSequence.length - 1;
+        recomputeAndRender(true, false);
+      }
+
+      function handleResetCircuit() {
+        appState.initialBasis = '0';
+        appState.gateSequence = [];
+        appState.inspectedIndex = -1;
+        recomputeAndRender(true, false);
       }
 
       function handleSimulateShots() {
         appState.measurementRunCount += 1;
-        appState.measurement = simulateMeasurements(appState.current, 100);
+        appState.measurement = simulateMeasurements(appState.evaluation.finalState, 100);
         renderMeasurement();
       }
 
       /* Wire Event Listeners */
-      btnInit0.addEventListener('click', function () {
-        initBasis('0');
-      });
-      btnInit1.addEventListener('click', function () {
-        initBasis('1');
-      });
-      btnReset.addEventListener('click', function () {
-        initBasis('0');
-      });
+      btnToggleInit.addEventListener('click', handleToggleInitialBasis);
       btnGateX.addEventListener('click', function () {
-        handleApplyGate('X');
+        handleAppendGate('X');
       });
       btnGateH.addEventListener('click', function () {
-        handleApplyGate('H');
+        handleAppendGate('H');
       });
       btnGateI.addEventListener('click', function () {
-        handleApplyGate('I');
+        handleAppendGate('I');
       });
+      btnUndo.addEventListener('click', handleUndoLast);
+      btnReset.addEventListener('click', handleResetCircuit);
       btnSimulate.addEventListener('click', handleSimulateShots);
 
       window.addEventListener('resize', function () {
@@ -2079,7 +2444,7 @@
       });
 
       /* Initial Paint */
-      renderAll();
+      recomputeAndRender(true, false);
     })();
   </script>
 </body>

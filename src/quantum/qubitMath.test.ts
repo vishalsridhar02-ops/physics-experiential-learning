@@ -6,6 +6,7 @@ import vm from 'node:vm';
 import {
   applyGate,
   createBasisState,
+  evaluateCircuit,
   formatExactAmp,
   formatKetNotation,
   formatSignedDecimal,
@@ -71,6 +72,27 @@ test('H(H|0>) = |0> and H(H|1>) = |1> with zero floating-point drift', () => {
   assert.equal(formatExactAmp(hh1.output.beta), '1');
 });
 
+test('evaluateCircuit tracks per-step states, supports removing middle gates, and toggles initial basis', () => {
+  const evalHH = evaluateCircuit('0', ['H', 'H']);
+  assert.equal(evalHH.steps.length, 2);
+  assert.equal(formatKetNotation(evalHH.steps[0].input).ket, '|0⟩');
+  assert.equal(formatKetNotation(evalHH.steps[0].output).alias, '|+⟩');
+  assert.equal(formatKetNotation(evalHH.steps[1].input).alias, '|+⟩');
+  assert.equal(formatKetNotation(evalHH.steps[1].output).ket, '|0⟩');
+  assert.equal(formatKetNotation(evalHH.finalState).ket, '|0⟩');
+
+  // Toggle initial basis from |0> to |1> with [H] on wire
+  const evalH1 = evaluateCircuit('1', ['H']);
+  assert.equal(formatKetNotation(evalH1.finalState).alias, '|-⟩');
+  assert.equal(getStateAngleDegrees(evalH1.finalState), -45);
+
+  // Removing a gate from [H, X, H] -> [H, H] restores |0>
+  const withMiddle = evaluateCircuit('0', ['H', 'X', 'H']);
+  assert.equal(formatKetNotation(withMiddle.finalState).ket, '|0⟩');
+  const afterRemoveFirstH = evaluateCircuit('0', ['X', 'H']);
+  assert.equal(formatKetNotation(afterRemoveFirstH.finalState).alias, '|-⟩');
+});
+
 test('Identity gate leaves basis and superposition states unchanged', () => {
   const h0 = applyGate(createBasisState('0'), 'H').output;
   const ih0 = applyGate(h0, 'I');
@@ -100,7 +122,7 @@ test('Measurement simulator collapses 100 shots accurately for deterministic and
   assert.equal(mPlus.deltaP1, 0);
 });
 
-test('Self-contained index.html inline vanilla JS kernel matches all quantum identities', () => {
+test('Self-contained index.html inline vanilla JS kernel matches all quantum identities and circuit evaluation', () => {
   const htmlPath = path.resolve(process.cwd(), 'index.html');
   const html = fs.readFileSync(htmlPath, 'utf-8');
   const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
@@ -119,6 +141,10 @@ test('Self-contained index.html inline vanilla JS kernel matches all quantum ide
   const kernel = sandbox.window.__QUBIT_KERNEL__ as {
     createBasisState: (b: '0' | '1') => unknown;
     applyGate: (s: unknown, g: 'X' | 'H' | 'I') => { output: unknown };
+    evaluateCircuit: (
+      b: '0' | '1',
+      seq: ('X' | 'H' | 'I')[]
+    ) => { steps: { input: unknown; output: unknown }[]; finalState: unknown };
     formatKetNotation: (s: unknown) => { ket: string; alias: string | null };
     getStateAngleDegrees: (s: unknown) => number;
     getStateProbabilities: (s: unknown) => { p0: number; p1: number; sum: number };
@@ -127,25 +153,24 @@ test('Self-contained index.html inline vanilla JS kernel matches all quantum ide
 
   assert.ok(kernel, 'inline script should expose __QUBIT_KERNEL__');
 
-  // Verify H(H|0>) = |0> directly in the inline vanilla JS
-  const h0 = kernel.applyGate(kernel.createBasisState('0'), 'H').output;
-  assert.equal(kernel.getStateAngleDegrees(h0), 45);
-  assert.equal(kernel.getStateProbabilities(h0).sum.toFixed(4), '1.0000');
-
-  const hh0 = kernel.applyGate(h0, 'H').output;
-  assert.equal(kernel.formatKetNotation(hh0).ket, '|0⟩');
-  assert.equal(kernel.getStateAngleDegrees(hh0), 0);
+  // Verify evaluateCircuit on H(H|0>) = |0> directly in the inline vanilla JS
+  const circHH = kernel.evaluateCircuit('0', ['H', 'H']);
+  assert.equal(circHH.steps.length, 2);
+  assert.equal(kernel.getStateAngleDegrees(circHH.steps[0].output), 45);
+  assert.equal(kernel.formatKetNotation(circHH.finalState).ket, '|0⟩');
+  assert.equal(kernel.getStateAngleDegrees(circHH.finalState), 0);
+  assert.equal(kernel.getStateProbabilities(circHH.finalState).sum.toFixed(4), '1.0000');
 
   // Verify H|1> = |-> at -45 deg
-  const h1 = kernel.applyGate(kernel.createBasisState('1'), 'H').output;
-  assert.equal(kernel.getStateAngleDegrees(h1), -45);
-  assert.equal(kernel.formatKetNotation(h1).ket, '(1/√2)|0⟩ - (1/√2)|1⟩');
+  const circH1 = kernel.evaluateCircuit('1', ['H']);
+  assert.equal(kernel.getStateAngleDegrees(circH1.finalState), -45);
+  assert.equal(kernel.formatKetNotation(circH1.finalState).ket, '(1/√2)|0⟩ - (1/√2)|1⟩');
 
   // Verify X|0> = |1>
-  const x0 = kernel.applyGate(kernel.createBasisState('0'), 'X').output;
-  assert.equal(kernel.formatKetNotation(x0).ket, '|1⟩');
+  const circX0 = kernel.evaluateCircuit('0', ['X']);
+  assert.equal(kernel.formatKetNotation(circX0.finalState).ket, '|1⟩');
 
   // Verify 100 shots sum to 100
-  const shots = kernel.simulateMeasurements(h1, 100);
+  const shots = kernel.simulateMeasurements(circH1.finalState, 100);
   assert.equal(shots.count0 + shots.count1, 100);
 });

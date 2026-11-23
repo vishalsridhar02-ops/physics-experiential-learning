@@ -349,3 +349,35 @@ export function simulateMeasurements(
     measuredKet: formatKetNotation(state).ket,
   };
 }
+
+export interface CircuitEvaluation {
+  initialBasis: BasisState;
+  initialState: QubitState;
+  steps: MatrixStep[];
+  finalState: QubitState;
+  previousState: QubitState | null;
+}
+
+export function evaluateCircuit(
+  initialBasis: BasisState,
+  gateSequence: GateId[]
+): CircuitEvaluation {
+  const initialState = createBasisState(initialBasis);
+  const steps: MatrixStep[] = [];
+  let cursor = initialState;
+
+  for (let i = 0; i < gateSequence.length; i += 1) {
+    const step = applyGate(cursor, gateSequence[i]);
+    steps.push(step);
+    cursor = step.output;
+  }
+
+  return {
+    initialBasis,
+    initialState,
+    steps,
+    finalState: cursor,
+    previousState: steps.length > 0 ? steps[steps.length - 1].input : null,
+  };
+}
+
