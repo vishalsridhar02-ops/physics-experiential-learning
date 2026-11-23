@@ -1,30 +1,31 @@
-export type GateId = 'X' | 'H' | 'I';
-export type BasisState = '0' | '1';
+export type GateId = 'X' | 'Y' | 'Z' | 'H' | 'S' | 'I';
+export type CardinalStateId = '0' | '1' | '+' | '-' | '+i' | '-i';
 
-/**
- * Exact algebraic representation for single-qubit real stabilizer amplitudes:
- * value = (r / 2) + (s / (2 * sqrt(2)))
- * Under {X, H, I} starting from |0> or |1>, all states remain in:
- * 0 -> (0,0), ±1 -> (±2,0), ±1/√2 -> (0,±2)
- */
-export interface ExactAmp {
-  r: number;
-  s: number;
+export interface Complex {
+  re: number;
+  im: number;
 }
 
 export interface QubitState {
-  alpha: ExactAmp;
-  beta: ExactAmp;
+  alpha: Complex;
+  beta: Complex;
+}
+
+export interface CardinalDefinition {
+  id: CardinalStateId;
+  ketLabel: string;
+  compactVec: string;
+  description: string;
+  state: QubitState;
 }
 
 export interface GateDefinition {
   id: GateId;
   name: string;
-  shortLabel: string;
   role: string;
   scalarLabel: string | null;
   displayMatrix: [[string, string], [string, string]];
-  exactMatrix: [[ExactAmp, ExactAmp], [ExactAmp, ExactAmp]];
+  matrix: [[Complex, Complex], [Complex, Complex]];
 }
 
 export interface MatrixStep {
@@ -52,126 +53,363 @@ export interface MeasurementResult {
   measuredKet: string;
 }
 
-const INV_SQRT2 = Math.SQRT1_2;
+export interface CircuitEvaluation {
+  initialId: CardinalStateId;
+  initialState: QubitState;
+  steps: MatrixStep[];
+  finalState: QubitState;
+  previousState: QubitState | null;
+}
 
-export const ZERO: ExactAmp = { r: 0, s: 0 };
-export const ONE: ExactAmp = { r: 2, s: 0 };
-export const NEG_ONE: ExactAmp = { r: -2, s: 0 };
-export const INV_SQRT2_EXACT: ExactAmp = { r: 0, s: 2 };
-export const NEG_INV_SQRT2_EXACT: ExactAmp = { r: 0, s: -2 };
+const INV_SQRT2 = Math.SQRT1_2;
+const HALF_INV_SQRT2 = Math.SQRT1_2 / 2;
+const EPS = 1e-10;
+
+const SNAP_VALUES = [
+  0,
+  1,
+  -1,
+  0.5,
+  -0.5,
+  INV_SQRT2,
+  -INV_SQRT2,
+  HALF_INV_SQRT2,
+  -HALF_INV_SQRT2,
+];
+
+export function snapReal(v: number): number {
+  for (let i = 0; i < SNAP_VALUES.length; i += 1) {
+    if (Math.abs(v - SNAP_VALUES[i]) < EPS) {
+      return SNAP_VALUES[i] === 0 ? 0 : SNAP_VALUES[i];
+    }
+  }
+  return v;
+}
+
+export function complex(re: number, im = 0): Complex {
+  return { re: snapReal(re), im: snapReal(im) };
+}
+
+export function cAdd(a: Complex, b: Complex): Complex {
+  return complex(a.re + b.re, a.im + b.im);
+}
+
+export function cMul(a: Complex, b: Complex): Complex {
+  return complex(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re);
+}
+
+export function cMagSq(z: Complex): number {
+  const m2 = z.re * z.re + z.im * z.im;
+  if (Math.abs(m2) < EPS) return 0;
+  if (Math.abs(m2 - 0.5) < EPS) return 0.5;
+  if (Math.abs(m2 - 1) < EPS) return 1;
+  return m2;
+}
+
+export function cMag(z: Complex): number {
+  return Math.sqrt(cMagSq(z));
+}
+
+export function cIsZero(z: Complex): boolean {
+  return Math.abs(z.re) < EPS && Math.abs(z.im) < EPS;
+}
+
+export function cEquals(a: Complex, b: Complex): boolean {
+  return Math.abs(a.re - b.re) < EPS && Math.abs(a.im - b.im) < EPS;
+}
+
+/**
+ * Returns complex phase angle in [0, 360) degrees, or null if amplitude is 0.
+ */
+export function cPhaseDeg(z: Complex): number | null {
+  if (cIsZero(z)) return null;
+  let deg = (Math.atan2(z.im, z.re) * 180) / Math.PI;
+  if (deg < -EPS) deg += 360;
+  const rounded = Math.round(deg) % 360;
+  if (Math.abs(deg - rounded) < 1e-6 || Math.abs(deg - 360) < 1e-6) {
+    return rounded === 360 ? 0 : rounded;
+  }
+  return Number(deg.toFixed(1));
+}
+
+export function formatPhaseCardinal(deg: number | null): string {
+  if (deg === null) return '—';
+  if (deg === 0) return '0° (+1)';
+  if (deg === 90) return '90° (+i)';
+  if (deg === 180) return '180° (-1)';
+  if (deg === 270) return '270° (-i)';
+  return `${deg}°`;
+}
+
+export function getRelativePhaseDeg(state: QubitState): number | null {
+  const pA = cPhaseDeg(state.alpha);
+  const pB = cPhaseDeg(state.beta);
+  if (pA === null || pB === null) return null;
+  let diff = (pB - pA) % 360;
+  if (diff < 0) diff += 360;
+  if (Math.abs(diff - Math.round(diff)) < 1e-6) {
+    return Math.round(diff) % 360;
+  }
+  return Number(diff.toFixed(1));
+}
+
+export interface RelativePhaseStatus {
+  deltaPhi: number | null;
+  label: string;
+  isSuperposition: boolean;
+}
+
+export function getRelativePhaseStatus(state: QubitState): RelativePhaseStatus {
+  if (cIsZero(state.alpha) || cIsZero(state.beta)) {
+    return {
+      deltaPhi: null,
+      label: 'Basis state (no superposition)',
+      isSuperposition: false,
+    };
+  }
+  const rel = getRelativePhaseDeg(state);
+  if (rel === 0) {
+    return { deltaPhi: 0, label: 'In-phase superposition (Δφ = 0°)', isSuperposition: true };
+  }
+  if (rel === 90) {
+    return { deltaPhi: 90, label: 'Positive imaginary phase (Δφ = 90° / +i)', isSuperposition: true };
+  }
+  if (rel === 180) {
+    return { deltaPhi: 180, label: 'Phase-flipped superposition (Δφ = 180°)', isSuperposition: true };
+  }
+  if (rel === 270) {
+    return { deltaPhi: 270, label: 'Negative imaginary phase (Δφ = 270° / -i)', isSuperposition: true };
+  }
+  return {
+    deltaPhi: rel,
+    label: `Superposition (Δφ = ${rel}°)`,
+    isSuperposition: true,
+  };
+}
+
+export function isPurelyRealState(state: QubitState): boolean {
+  return Math.abs(state.alpha.im) < EPS && Math.abs(state.beta.im) < EPS;
+}
+
+const C0 = complex(0, 0);
+const C1 = complex(1, 0);
+const CM1 = complex(-1, 0);
+const CI = complex(0, 1);
+const CMI = complex(0, -1);
+const CH = complex(INV_SQRT2, 0);
+const CMH = complex(-INV_SQRT2, 0);
+const CHI = complex(0, INV_SQRT2);
+const CMHI = complex(0, -INV_SQRT2);
+
+export const CARDINAL_ORDER: CardinalStateId[] = ['0', '1', '+', '-', '+i', '-i'];
+
+export const CARDINAL_STATES: Record<CardinalStateId, CardinalDefinition> = {
+  '0': {
+    id: '0',
+    ketLabel: '|0⟩',
+    compactVec: '[1, 0]ᵀ',
+    description: 'Computational basis |0⟩ (+Z)',
+    state: { alpha: C1, beta: C0 },
+  },
+  '1': {
+    id: '1',
+    ketLabel: '|1⟩',
+    compactVec: '[0, 1]ᵀ',
+    description: 'Computational basis |1⟩ (-Z)',
+    state: { alpha: C0, beta: C1 },
+  },
+  '+': {
+    id: '+',
+    ketLabel: '|+⟩',
+    compactVec: '[1, 1]ᵀ/√2',
+    description: 'Equal superposition |+⟩ (+X)',
+    state: { alpha: CH, beta: CH },
+  },
+  '-': {
+    id: '-',
+    ketLabel: '|-⟩',
+    compactVec: '[1, -1]ᵀ/√2',
+    description: 'Phase-flipped superposition |-⟩ (-X)',
+    state: { alpha: CH, beta: CMH },
+  },
+  '+i': {
+    id: '+i',
+    ketLabel: '|+i⟩',
+    compactVec: '[1, i]ᵀ/√2',
+    description: 'Complex superposition |+i⟩ (+Y)',
+    state: { alpha: CH, beta: CHI },
+  },
+  '-i': {
+    id: '-i',
+    ketLabel: '|-i⟩',
+    compactVec: '[1, -i]ᵀ/√2',
+    description: 'Complex superposition |-i⟩ (-Y)',
+    state: { alpha: CH, beta: CMHI },
+  },
+};
 
 export const GATES: Record<GateId, GateDefinition> = {
   X: {
     id: 'X',
     name: 'Pauli-X',
-    shortLabel: 'X',
     role: 'Bit-Flip',
     scalarLabel: null,
     displayMatrix: [
       ['0', '1'],
       ['1', '0'],
     ],
-    exactMatrix: [
-      [ZERO, ONE],
-      [ONE, ZERO],
+    matrix: [
+      [C0, C1],
+      [C1, C0],
+    ],
+  },
+  Y: {
+    id: 'Y',
+    name: 'Pauli-Y',
+    role: 'Bit + Phase',
+    scalarLabel: null,
+    displayMatrix: [
+      ['0', '-i'],
+      ['i', '0'],
+    ],
+    matrix: [
+      [C0, CMI],
+      [CI, C0],
+    ],
+  },
+  Z: {
+    id: 'Z',
+    name: 'Pauli-Z',
+    role: 'Phase-Flip',
+    scalarLabel: null,
+    displayMatrix: [
+      ['1', '0'],
+      ['0', '-1'],
+    ],
+    matrix: [
+      [C1, C0],
+      [C0, CM1],
     ],
   },
   H: {
     id: 'H',
     name: 'Hadamard',
-    shortLabel: 'H',
     role: 'Superposition',
     scalarLabel: '1/√2',
     displayMatrix: [
       ['1', '1'],
       ['1', '-1'],
     ],
-    exactMatrix: [
-      [INV_SQRT2_EXACT, INV_SQRT2_EXACT],
-      [INV_SQRT2_EXACT, NEG_INV_SQRT2_EXACT],
+    matrix: [
+      [CH, CH],
+      [CH, CMH],
+    ],
+  },
+  S: {
+    id: 'S',
+    name: 'Phase',
+    role: 'π/2 Phase',
+    scalarLabel: null,
+    displayMatrix: [
+      ['1', '0'],
+      ['0', 'i'],
+    ],
+    matrix: [
+      [C1, C0],
+      [C0, CI],
     ],
   },
   I: {
     id: 'I',
     name: 'Identity',
-    shortLabel: 'I',
     role: 'No-Op',
     scalarLabel: null,
     displayMatrix: [
       ['1', '0'],
       ['0', '1'],
     ],
-    exactMatrix: [
-      [ONE, ZERO],
-      [ZERO, ONE],
+    matrix: [
+      [C1, C0],
+      [C0, C1],
     ],
   },
 };
 
-export function createBasisState(basis: BasisState): QubitState {
-  return basis === '0'
-    ? { alpha: { ...ONE }, beta: { ...ZERO } }
-    : { alpha: { ...ZERO }, beta: { ...ONE } };
-}
-
-export function ampToFloat(a: ExactAmp): number {
-  return a.r / 2 + (a.s / 2) * INV_SQRT2;
-}
-
-export function ampEquals(a: ExactAmp, b: ExactAmp): boolean {
-  return a.r === b.r && a.s === b.s;
-}
-
-export function mulExact(a: ExactAmp, b: ExactAmp): ExactAmp {
-  // (a.r/2 + a.s/(2√2)) * (b.r/2 + b.s/(2√2))
-  // = (2*a.r*b.r + a.s*b.s) / 8 + (a.r*b.s + a.s*b.r) / (4√2)
-  // For our closed set, numerator divides cleanly into halves.
-  const rNum = 2 * a.r * b.r + a.s * b.s;
-  const sNum = a.r * b.s + a.s * b.r;
+export function createCardinalState(id: CardinalStateId): QubitState {
+  const def = CARDINAL_STATES[id];
   return {
-    r: rNum / 4,
-    s: sNum / 2,
+    alpha: { ...def.state.alpha },
+    beta: { ...def.state.beta },
   };
 }
 
-export function addExact(a: ExactAmp, b: ExactAmp): ExactAmp {
-  return {
-    r: a.r + b.r,
-    s: a.s + b.s,
-  };
+function formatRealExact(v: number): string {
+  const s = snapReal(v);
+  if (s === 0) return '0';
+  if (s === 1) return '1';
+  if (s === -1) return '-1';
+  if (s === 0.5) return '1/2';
+  if (s === -0.5) return '-1/2';
+  if (s === INV_SQRT2) return '1/√2';
+  if (s === -INV_SQRT2) return '-1/√2';
+  if (s === HALF_INV_SQRT2) return '1/(2√2)';
+  if (s === -HALF_INV_SQRT2) return '-1/(2√2)';
+  return s.toFixed(4);
 }
 
-export function formatExactAmp(a: ExactAmp): string {
-  if (a.r === 0 && a.s === 0) return '0';
-  if (a.s === 0) {
-    if (a.r === 2) return '1';
-    if (a.r === -2) return '-1';
-    if (a.r === 1) return '1/2';
-    if (a.r === -1) return '-1/2';
-    if (a.r % 2 === 0) return String(a.r / 2);
-    return `${a.r}/2`;
+function formatImagExact(v: number): string {
+  const s = snapReal(v);
+  if (s === 0) return '0';
+  if (s === 1) return 'i';
+  if (s === -1) return '-i';
+  if (s === 0.5) return 'i/2';
+  if (s === -0.5) return '-i/2';
+  if (s === INV_SQRT2) return 'i/√2';
+  if (s === -INV_SQRT2) return '-i/√2';
+  if (s === HALF_INV_SQRT2) return 'i/(2√2)';
+  if (s === -HALF_INV_SQRT2) return '-i/(2√2)';
+  return `${s.toFixed(4)}i`;
+}
+
+export function formatComplexExact(z: Complex): string {
+  const re = snapReal(z.re);
+  const im = snapReal(z.im);
+  if (re === 0 && im === 0) return '0';
+  if (im === 0) return formatRealExact(re);
+  if (re === 0) return formatImagExact(im);
+
+  const absRe = Math.abs(re);
+  const absIm = Math.abs(im);
+  if (Math.abs(absRe - absIm) < EPS) {
+    const rSign = re < 0 ? '-1' : '1';
+    const iSign = im < 0 ? '-i' : '+i';
+    if (absRe === 0.5) return `(${rSign}${iSign})/2`;
+    if (absRe === INV_SQRT2) return `(${rSign}${iSign})/√2`;
+    if (absRe === HALF_INV_SQRT2) return `(${rSign}${iSign})/(2√2)`;
+    if (absRe === 1) return `${rSign}${iSign}`;
   }
-  if (a.r === 0) {
-    if (a.s === 2) return '1/√2';
-    if (a.s === -2) return '-1/√2';
-    if (a.s === 1) return '1/(2√2)';
-    if (a.s === -1) return '-1/(2√2)';
-    return `${a.s}/(2√2)`;
+
+  const rPart = formatRealExact(re);
+  const iPart = formatImagExact(Math.abs(im));
+  return `${rPart} ${im > 0 ? '+' : '-'} ${iPart}`;
+}
+
+export function formatComplexDecimal(z: Complex): string {
+  const re = snapReal(z.re);
+  const im = snapReal(z.im);
+  if (re === 0 && im === 0) return '0';
+  if (im === 0) {
+    if (re === 1) return '1.0000';
+    if (re === -1) return '-1.0000';
+    return re.toFixed(4);
   }
-  return ampToFloat(a).toFixed(4);
-}
-
-export function formatSignedDecimal(a: ExactAmp): string {
-  const val = ampToFloat(a);
-  if (Math.abs(val) < 1e-12) return '0.0000';
-  const sign = val > 0 ? '+' : '-';
-  return `${sign}${Math.abs(val).toFixed(4)}`;
-}
-
-export function formatUnsignedDecimal(a: ExactAmp): string {
-  const val = ampToFloat(a);
-  if (Math.abs(val) < 1e-12) return '0.0000';
-  return val.toFixed(4);
+  if (re === 0) {
+    if (im === 1) return 'i';
+    if (im === -1) return '-i';
+    return `${im.toFixed(4)}i`;
+  }
+  const sign = im > 0 ? ' + ' : ' - ';
+  return `${re.toFixed(4)}${sign}${Math.abs(im).toFixed(4)}i`;
 }
 
 export function getStateProbabilities(state: QubitState): {
@@ -183,11 +421,8 @@ export function getStateProbabilities(state: QubitState): {
   p0Percent: string;
   p1Percent: string;
 } {
-  const a = ampToFloat(state.alpha);
-  const b = ampToFloat(state.beta);
-  // Exact squared magnitudes for our stabilizer states
-  const p0 = Math.abs(a * a) < 1e-12 ? 0 : Math.abs(a * a - 0.5) < 1e-12 ? 0.5 : Math.abs(a * a - 1) < 1e-12 ? 1 : a * a;
-  const p1 = Math.abs(b * b) < 1e-12 ? 0 : Math.abs(b * b - 0.5) < 1e-12 ? 0.5 : Math.abs(b * b - 1) < 1e-12 ? 1 : b * b;
+  const p0 = cMagSq(state.alpha);
+  const p1 = cMagSq(state.beta);
   const sum = p0 + p1;
 
   const toFraction = (p: number): string => {
@@ -208,100 +443,158 @@ export function getStateProbabilities(state: QubitState): {
   };
 }
 
+function formatKetCoeff(z: Complex, isSecondTerm: boolean): { sign: string; body: string } {
+  const exact = formatComplexExact(z);
+  const re = snapReal(z.re);
+  const im = snapReal(z.im);
+
+  if (!isSecondTerm) {
+    if (exact === '1') return { sign: '', body: '' };
+    if (exact === '-1') return { sign: '-', body: '' };
+    if (exact === 'i') return { sign: '', body: 'i' };
+    if (exact === '-i') return { sign: '-', body: 'i' };
+    if (re !== 0 && im !== 0) return { sign: '', body: `(${exact})` };
+    if (exact.startsWith('-')) return { sign: '-', body: `(${exact.slice(1)})` };
+    return { sign: '', body: `(${exact})` };
+  }
+
+  // Second term with binary + or - operator
+  if (exact === '1') return { sign: ' + ', body: '' };
+  if (exact === '-1') return { sign: ' - ', body: '' };
+  if (exact === 'i') return { sign: ' + ', body: 'i' };
+  if (exact === '-i') return { sign: ' - ', body: 'i' };
+  if (re === 0 || im === 0) {
+    if (exact.startsWith('-')) return { sign: ' - ', body: `(${exact.slice(1)})` };
+    return { sign: ' + ', body: `(${exact})` };
+  }
+  return { sign: ' + ', body: `(${exact})` };
+}
+
 export function formatKetNotation(state: QubitState): {
   ket: string;
   alias: string | null;
+  kind: string;
 } {
   const { alpha, beta } = state;
+  const aZero = cIsZero(alpha);
+  const bZero = cIsZero(beta);
 
-  if (ampEquals(alpha, ONE) && ampEquals(beta, ZERO)) {
-    return { ket: '|0⟩', alias: null };
-  }
-  if (ampEquals(alpha, NEG_ONE) && ampEquals(beta, ZERO)) {
-    return { ket: '-|0⟩', alias: 'Global phase π' };
-  }
-  if (ampEquals(alpha, ZERO) && ampEquals(beta, ONE)) {
-    return { ket: '|1⟩', alias: null };
-  }
-  if (ampEquals(alpha, ZERO) && ampEquals(beta, NEG_ONE)) {
-    return { ket: '-|1⟩', alias: 'Global phase π' };
-  }
-  if (ampEquals(alpha, INV_SQRT2_EXACT) && ampEquals(beta, INV_SQRT2_EXACT)) {
-    return { ket: '(1/√2)|0⟩ + (1/√2)|1⟩', alias: '|+⟩' };
-  }
-  if (ampEquals(alpha, INV_SQRT2_EXACT) && ampEquals(beta, NEG_INV_SQRT2_EXACT)) {
-    return { ket: '(1/√2)|0⟩ - (1/√2)|1⟩', alias: '|-⟩' };
-  }
-  if (ampEquals(alpha, NEG_INV_SQRT2_EXACT) && ampEquals(beta, INV_SQRT2_EXACT)) {
-    return { ket: '-(1/√2)|0⟩ + (1/√2)|1⟩', alias: '-|-⟩' };
-  }
-  if (ampEquals(alpha, NEG_INV_SQRT2_EXACT) && ampEquals(beta, NEG_INV_SQRT2_EXACT)) {
-    return { ket: '-(1/√2)|0⟩ - (1/√2)|1⟩', alias: '-|+⟩' };
+  let ket = '';
+  if (aZero && !bZero) {
+    const c = formatKetCoeff(beta, false);
+    ket = `${c.sign}${c.body}|1⟩`;
+  } else if (!aZero && bZero) {
+    const c = formatKetCoeff(alpha, false);
+    ket = `${c.sign}${c.body}|0⟩`;
+  } else {
+    const c0 = formatKetCoeff(alpha, false);
+    const c1 = formatKetCoeff(beta, true);
+    ket = `${c0.sign}${c0.body}|0⟩${c1.sign}${c1.body}|1⟩`;
   }
 
-  const aStr = formatExactAmp(alpha);
-  const bFloat = ampToFloat(beta);
-  const bSign = bFloat >= 0 ? ' + ' : ' - ';
-  const bMag = formatExactAmp({ r: Math.abs(beta.r), s: Math.abs(beta.s) });
-  return { ket: `(${aStr})|0⟩${bSign}(${bMag})|1⟩`, alias: null };
+  // Identify exact cardinal alias or equivalence up to global phase
+  if (aZero && !bZero) {
+    const pB = cPhaseDeg(beta);
+    if (pB === 0) return { ket, alias: null, kind: 'Computational basis |1⟩' };
+    return { ket, alias: `≡ |1⟩ (phase ${formatPhaseCardinal(pB)})`, kind: 'Basis |1⟩ with global phase' };
+  }
+  if (!aZero && bZero) {
+    const pA = cPhaseDeg(alpha);
+    if (pA === 0) return { ket, alias: null, kind: 'Computational basis |0⟩' };
+    return { ket, alias: `≡ |0⟩ (phase ${formatPhaseCardinal(pA)})`, kind: 'Basis |0⟩ with global phase' };
+  }
+
+  const p0 = cMagSq(alpha);
+  const p1 = cMagSq(beta);
+  const rel = getRelativePhaseDeg(state);
+  const pA = cPhaseDeg(alpha);
+
+  if (p0 === 0.5 && p1 === 0.5 && rel !== null) {
+    const cardinalMap: Record<number, { name: string; factoredKet: string; label: string }> = {
+      0: { name: '|+⟩', factoredKet: '(|0⟩ + |1⟩)/√2', label: 'In-phase superposition (Δφ = 0°)' },
+      90: { name: '|+i⟩', factoredKet: '(|0⟩ + i|1⟩)/√2', label: 'Positive imaginary phase (Δφ = 90° / +i)' },
+      180: { name: '|-⟩', factoredKet: '(|0⟩ - |1⟩)/√2', label: 'Phase-flipped superposition (Δφ = 180°)' },
+      270: { name: '|-i⟩', factoredKet: '(|0⟩ - i|1⟩)/√2', label: 'Negative imaginary phase (Δφ = 270° / -i)' },
+    };
+    const match = cardinalMap[rel];
+    if (match) {
+      if (pA === 0) {
+        return { ket: match.factoredKet, alias: `= ${match.name}`, kind: match.label };
+      }
+      return {
+        ket,
+        alias: `≡ ${match.name} (global phase ${pA}°)`,
+        kind: match.label,
+      };
+    }
+  }
+
+  return { ket, alias: null, kind: 'Superposition state' };
 }
 
 export function getStateAngleDegrees(state: QubitState): number {
-  const a = ampToFloat(state.alpha);
-  const b = ampToFloat(state.beta);
-  const deg = (Math.atan2(b, a) * 180) / Math.PI;
+  if (isPurelyRealState(state)) {
+    const deg = (Math.atan2(state.beta.re, state.alpha.re) * 180) / Math.PI;
+    const rounded = Math.round(deg);
+    return Math.abs(deg - rounded) < 1e-9 ? (rounded === 0 ? 0 : rounded) : Number(deg.toFixed(1));
+  }
+  const deg = (Math.atan2(cMag(state.beta), cMag(state.alpha)) * 180) / Math.PI;
   const rounded = Math.round(deg);
-  return Math.abs(deg - rounded) < 1e-9 ? (rounded === -0 ? 0 : rounded) : Number(deg.toFixed(1));
+  return Math.abs(deg - rounded) < 1e-9 ? (rounded === 0 ? 0 : rounded) : Number(deg.toFixed(1));
 }
 
 function describeStep(gateId: GateId, input: QubitState, output: QubitState): string {
-  const inKet = formatKetNotation(input).alias || formatKetNotation(input).ket;
+  const inInfo = formatKetNotation(input);
   const outInfo = formatKetNotation(output);
-  const outKet = outInfo.alias ? `${outInfo.ket} (${outInfo.alias})` : outInfo.ket;
+  const inLbl = inInfo.alias ? inInfo.alias.replace(/^[=≡]\s*/, '').split(' ')[0] : inInfo.ket;
+  const outLbl = outInfo.alias ? `${outInfo.ket} (${outInfo.alias.replace(/^[=≡]\s*/, '')})` : outInfo.ket;
 
   if (gateId === 'I') {
-    return `Identity leaves ${inKet} unchanged with identical amplitudes and probabilities.`;
+    return `Identity (I) leaves ${inLbl} invariant with unchanged magnitudes and phases.`;
   }
   if (gateId === 'X') {
-    return `Pauli-X swaps the |0⟩ and |1⟩ amplitudes (reflection across +45°), mapping ${inKet} to ${outKet}.`;
+    return `Pauli-X exchanges the |0⟩ and |1⟩ amplitudes, transforming ${inLbl} into ${outLbl}.`;
   }
-  // Hadamard
-  const inIsBasis = ampEquals(input.beta, ZERO) || ampEquals(input.alpha, ZERO);
-  if (inIsBasis) {
-    const angle = getStateAngleDegrees(output);
-    const signStr = angle > 0 ? `+${angle}°` : `${angle}°`;
-    return `Hadamard rotates basis state ${inKet} into equal superposition ${outKet} at ${signStr}.`;
+  if (gateId === 'Y') {
+    return `Pauli-Y swaps |0⟩ and |1⟩ while applying ±i phase shifts, mapping ${inLbl} to ${outLbl}.`;
   }
-  return `Second Hadamard causes constructive/destructive interference, collapsing superposition ${inKet} back to basis state ${outKet}.`;
+  if (gateId === 'Z') {
+    return `Pauli-Z preserves |0⟩ and applies a 180° (-1) phase shift to |1⟩, transforming ${inLbl} into ${outLbl}.`;
+  }
+  if (gateId === 'S') {
+    return `Phase gate (S) preserves |0⟩ and rotates the |1⟩ phase by +90° (×i), transforming ${inLbl} into ${outLbl}.`;
+  }
+  return `Hadamard (H) interferes α and β with (α+β)/√2 and (α-β)/√2, mapping ${inLbl} to ${outLbl}.`;
 }
 
 export function applyGate(state: QubitState, gateId: GateId): MatrixStep {
   const gate = GATES[gateId];
-  const [[m00, m01], [m10, m11]] = gate.exactMatrix;
+  const [[m00, m01], [m10, m11]] = gate.matrix;
 
-  const p00 = mulExact(m00, state.alpha);
-  const p01 = mulExact(m01, state.beta);
-  const p10 = mulExact(m10, state.alpha);
-  const p11 = mulExact(m11, state.beta);
+  const p00 = cMul(m00, state.alpha);
+  const p01 = cMul(m01, state.beta);
+  const p10 = cMul(m10, state.alpha);
+  const p11 = cMul(m11, state.beta);
 
-  const outAlpha = addExact(p00, p01);
-  const outBeta = addExact(p10, p11);
-  const output: QubitState = { alpha: outAlpha, beta: outBeta };
+  const output: QubitState = {
+    alpha: cAdd(p00, p01),
+    beta: cAdd(p10, p11),
+  };
 
-  const aStr = formatExactAmp(state.alpha);
-  const bStr = formatExactAmp(state.beta);
+  const aStr = formatComplexExact(state.alpha);
+  const bStr = formatComplexExact(state.beta);
 
   const row0Terms: [string, string] = [
-    `(${formatExactAmp(m00)})(${aStr})`,
-    `(${formatExactAmp(m01)})(${bStr})`,
+    `(${formatComplexExact(m00)})(${aStr})`,
+    `(${formatComplexExact(m01)})(${bStr})`,
   ];
   const row1Terms: [string, string] = [
-    `(${formatExactAmp(m10)})(${aStr})`,
-    `(${formatExactAmp(m11)})(${bStr})`,
+    `(${formatComplexExact(m10)})(${aStr})`,
+    `(${formatComplexExact(m11)})(${bStr})`,
   ];
 
-  const row0Simplified: [string, string] = [formatExactAmp(p00), formatExactAmp(p01)];
-  const row1Simplified: [string, string] = [formatExactAmp(p10), formatExactAmp(p11)];
+  const row0Simplified: [string, string] = [formatComplexExact(p00), formatComplexExact(p01)];
+  const row1Simplified: [string, string] = [formatComplexExact(p10), formatComplexExact(p11)];
 
   return {
     gateId,
@@ -313,6 +606,29 @@ export function applyGate(state: QubitState, gateId: GateId): MatrixStep {
     row0Simplified,
     row1Simplified,
     interpretation: describeStep(gateId, state, output),
+  };
+}
+
+export function evaluateCircuit(
+  initialId: CardinalStateId,
+  gateSequence: GateId[]
+): CircuitEvaluation {
+  const initialState = createCardinalState(initialId);
+  const steps: MatrixStep[] = [];
+  let cursor = initialState;
+
+  for (let i = 0; i < gateSequence.length; i += 1) {
+    const step = applyGate(cursor, gateSequence[i]);
+    steps.push(step);
+    cursor = step.output;
+  }
+
+  return {
+    initialId,
+    initialState,
+    steps,
+    finalState: cursor,
+    previousState: steps.length > 0 ? steps[steps.length - 1].input : null,
   };
 }
 
@@ -349,35 +665,3 @@ export function simulateMeasurements(
     measuredKet: formatKetNotation(state).ket,
   };
 }
-
-export interface CircuitEvaluation {
-  initialBasis: BasisState;
-  initialState: QubitState;
-  steps: MatrixStep[];
-  finalState: QubitState;
-  previousState: QubitState | null;
-}
-
-export function evaluateCircuit(
-  initialBasis: BasisState,
-  gateSequence: GateId[]
-): CircuitEvaluation {
-  const initialState = createBasisState(initialBasis);
-  const steps: MatrixStep[] = [];
-  let cursor = initialState;
-
-  for (let i = 0; i < gateSequence.length; i += 1) {
-    const step = applyGate(cursor, gateSequence[i]);
-    steps.push(step);
-    cursor = step.output;
-  }
-
-  return {
-    initialBasis,
-    initialState,
-    steps,
-    finalState: cursor,
-    previousState: steps.length > 0 ? steps[steps.length - 1].input : null,
-  };
-}
-

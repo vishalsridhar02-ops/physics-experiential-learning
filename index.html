@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Interactive Single-Qubit Quantum Gate &amp; Superposition Simulator</title>
-  <meta name="description" content="Interactive Single-Qubit Quantum Gate &amp; Superposition Simulator for Applied Physics Experiential Learning at Jain (Deemed-to-be University)." />
+  <meta name="description" content="Interactive Single-Qubit Quantum Gate &amp; Superposition Simulator with complex-number amplitudes and phase visualization for Applied Physics Experiential Learning at Jain (Deemed-to-be University)." />
   <meta property="og:title" content="Interactive Single-Qubit Quantum Gate &amp; Superposition Simulator" />
-  <meta property="og:description" content="Interactive Single-Qubit Quantum Gate &amp; Superposition Simulator for Applied Physics Experiential Learning at Jain (Deemed-to-be University)." />
+  <meta property="og:description" content="Interactive Single-Qubit Quantum Gate &amp; Superposition Simulator with complex-number amplitudes and phase visualization for Applied Physics Experiential Learning at Jain (Deemed-to-be University)." />
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,7 +22,6 @@
       --accent: #0F766E;
       --accent-hover: #115E59;
       --accent-soft: rgba(15, 118, 110, 0.08);
-      --accent-mid: rgba(15, 118, 110, 0.16);
       --grid-minor: rgba(30, 41, 59, 0.045);
       --grid-major: rgba(30, 41, 59, 0.09);
       --border-ink: #1E293B;
@@ -84,7 +83,7 @@
       background: var(--bg-surface);
       border: 1.5px solid var(--border-ink);
       border-radius: var(--radius);
-      padding: 9px 16px;
+      padding: 8px 16px;
       display: flex;
       flex-direction: column;
       gap: 2px;
@@ -117,7 +116,7 @@
 
     .academic-notation-hint {
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--ink-secondary);
       white-space: nowrap;
     }
@@ -152,14 +151,14 @@
 
     .panel-meta {
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--ink-secondary);
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
     }
 
     .panel-body {
-      padding: 11px 14px;
+      padding: 10px 14px;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -179,20 +178,20 @@
     }
 
     .palette-bar {
-      padding: 8px 14px;
+      padding: 7px 14px;
       background: var(--bg-subtle);
       border-bottom: 1px solid var(--border-hairline);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
     .palette-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
@@ -206,7 +205,7 @@
     .palette-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
@@ -221,13 +220,13 @@
       background: var(--bg-surface);
       border: 1px solid var(--border-ink);
       border-radius: var(--radius);
-      padding: 8px 12px;
-      min-height: 34px;
+      padding: 7px 11px;
+      min-height: 33px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
       white-space: nowrap;
       flex-shrink: 0;
       transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease, transform 80ms ease;
@@ -272,7 +271,7 @@
 
     .btn-gate .gate-label {
       font-weight: 500;
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--ink-secondary);
     }
 
@@ -299,7 +298,7 @@
 
     /* Horizontal Qubit Wire Stage */
     .wire-stage {
-      padding: 12px 14px 10px;
+      padding: 10px 14px 9px;
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -309,17 +308,17 @@
       display: flex;
       align-items: center;
       gap: 0;
-      min-height: 62px;
+      min-height: 60px;
       position: relative;
     }
 
-    /* Left: Toggleable Initial State Block */
+    /* Left: Toggleable Initial State Block (cycles all 6 cardinal states) */
     .init-block-btn {
       appearance: none;
       position: relative;
       z-index: 2;
       flex-shrink: 0;
-      width: 68px;
+      width: 82px;
       height: 54px;
       background: var(--bg-subtle);
       border: 1.5px solid var(--border-ink);
@@ -359,7 +358,7 @@
 
     .init-sub {
       font-family: var(--font-mono);
-      font-size: 10px;
+      font-size: 9.5px;
       color: var(--ink-secondary);
       line-height: 1;
     }
@@ -373,7 +372,7 @@
       display: flex;
       align-items: center;
       position: relative;
-      padding: 6px 0;
+      padding: 5px 0;
     }
 
     .wire-track-inner {
@@ -381,12 +380,11 @@
       display: flex;
       align-items: center;
       min-width: 100%;
-      min-height: 54px;
+      min-height: 52px;
       padding: 0 18px;
       gap: 18px;
     }
 
-    /* Continuous horizontal quantum wire line */
     .wire-track-inner::before {
       content: '';
       position: absolute;
@@ -424,8 +422,8 @@
 
     .wire-gate-tile {
       appearance: none;
-      width: 48px;
-      height: 48px;
+      width: 46px;
+      height: 46px;
       background: var(--bg-surface);
       border: 1.5px solid var(--border-ink);
       border-radius: var(--radius);
@@ -461,7 +459,7 @@
     }
 
     .tile-symbol {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 700;
       line-height: 1;
     }
@@ -479,8 +477,8 @@
       position: absolute;
       top: -7px;
       right: -7px;
-      width: 19px;
-      height: 19px;
+      width: 18px;
+      height: 18px;
       border-radius: 2px;
       border: 1px solid var(--border-ink);
       background: var(--bg-surface);
@@ -495,7 +493,7 @@
       align-items: center;
       justify-content: center;
       z-index: 3;
-      transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+      transition: background-color 120ms ease, color 120ms ease;
     }
 
     .tile-remove-btn:hover {
@@ -513,7 +511,7 @@
       position: relative;
       z-index: 2;
       flex-shrink: 0;
-      min-width: 186px;
+      min-width: 182px;
       height: 54px;
       background: var(--bg-subtle);
       border: 1.5px solid var(--border-ink);
@@ -567,16 +565,64 @@
       transition: width 150ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    /* Cardinal Quick-Select & Wire Summary Strip */
     .wire-caption-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
       font-size: 11.5px;
       color: var(--ink-secondary);
       border-top: 1px solid #E2E8F0;
       padding-top: 6px;
+    }
+
+    .cardinal-strip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .cardinal-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      margin-right: 2px;
+    }
+
+    .btn-cardinal {
+      appearance: none;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      line-height: 1;
+      padding: 4px 7px;
+      min-height: 24px;
+      border-radius: 2px;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
+      color: var(--ink-primary);
+      cursor: pointer;
+      transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+    }
+
+    .btn-cardinal:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .btn-cardinal[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #FFFFFF;
+    }
+
+    .btn-cardinal:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
     }
 
     .wire-sequence-text {
@@ -591,7 +637,7 @@
      * ===================================================================== */
     .workbench-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.02fr) minmax(0, 1.18fr);
+      grid-template-columns: minmax(0, 1.06fr) minmax(0, 1.14fr);
       gap: 10px;
       align-items: stretch;
     }
@@ -607,7 +653,7 @@
       flex: 1;
     }
 
-    /* 2D State-Vector Plot Canvas */
+    /* 2D State-Vector & Complex Phase Plot Canvas */
     .canvas-stage {
       position: relative;
       width: 100%;
@@ -623,8 +669,7 @@
     #stateCanvas {
       display: block;
       width: 100%;
-      max-width: 410px;
-      height: 278px;
+      height: 274px;
       cursor: crosshair;
     }
 
@@ -650,19 +695,19 @@
     .legend-item {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .swatch-line {
       display: inline-block;
-      width: 15px;
+      width: 14px;
       height: 2px;
       background: var(--accent);
     }
 
     .swatch-dashed {
       display: inline-block;
-      width: 15px;
+      width: 14px;
       height: 0;
       border-top: 1.5px dashed #64748B;
     }
@@ -682,10 +727,10 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 8px;
+      gap: 7px;
       font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
-      min-height: 104px;
+      min-height: 102px;
     }
 
     .matrix-block {
@@ -711,7 +756,7 @@
     }
 
     .matrix-scalar {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
       color: var(--accent);
       padding-right: 2px;
@@ -720,8 +765,8 @@
     .matrix-brackets {
       position: relative;
       display: grid;
-      gap: 6px 12px;
-      padding: 6px 10px;
+      gap: 6px 10px;
+      padding: 6px 9px;
       border-left: 1.5px solid var(--border-ink);
       border-right: 1.5px solid var(--border-ink);
     }
@@ -765,24 +810,24 @@
     }
 
     .mat-2x2 {
-      grid-template-columns: repeat(2, minmax(24px, auto));
+      grid-template-columns: repeat(2, minmax(22px, auto));
       text-align: right;
     }
 
     .mat-2x1 {
-      grid-template-columns: minmax(38px, auto);
+      grid-template-columns: minmax(36px, auto);
       text-align: center;
     }
 
     .mat-expanded {
       grid-template-columns: auto;
       text-align: left;
-      font-size: 12px;
-      padding: 6px 10px;
+      font-size: 11.5px;
+      padding: 6px 9px;
     }
 
     .mat-cell {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 500;
       color: var(--ink-primary);
       white-space: nowrap;
@@ -794,7 +839,7 @@
     }
 
     .mat-op {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--ink-secondary);
       padding-top: 16px;
@@ -802,7 +847,7 @@
     }
 
     .step-note {
-      font-size: 12.5px;
+      font-size: 12px;
       color: var(--ink-secondary);
       padding-top: 7px;
       border-top: 1px solid var(--border-hairline);
@@ -819,9 +864,9 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
-      padding: 9px 12px;
+      padding: 7px 11px;
       background: var(--bg-subtle);
       border: 1px solid var(--border-hairline);
       border-radius: 2px;
@@ -829,7 +874,7 @@
 
     .ket-equation {
       font-family: var(--font-mono);
-      font-size: 16px;
+      font-size: 15.5px;
       font-weight: 600;
       color: var(--ink-primary);
       font-variant-numeric: tabular-nums;
@@ -837,32 +882,74 @@
 
     .ket-alias {
       font-family: var(--font-mono);
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
       color: var(--accent);
+    }
+
+    .phase-status-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 5px 10px;
+      border: 1px solid var(--border-hairline);
+      border-left: 3px solid var(--ink-muted);
+      border-radius: 2px;
+      background: var(--bg-subtle);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .phase-status-row.is-superposition {
+      background: var(--accent-soft);
+      border-color: #99F6E4;
+      border-left: 3px solid var(--accent);
+    }
+
+    .phase-status-key {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--ink-secondary);
+      text-transform: uppercase;
+    }
+
+    .phase-status-val {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .phase-status-row.is-superposition .phase-status-val {
+      color: #115E59;
     }
 
     .amp-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
     }
 
     .amp-row-box {
-      padding: 8px 10px;
+      padding: 6px 10px;
       border: 1px solid var(--border-hairline);
       border-radius: 2px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
     }
 
     .amp-label {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--ink-secondary);
       display: flex;
       justify-content: space-between;
       align-items: baseline;
+      gap: 6px;
     }
 
     .amp-values {
@@ -875,20 +962,43 @@
     }
 
     .amp-exact {
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 600;
       color: var(--ink-primary);
     }
 
     .amp-decimal {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--ink-secondary);
+    }
+
+    .amp-meta-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding-top: 3px;
+      border-top: 1px solid #E2E8F0;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .amp-mag {
+      color: var(--ink-secondary);
+      font-weight: 500;
+    }
+
+    .amp-phase-tag {
+      color: var(--accent);
+      font-weight: 600;
     }
 
     .prob-list {
       display: flex;
       flex-direction: column;
-      gap: 9px;
+      gap: 8px;
     }
 
     .prob-item {
@@ -901,10 +1011,11 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       font-family: var(--font-mono);
-      font-size: 12.5px;
+      font-size: 12px;
       font-variant-numeric: tabular-nums;
+      flex-wrap: wrap;
     }
 
     .prob-formula {
@@ -923,7 +1034,7 @@
 
     .bar-track {
       width: 100%;
-      height: 12px;
+      height: 11px;
       background: var(--bg-subtle);
       border: 1px solid var(--border-ink);
       border-radius: 2px;
@@ -946,13 +1057,14 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       margin-top: auto;
-      padding-top: 9px;
+      padding-top: 8px;
       border-top: 1px solid var(--border-hairline);
       font-family: var(--font-mono);
-      font-size: 12.5px;
+      font-size: 12px;
       font-variant-numeric: tabular-nums;
+      flex-wrap: wrap;
     }
 
     .norm-equation {
@@ -963,7 +1075,7 @@
     .norm-status {
       color: var(--accent);
       font-weight: 600;
-      font-family: var(--font-sans);
+      font-family: var(--font-mono);
       font-size: 12px;
     }
 
@@ -972,7 +1084,7 @@
       width: 100%;
       border-collapse: collapse;
       font-family: var(--font-mono);
-      font-size: 12.5px;
+      font-size: 12px;
       font-variant-numeric: tabular-nums;
     }
 
@@ -1007,7 +1119,7 @@
       display: flex;
       flex-direction: column;
       gap: 3px;
-      min-width: 88px;
+      min-width: 84px;
     }
 
     .mini-track {
@@ -1032,7 +1144,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
       font-size: 11.5px;
       color: var(--ink-secondary);
@@ -1051,8 +1163,7 @@
         grid-template-columns: 1fr;
       }
       #stateCanvas {
-        max-width: 420px;
-        height: 310px;
+        height: 295px;
       }
     }
 
@@ -1061,8 +1172,8 @@
         padding: 10px 12px 18px;
       }
       .btn {
-        min-height: 40px;
-        padding: 9px 12px;
+        min-height: 38px;
+        padding: 8px 10px;
       }
       .wire-row {
         flex-wrap: wrap;
@@ -1074,7 +1185,7 @@
       }
       .wire-readout-box {
         margin-left: auto;
-        min-width: 172px;
+        min-width: 168px;
       }
       .amp-grid {
         grid-template-columns: 1fr;
@@ -1083,7 +1194,7 @@
         display: none;
       }
       #stateCanvas {
-        height: 280px;
+        height: 390px;
       }
     }
 
@@ -1092,6 +1203,7 @@
       .init-block-btn,
       .wire-gate-tile,
       .tile-remove-btn,
+      .btn-cardinal,
       .bar-fill-0,
       .bar-fill-1,
       .readout-fill-0,
@@ -1112,7 +1224,7 @@
       </div>
       <div class="academic-title-row">
         <h1 class="academic-title">Interactive Single-Qubit Quantum Gate &amp; Superposition Simulator</h1>
-        <span class="academic-notation-hint" aria-label="Single qubit state equation">|&#968;&#10217; = &#945;|0&#10217; + &#946;|1&#10217;, |&#945;|&sup2; + |&#946;|&sup2; = 1</span>
+        <span class="academic-notation-hint" aria-label="Complex single qubit state equation">|&#968;&#10217; = &#945;|0&#10217; + &#946;|1&#10217;, &#945;,&#946; &#8712; &#8450;, |&#945;|&sup2; + |&#946;|&sup2; = 1</span>
       </div>
     </header>
 
@@ -1123,76 +1235,54 @@
           <div class="palette-left">
             <span class="palette-heading">Gate Palette:</span>
             <div class="palette-actions" role="group" aria-label="Append quantum gate to qubit wire">
-              <button
-                type="button"
-                id="btn-gate-X"
-                class="btn btn-gate"
-                aria-label="Append Pauli-X bit-flip gate to circuit wire"
-              ><span class="gate-sym">X</span><span class="gate-label">Pauli-X</span></button>
-              <button
-                type="button"
-                id="btn-gate-H"
-                class="btn btn-gate"
-                aria-label="Append Hadamard superposition gate to circuit wire"
-              ><span class="gate-sym">H</span><span class="gate-label">Hadamard</span></button>
-              <button
-                type="button"
-                id="btn-gate-I"
-                class="btn btn-gate"
-                aria-label="Append Identity gate to circuit wire"
-              ><span class="gate-sym">I</span><span class="gate-label">Identity</span></button>
+              <button type="button" id="btn-gate-X" class="btn btn-gate" aria-label="Append Pauli-X bit-flip gate to circuit wire">
+                <span class="gate-sym">X</span><span class="gate-label">Pauli-X</span>
+              </button>
+              <button type="button" id="btn-gate-Y" class="btn btn-gate" aria-label="Append Pauli-Y complex bit and phase flip gate to circuit wire">
+                <span class="gate-sym">Y</span><span class="gate-label">Pauli-Y</span>
+              </button>
+              <button type="button" id="btn-gate-Z" class="btn btn-gate" aria-label="Append Pauli-Z phase-flip gate to circuit wire">
+                <span class="gate-sym">Z</span><span class="gate-label">Pauli-Z</span>
+              </button>
+              <button type="button" id="btn-gate-H" class="btn btn-gate" aria-label="Append Hadamard superposition gate to circuit wire">
+                <span class="gate-sym">H</span><span class="gate-label">Hadamard</span>
+              </button>
+              <button type="button" id="btn-gate-S" class="btn btn-gate" aria-label="Append S phase gate (90 degree phase shift) to circuit wire">
+                <span class="gate-sym">S</span><span class="gate-label">Phase</span>
+              </button>
+              <button type="button" id="btn-gate-I" class="btn btn-gate" aria-label="Append Identity gate to circuit wire">
+                <span class="gate-sym">I</span><span class="gate-label">Identity</span>
+              </button>
             </div>
           </div>
 
           <div class="palette-actions" role="group" aria-label="Circuit history controls">
-            <button
-              type="button"
-              id="btn-undo"
-              class="btn btn-secondary"
-              disabled
-              aria-label="Undo last placed gate on the circuit wire"
-            >Undo Last</button>
-            <button
-              type="button"
-              id="btn-reset"
-              class="btn btn-secondary"
-              aria-label="Reset circuit to ket 0 and remove all gates"
-            >Reset Circuit</button>
+            <button type="button" id="btn-undo" class="btn btn-secondary" disabled aria-label="Undo last placed gate on the circuit wire">Undo Last</button>
+            <button type="button" id="btn-reset" class="btn btn-secondary" aria-label="Reset circuit to ket 0 and remove all gates">Reset Circuit</button>
           </div>
         </div>
 
         <div class="wire-stage">
           <div class="wire-row" aria-label="Horizontal single-qubit circuit wire">
-            <!-- Toggleable Initial State Block -->
+            <!-- Toggleable Initial State Block (cycles all 6 cardinal states) -->
             <button
               type="button"
               id="btn-toggle-init"
               class="init-block-btn"
-              aria-label="Toggle initial qubit state, currently ket 0. Click to switch to ket 1."
-              title="Click to toggle initial state between |0&#10217; and |1&#10217;"
+              aria-label="Cycle initial cardinal qubit state, currently ket 0. Click to switch to ket 1."
+              title="Click to cycle initial state: |0&#10217; &#8594; |1&#10217; &#8594; |+&#10217; &#8594; |-&#10217; &#8594; |+i&#10217; &#8594; |-i&#10217;"
             >
               <span class="init-ket" id="init-ket-label">|0&#10217;</span>
               <span class="init-sub" id="init-vec-label">[1, 0]&#7488;</span>
             </button>
 
             <!-- Horizontal Wire with Placed Square Gate Tiles -->
-            <div
-              class="wire-track-scroll"
-              id="wire-scroll"
-              role="region"
-              aria-label="Placed quantum gates on the wire"
-            >
+            <div class="wire-track-scroll" id="wire-scroll" role="region" aria-label="Placed quantum gates on the wire">
               <div class="wire-track-inner" id="wire-gates-track"></div>
             </div>
 
             <!-- Live Compact Probability Readout Box -->
-            <div
-              class="wire-readout-box"
-              id="wire-readout"
-              role="status"
-              aria-live="polite"
-              aria-label="Live circuit output probability readout"
-            >
+            <div class="wire-readout-box" id="wire-readout" role="status" aria-live="polite" aria-label="Live circuit output probability readout">
               <div class="readout-row">
                 <span class="readout-lbl">P(0)</span>
                 <div class="readout-mini-track" aria-hidden="true">
@@ -1211,21 +1301,29 @@
           </div>
 
           <div class="wire-caption-bar">
-            <span id="wire-sequence-summary" class="wire-sequence-text">Circuit: |0&#10217; &rarr; |0&#10217;</span>
-            <span>Click |0&#10217;/|1&#10217; block to toggle input &middot; Click any placed gate tile to inspect step &middot; Click &times; to remove gate</span>
+            <div class="cardinal-strip" role="group" aria-label="Direct select cardinal initial state">
+              <span class="cardinal-label">Initial State:</span>
+              <button type="button" class="btn-cardinal" data-init-id="0" aria-pressed="true" aria-label="Set initial state to ket 0">|0&#10217;</button>
+              <button type="button" class="btn-cardinal" data-init-id="1" aria-pressed="false" aria-label="Set initial state to ket 1">|1&#10217;</button>
+              <button type="button" class="btn-cardinal" data-init-id="+" aria-pressed="false" aria-label="Set initial state to ket plus">|+&#10217;</button>
+              <button type="button" class="btn-cardinal" data-init-id="-" aria-pressed="false" aria-label="Set initial state to ket minus">|-&#10217;</button>
+              <button type="button" class="btn-cardinal" data-init-id="+i" aria-pressed="false" aria-label="Set initial state to ket plus i">|+i&#10217;</button>
+              <button type="button" class="btn-cardinal" data-init-id="-i" aria-pressed="false" aria-label="Set initial state to ket minus i">|-i&#10217;</button>
+            </div>
+            <span id="wire-sequence-summary" class="wire-sequence-text">Circuit: |0&#10217; (0 gates)</span>
           </div>
         </div>
       </section>
 
       <!-- Main 2-Column Technical Workbench -->
       <div class="workbench-grid" style="margin-top: 10px;">
-        <!-- Left Column: 2D State-Vector Plot + Measurement Simulator -->
+        <!-- Left Column: State-Vector & Complex Phase Plot + Measurement Simulator -->
         <div class="col-stack">
-          <!-- 3. Interactive 2D State-Vector Plot -->
+          <!-- 3. Interactive 2D State-Vector & Complex Phase Plot -->
           <section class="panel" aria-labelledby="plot-heading">
             <div class="panel-header">
-              <h2 id="plot-heading" class="panel-title">2D State-Vector Plot (Real |0&#10217;&#8211;|1&#10217; Plane)</h2>
-              <span id="plot-angle-readout" class="panel-meta">&#952; = 0&#176; &middot; (1.0000, 0.0000)</span>
+              <h2 id="plot-heading" class="panel-title">2D State-Vector &amp; Complex Phase Plot</h2>
+              <span id="plot-angle-readout" class="panel-meta">&#952; = 0&#176; &middot; &#916;&#966; = &#8212;</span>
             </div>
             <div class="panel-body">
               <div class="canvas-stage">
@@ -1233,15 +1331,16 @@
                   id="stateCanvas"
                   data-testid="state-vector-canvas"
                   role="img"
-                  aria-label="2D state vector plot showing the unit circle and current qubit vector"
+                  aria-label="2D state vector plot and complex phase indicators for alpha and beta"
                 ></canvas>
               </div>
               <div class="plot-legend">
                 <div class="legend-items">
-                  <span class="legend-item"><span class="swatch-line" aria-hidden="true"></span>Final |&#968;&#10217;</span>
+                  <span class="legend-item"><span class="swatch-line" aria-hidden="true"></span>State / Phasor</span>
                   <span class="legend-item"><span class="swatch-dashed" aria-hidden="true"></span>Prior state &amp; projections</span>
                   <span class="legend-item"><span class="swatch-circle" aria-hidden="true"></span>Unit circle (|&#945;|&sup2;+|&#946;|&sup2;=1)</span>
                 </div>
+                <span class="panel-meta">0&#176;:+1 &middot; 90&#176;:+i &middot; 180&#176;:-1 &middot; 270&#176;:-i</span>
               </div>
             </div>
           </section>
@@ -1267,7 +1366,7 @@
           <!-- 2. Step-by-Step Matrix Calculation Panel -->
           <section class="panel" aria-labelledby="matrix-heading">
             <div class="panel-header">
-              <h2 id="matrix-heading" class="panel-title">Step-by-Step Matrix Calculation</h2>
+              <h2 id="matrix-heading" class="panel-title">Step-by-Step Complex Matrix Calculation</h2>
               <span id="matrix-step-label" class="panel-meta">Initial state prepared</span>
             </div>
             <div class="panel-body">
@@ -1275,7 +1374,7 @@
                 id="matrix-equation"
                 class="matrix-equation-wrap"
                 aria-live="polite"
-                aria-label="Matrix multiplication calculation"
+                aria-label="Complex matrix multiplication calculation"
               ></div>
               <div id="matrix-interpretation" class="step-note"></div>
             </div>
@@ -1284,8 +1383,8 @@
           <!-- 4. Output, Amplitudes & Normalization Panel -->
           <section class="panel" aria-labelledby="output-heading">
             <div class="panel-header">
-              <h2 id="output-heading" class="panel-title">Output State, Amplitudes &amp; Normalization</h2>
-              <span id="output-state-type" class="panel-meta">Computational basis</span>
+              <h2 id="output-heading" class="panel-title">Output State, Complex Amplitudes &amp; Normalization</h2>
+              <span id="output-state-type" class="panel-meta">Computational basis |0&#10217;</span>
             </div>
             <div class="panel-body" aria-live="polite">
               <div class="ket-banner">
@@ -1293,25 +1392,36 @@
                 <div class="ket-alias" id="ket-alias"></div>
               </div>
 
+              <div class="phase-status-row is-basis" id="relative-phase-status" role="status" aria-live="polite">
+                <span class="phase-status-key">Relative Phase Status</span>
+                <span class="phase-status-val" id="relative-phase-label">Basis state (no superposition)</span>
+              </div>
+
               <div class="amp-grid">
                 <div class="amp-row-box">
                   <div class="amp-label">
                     <span>Amplitude &#945; (for |0&#10217;)</span>
-                    <span>Exact / 4-dec</span>
+                    <span class="amp-decimal" id="alpha-decimal">1.0000</span>
                   </div>
                   <div class="amp-values">
                     <span class="amp-exact" id="alpha-exact">1</span>
-                    <span class="amp-decimal" id="alpha-decimal">+1.0000</span>
+                  </div>
+                  <div class="amp-meta-row">
+                    <span class="amp-mag" id="alpha-mag">|&#945;| = 1.0000</span>
+                    <span class="amp-phase-tag" id="alpha-phase">arg(&#945;) = 0&#176; (+1)</span>
                   </div>
                 </div>
                 <div class="amp-row-box">
                   <div class="amp-label">
                     <span>Amplitude &#946; (for |1&#10217;)</span>
-                    <span>Exact / 4-dec</span>
+                    <span class="amp-decimal" id="beta-decimal">0</span>
                   </div>
                   <div class="amp-values">
                     <span class="amp-exact" id="beta-exact">0</span>
-                    <span class="amp-decimal" id="beta-decimal">0.0000</span>
+                  </div>
+                  <div class="amp-meta-row">
+                    <span class="amp-mag" id="beta-mag">|&#946;| = 0.0000</span>
+                    <span class="amp-phase-tag" id="beta-phase">arg(&#946;) = &#8212;</span>
                   </div>
                 </div>
               </div>
@@ -1339,8 +1449,8 @@
               </div>
 
               <div class="norm-check" id="normalization-check">
-                <span class="norm-equation">P(0) + P(1) = |&#945;|&sup2; + |&#946;|&sup2; = <strong>1.0000</strong></span>
-                <span class="norm-status">Normalized (Unit Vector)</span>
+                <span class="norm-equation">|&#945;|&sup2; + |&#946;|&sup2; = <strong>1.0000</strong> <span class="norm-status">(Normalized)</span></span>
+                <span class="panel-meta">P(0) + P(1) = 100.0%</span>
               </div>
             </div>
           </section>
@@ -1354,16 +1464,135 @@
       'use strict';
 
       /* =====================================================================
-       * Pure Single-Qubit Exact Stabilizer Quantum Math Kernel
-       * Value representation: { r, s } => (r / 2) + (s / (2 * sqrt(2)))
-       * Exact closure over {X, H, I} starting from |0> or |1> with zero drift.
+       * Complex-Number Single-Qubit Quantum Math Kernel (a + bi)
+       * Exact snapping for the full single-qubit Clifford stabilizer set.
        * ===================================================================== */
       var INV_SQRT2 = Math.SQRT1_2;
-      var ZERO = { r: 0, s: 0 };
-      var ONE = { r: 2, s: 0 };
-      var NEG_ONE = { r: -2, s: 0 };
-      var INV_SQRT2_EXACT = { r: 0, s: 2 };
-      var NEG_INV_SQRT2_EXACT = { r: 0, s: -2 };
+      var HALF_INV_SQRT2 = Math.SQRT1_2 / 2;
+      var EPS = 1e-10;
+      var SNAP_VALUES = [0, 1, -1, 0.5, -0.5, INV_SQRT2, -INV_SQRT2, HALF_INV_SQRT2, -HALF_INV_SQRT2];
+
+      function snapReal(v) {
+        for (var i = 0; i < SNAP_VALUES.length; i += 1) {
+          if (Math.abs(v - SNAP_VALUES[i]) < EPS) {
+            return SNAP_VALUES[i] === 0 ? 0 : SNAP_VALUES[i];
+          }
+        }
+        return v;
+      }
+
+      function complex(re, im) {
+        return { re: snapReal(re), im: snapReal(im || 0) };
+      }
+
+      function cAdd(a, b) {
+        return complex(a.re + b.re, a.im + b.im);
+      }
+
+      function cMul(a, b) {
+        return complex(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re);
+      }
+
+      function cMagSq(z) {
+        var m2 = z.re * z.re + z.im * z.im;
+        if (Math.abs(m2) < EPS) return 0;
+        if (Math.abs(m2 - 0.5) < EPS) return 0.5;
+        if (Math.abs(m2 - 1) < EPS) return 1;
+        return m2;
+      }
+
+      function cMag(z) {
+        return Math.sqrt(cMagSq(z));
+      }
+
+      function cIsZero(z) {
+        return Math.abs(z.re) < EPS && Math.abs(z.im) < EPS;
+      }
+
+      function cPhaseDeg(z) {
+        if (cIsZero(z)) return null;
+        var deg = (Math.atan2(z.im, z.re) * 180) / Math.PI;
+        if (deg < -EPS) deg += 360;
+        var rounded = Math.round(deg) % 360;
+        if (Math.abs(deg - rounded) < 1e-6 || Math.abs(deg - 360) < 1e-6) {
+          return rounded === 360 ? 0 : rounded;
+        }
+        return Number(deg.toFixed(1));
+      }
+
+      function formatPhaseCardinal(deg) {
+        if (deg === null) return '\u2014';
+        if (deg === 0) return '0\u00B0 (+1)';
+        if (deg === 90) return '90\u00B0 (+i)';
+        if (deg === 180) return '180\u00B0 (-1)';
+        if (deg === 270) return '270\u00B0 (-i)';
+        return deg + '\u00B0';
+      }
+
+      function getRelativePhaseDeg(state) {
+        var pA = cPhaseDeg(state.alpha);
+        var pB = cPhaseDeg(state.beta);
+        if (pA === null || pB === null) return null;
+        var diff = (pB - pA) % 360;
+        if (diff < 0) diff += 360;
+        if (Math.abs(diff - Math.round(diff)) < 1e-6) {
+          return Math.round(diff) % 360;
+        }
+        return Number(diff.toFixed(1));
+      }
+
+      function getRelativePhaseStatus(state) {
+        if (cIsZero(state.alpha) || cIsZero(state.beta)) {
+          return {
+            deltaPhi: null,
+            label: 'Basis state (no superposition)',
+            isSuperposition: false
+          };
+        }
+        var rel = getRelativePhaseDeg(state);
+        if (rel === 0) {
+          return { deltaPhi: 0, label: 'In-phase superposition (\u0394\u03C6 = 0\u00B0)', isSuperposition: true };
+        }
+        if (rel === 90) {
+          return { deltaPhi: 90, label: 'Positive imaginary phase (\u0394\u03C6 = 90\u00B0 / +i)', isSuperposition: true };
+        }
+        if (rel === 180) {
+          return { deltaPhi: 180, label: 'Phase-flipped superposition (\u0394\u03C6 = 180\u00B0)', isSuperposition: true };
+        }
+        if (rel === 270) {
+          return { deltaPhi: 270, label: 'Negative imaginary phase (\u0394\u03C6 = 270\u00B0 / -i)', isSuperposition: true };
+        }
+        return {
+          deltaPhi: rel,
+          label: 'Superposition (\u0394\u03C6 = ' + rel + '\u00B0)',
+          isSuperposition: true
+        };
+      }
+
+      function isPurelyRealState(state) {
+        return Math.abs(state.alpha.im) < EPS && Math.abs(state.beta.im) < EPS;
+      }
+
+      var C0 = complex(0, 0);
+      var C1 = complex(1, 0);
+      var CM1 = complex(-1, 0);
+      var CI = complex(0, 1);
+      var CMI = complex(0, -1);
+      var CH = complex(INV_SQRT2, 0);
+      var CMH = complex(-INV_SQRT2, 0);
+      var CHI = complex(0, INV_SQRT2);
+      var CMHI = complex(0, -INV_SQRT2);
+
+      var CARDINAL_ORDER = ['0', '1', '+', '-', '+i', '-i'];
+
+      var CARDINAL_STATES = {
+        '0': { id: '0', ketLabel: '|0\u27E9', compactVec: '[1, 0]\u1D40', state: { alpha: C1, beta: C0 } },
+        '1': { id: '1', ketLabel: '|1\u27E9', compactVec: '[0, 1]\u1D40', state: { alpha: C0, beta: C1 } },
+        '+': { id: '+', ketLabel: '|+\u27E9', compactVec: '[1, 1]\u1D40/\u221A2', state: { alpha: CH, beta: CH } },
+        '-': { id: '-', ketLabel: '|-\u27E9', compactVec: '[1,-1]\u1D40/\u221A2', state: { alpha: CH, beta: CMH } },
+        '+i': { id: '+i', ketLabel: '|+i\u27E9', compactVec: '[1, i]\u1D40/\u221A2', state: { alpha: CH, beta: CHI } },
+        '-i': { id: '-i', ketLabel: '|-i\u27E9', compactVec: '[1,-i]\u1D40/\u221A2', state: { alpha: CH, beta: CMHI } }
+      };
 
       var GATES = {
         X: {
@@ -1375,9 +1604,37 @@
             ['0', '1'],
             ['1', '0']
           ],
-          exactMatrix: [
-            [ZERO, ONE],
-            [ONE, ZERO]
+          matrix: [
+            [C0, C1],
+            [C1, C0]
+          ]
+        },
+        Y: {
+          id: 'Y',
+          name: 'Pauli-Y',
+          role: 'Bit + Phase',
+          scalarLabel: null,
+          displayMatrix: [
+            ['0', '-i'],
+            ['i', '0']
+          ],
+          matrix: [
+            [C0, CMI],
+            [CI, C0]
+          ]
+        },
+        Z: {
+          id: 'Z',
+          name: 'Pauli-Z',
+          role: 'Phase-Flip',
+          scalarLabel: null,
+          displayMatrix: [
+            ['1', '0'],
+            ['0', '-1']
+          ],
+          matrix: [
+            [C1, C0],
+            [C0, CM1]
           ]
         },
         H: {
@@ -1389,9 +1646,23 @@
             ['1', '1'],
             ['1', '-1']
           ],
-          exactMatrix: [
-            [INV_SQRT2_EXACT, INV_SQRT2_EXACT],
-            [INV_SQRT2_EXACT, NEG_INV_SQRT2_EXACT]
+          matrix: [
+            [CH, CH],
+            [CH, CMH]
+          ]
+        },
+        S: {
+          id: 'S',
+          name: 'Phase',
+          role: '\u03C0/2 Phase',
+          scalarLabel: null,
+          displayMatrix: [
+            ['1', '0'],
+            ['0', 'i']
+          ],
+          matrix: [
+            [C1, C0],
+            [C0, CI]
           ]
         },
         I: {
@@ -1403,75 +1674,90 @@
             ['1', '0'],
             ['0', '1']
           ],
-          exactMatrix: [
-            [ONE, ZERO],
-            [ZERO, ONE]
+          matrix: [
+            [C1, C0],
+            [C0, C1]
           ]
         }
       };
 
-      function createBasisState(basis) {
-        return basis === '0'
-          ? { alpha: { r: 2, s: 0 }, beta: { r: 0, s: 0 } }
-          : { alpha: { r: 0, s: 0 }, beta: { r: 2, s: 0 } };
-      }
-
-      function ampToFloat(a) {
-        return a.r / 2 + (a.s / 2) * INV_SQRT2;
-      }
-
-      function ampEquals(a, b) {
-        return a.r === b.r && a.s === b.s;
-      }
-
-      function mulExact(a, b) {
+      function createCardinalState(id) {
+        var def = CARDINAL_STATES[id] || CARDINAL_STATES['0'];
         return {
-          r: (2 * a.r * b.r + a.s * b.s) / 4,
-          s: (a.r * b.s + a.s * b.r) / 2
+          alpha: { re: def.state.alpha.re, im: def.state.alpha.im },
+          beta: { re: def.state.beta.re, im: def.state.beta.im }
         };
       }
 
-      function addExact(a, b) {
-        return { r: a.r + b.r, s: a.s + b.s };
+      function formatRealExact(v) {
+        var s = snapReal(v);
+        if (s === 0) return '0';
+        if (s === 1) return '1';
+        if (s === -1) return '-1';
+        if (s === 0.5) return '1/2';
+        if (s === -0.5) return '-1/2';
+        if (s === INV_SQRT2) return '1/\u221A2';
+        if (s === -INV_SQRT2) return '-1/\u221A2';
+        if (s === HALF_INV_SQRT2) return '1/(2\u221A2)';
+        if (s === -HALF_INV_SQRT2) return '-1/(2\u221A2)';
+        return s.toFixed(4);
       }
 
-      function formatExactAmp(a) {
-        if (a.r === 0 && a.s === 0) return '0';
-        if (a.s === 0) {
-          if (a.r === 2) return '1';
-          if (a.r === -2) return '-1';
-          if (a.r === 1) return '1/2';
-          if (a.r === -1) return '-1/2';
-          if (a.r % 2 === 0) return String(a.r / 2);
-          return a.r + '/2';
-        }
-        if (a.r === 0) {
-          if (a.s === 2) return '1/\u221A2';
-          if (a.s === -2) return '-1/\u221A2';
-          if (a.s === 1) return '1/(2\u221A2)';
-          if (a.s === -1) return '-1/(2\u221A2)';
-          return a.s + '/(2\u221A2)';
-        }
-        return ampToFloat(a).toFixed(4);
+      function formatImagExact(v) {
+        var s = snapReal(v);
+        if (s === 0) return '0';
+        if (s === 1) return 'i';
+        if (s === -1) return '-i';
+        if (s === 0.5) return 'i/2';
+        if (s === -0.5) return '-i/2';
+        if (s === INV_SQRT2) return 'i/\u221A2';
+        if (s === -INV_SQRT2) return '-i/\u221A2';
+        if (s === HALF_INV_SQRT2) return 'i/(2\u221A2)';
+        if (s === -HALF_INV_SQRT2) return '-i/(2\u221A2)';
+        return s.toFixed(4) + 'i';
       }
 
-      function formatSignedDecimal(a) {
-        var val = ampToFloat(a);
-        if (Math.abs(val) < 1e-12) return '0.0000';
-        return (val > 0 ? '+' : '-') + Math.abs(val).toFixed(4);
+      function formatComplexExact(z) {
+        var re = snapReal(z.re);
+        var im = snapReal(z.im);
+        if (re === 0 && im === 0) return '0';
+        if (im === 0) return formatRealExact(re);
+        if (re === 0) return formatImagExact(im);
+
+        var absRe = Math.abs(re);
+        var absIm = Math.abs(im);
+        if (Math.abs(absRe - absIm) < EPS) {
+          var rSign = re < 0 ? '-1' : '1';
+          var iSign = im < 0 ? '-i' : '+i';
+          if (absRe === 0.5) return '(' + rSign + iSign + ')/2';
+          if (absRe === INV_SQRT2) return '(' + rSign + iSign + ')/\u221A2';
+          if (absRe === HALF_INV_SQRT2) return '(' + rSign + iSign + ')/(2\u221A2)';
+          if (absRe === 1) return rSign + iSign;
+        }
+        return formatRealExact(re) + (im > 0 ? ' + ' : ' - ') + formatImagExact(Math.abs(im));
+      }
+
+      function formatComplexDecimal(z) {
+        var re = snapReal(z.re);
+        var im = snapReal(z.im);
+        if (re === 0 && im === 0) return '0';
+        if (im === 0) {
+          if (re === 1) return '1.0000';
+          if (re === -1) return '-1.0000';
+          return re.toFixed(4);
+        }
+        if (re === 0) {
+          if (im === 1) return 'i';
+          if (im === -1) return '-i';
+          return im.toFixed(4) + 'i';
+        }
+        var sign = im > 0 ? ' + ' : ' - ';
+        return re.toFixed(4) + sign + Math.abs(im).toFixed(4) + 'i';
       }
 
       function getStateProbabilities(state) {
-        var a = ampToFloat(state.alpha);
-        var b = ampToFloat(state.beta);
-        var snap = function (v) {
-          if (Math.abs(v) < 1e-12) return 0;
-          if (Math.abs(v - 0.5) < 1e-12) return 0.5;
-          if (Math.abs(v - 1) < 1e-12) return 1;
-          return v;
-        };
-        var p0 = snap(a * a);
-        var p1 = snap(b * b);
+        var p0 = cMagSq(state.alpha);
+        var p1 = cMagSq(state.beta);
         var toFrac = function (p) {
           if (p === 0) return '0';
           if (p === 1) return '1';
@@ -1491,112 +1777,154 @@
         };
       }
 
+      function formatKetCoeff(z, isSecond) {
+        var exact = formatComplexExact(z);
+        var re = snapReal(z.re);
+        var im = snapReal(z.im);
+
+        if (!isSecond) {
+          if (exact === '1') return { sign: '', body: '' };
+          if (exact === '-1') return { sign: '-', body: '' };
+          if (exact === 'i') return { sign: '', body: 'i' };
+          if (exact === '-i') return { sign: '-', body: 'i' };
+          if (re !== 0 && im !== 0) return { sign: '', body: '(' + exact + ')' };
+          if (exact.charAt(0) === '-') return { sign: '-', body: '(' + exact.slice(1) + ')' };
+          return { sign: '', body: '(' + exact + ')' };
+        }
+
+        if (exact === '1') return { sign: ' + ', body: '' };
+        if (exact === '-1') return { sign: ' - ', body: '' };
+        if (exact === 'i') return { sign: ' + ', body: 'i' };
+        if (exact === '-i') return { sign: ' - ', body: 'i' };
+        if (re === 0 || im === 0) {
+          if (exact.charAt(0) === '-') return { sign: ' - ', body: '(' + exact.slice(1) + ')' };
+          return { sign: ' + ', body: '(' + exact + ')' };
+        }
+        return { sign: ' + ', body: '(' + exact + ')' };
+      }
+
       function formatKetNotation(state) {
         var alpha = state.alpha;
         var beta = state.beta;
-        if (ampEquals(alpha, ONE) && ampEquals(beta, ZERO)) {
-          return { ket: '|0\u27E9', alias: null, kind: 'Computational basis' };
+        var aZero = cIsZero(alpha);
+        var bZero = cIsZero(beta);
+
+        var ket = '';
+        if (aZero && !bZero) {
+          var c1Only = formatKetCoeff(beta, false);
+          ket = c1Only.sign + c1Only.body + '|1\u27E9';
+        } else if (!aZero && bZero) {
+          var c0Only = formatKetCoeff(alpha, false);
+          ket = c0Only.sign + c0Only.body + '|0\u27E9';
+        } else {
+          var c0 = formatKetCoeff(alpha, false);
+          var c1 = formatKetCoeff(beta, true);
+          ket = c0.sign + c0.body + '|0\u27E9' + c1.sign + c1.body + '|1\u27E9';
         }
-        if (ampEquals(alpha, NEG_ONE) && ampEquals(beta, ZERO)) {
-          return { ket: '-|0\u27E9', alias: 'Global phase \u03C0', kind: 'Computational basis' };
+
+        if (aZero && !bZero) {
+          var pB = cPhaseDeg(beta);
+          if (pB === 0) return { ket: ket, alias: null, kind: 'Computational basis |1\u27E9' };
+          return { ket: ket, alias: '\u2261 |1\u27E9 (phase ' + formatPhaseCardinal(pB) + ')', kind: 'Basis |1\u27E9 with global phase' };
         }
-        if (ampEquals(alpha, ZERO) && ampEquals(beta, ONE)) {
-          return { ket: '|1\u27E9', alias: null, kind: 'Computational basis' };
+        if (!aZero && bZero) {
+          var pA0 = cPhaseDeg(alpha);
+          if (pA0 === 0) return { ket: ket, alias: null, kind: 'Computational basis |0\u27E9' };
+          return { ket: ket, alias: '\u2261 |0\u27E9 (phase ' + formatPhaseCardinal(pA0) + ')', kind: 'Basis |0\u27E9 with global phase' };
         }
-        if (ampEquals(alpha, ZERO) && ampEquals(beta, NEG_ONE)) {
-          return { ket: '-|1\u27E9', alias: 'Global phase \u03C0', kind: 'Computational basis' };
+
+        var p0 = cMagSq(alpha);
+        var p1 = cMagSq(beta);
+        var rel = getRelativePhaseDeg(state);
+        var pA = cPhaseDeg(alpha);
+
+        if (p0 === 0.5 && p1 === 0.5 && rel !== null) {
+          var map = {
+            0: { name: '|+\u27E9', factoredKet: '(|0\u27E9 + |1\u27E9)/\u221A2', label: 'In-phase superposition (\u0394\u03C6 = 0\u00B0)' },
+            90: { name: '|+i\u27E9', factoredKet: '(|0\u27E9 + i|1\u27E9)/\u221A2', label: 'Positive imaginary phase (\u0394\u03C6 = 90\u00B0 / +i)' },
+            180: { name: '|-\u27E9', factoredKet: '(|0\u27E9 - |1\u27E9)/\u221A2', label: 'Phase-flipped superposition (\u0394\u03C6 = 180\u00B0)' },
+            270: { name: '|-i\u27E9', factoredKet: '(|0\u27E9 - i|1\u27E9)/\u221A2', label: 'Negative imaginary phase (\u0394\u03C6 = 270\u00B0 / -i)' }
+          };
+          var match = map[rel];
+          if (match) {
+            if (pA === 0) {
+              return { ket: match.factoredKet, alias: '= ' + match.name, kind: match.label };
+            }
+            return { ket: ket, alias: '\u2261 ' + match.name + ' (global phase ' + pA + '\u00B0)', kind: match.label };
+          }
         }
-        if (ampEquals(alpha, INV_SQRT2_EXACT) && ampEquals(beta, INV_SQRT2_EXACT)) {
-          return { ket: '(1/\u221A2)|0\u27E9 + (1/\u221A2)|1\u27E9', alias: '= |+\u27E9', kind: 'Equal superposition (+45\u00B0)' };
-        }
-        if (ampEquals(alpha, INV_SQRT2_EXACT) && ampEquals(beta, NEG_INV_SQRT2_EXACT)) {
-          return { ket: '(1/\u221A2)|0\u27E9 - (1/\u221A2)|1\u27E9', alias: '= |-\u27E9', kind: 'Equal superposition (-45\u00B0)' };
-        }
-        if (ampEquals(alpha, NEG_INV_SQRT2_EXACT) && ampEquals(beta, INV_SQRT2_EXACT)) {
-          return { ket: '-(1/\u221A2)|0\u27E9 + (1/\u221A2)|1\u27E9', alias: '= -|-\u27E9', kind: 'Equal superposition (+135\u00B0)' };
-        }
-        if (ampEquals(alpha, NEG_INV_SQRT2_EXACT) && ampEquals(beta, NEG_INV_SQRT2_EXACT)) {
-          return { ket: '-(1/\u221A2)|0\u27E9 - (1/\u221A2)|1\u27E9', alias: '= -|+\u27E9', kind: 'Equal superposition (-135\u00B0)' };
-        }
-        return {
-          ket: '(' + formatExactAmp(alpha) + ')|0\u27E9 + (' + formatExactAmp(beta) + ')|1\u27E9',
-          alias: null,
-          kind: 'Superposition state'
-        };
+        return { ket: ket, alias: null, kind: 'Superposition state' };
       }
 
       function getStateAngleDegrees(state) {
-        var a = ampToFloat(state.alpha);
-        var b = ampToFloat(state.beta);
-        var deg = (Math.atan2(b, a) * 180) / Math.PI;
-        var rounded = Math.round(deg);
-        if (Math.abs(deg - rounded) < 1e-9) {
-          return rounded === 0 ? 0 : rounded;
+        if (isPurelyRealState(state)) {
+          var degR = (Math.atan2(state.beta.re, state.alpha.re) * 180) / Math.PI;
+          var rR = Math.round(degR);
+          return Math.abs(degR - rR) < 1e-9 ? (rR === 0 ? 0 : rR) : Number(degR.toFixed(1));
         }
-        return Number(deg.toFixed(1));
+        var degM = (Math.atan2(cMag(state.beta), cMag(state.alpha)) * 180) / Math.PI;
+        var rM = Math.round(degM);
+        return Math.abs(degM - rM) < 1e-9 ? (rM === 0 ? 0 : rM) : Number(degM.toFixed(1));
       }
 
       function describeStep(gateId, input, output) {
         var inInfo = formatKetNotation(input);
         var outInfo = formatKetNotation(output);
-        var inLabel = inInfo.alias ? inInfo.alias.replace(/^=\s*/, '') : inInfo.ket;
-        var outLabel = outInfo.alias ? outInfo.ket + ' (' + outInfo.alias.replace(/^=\s*/, '') + ')' : outInfo.ket;
+        var inLbl = inInfo.alias ? inInfo.alias.replace(/^[=\u2261]\s*/, '').split(' ')[0] : inInfo.ket;
+        var outLbl = outInfo.alias ? outInfo.ket + ' (' + outInfo.alias.replace(/^[=\u2261]\s*/, '') + ')' : outInfo.ket;
         if (gateId === 'I') {
-          return 'Identity gate (I) acts as the 2\u00D72 unit operator, leaving ' + inLabel + ' invariant.';
+          return 'Identity (I) leaves ' + inLbl + ' invariant with unchanged magnitudes and complex phases.';
         }
         if (gateId === 'X') {
-          return 'Pauli-X (quantum NOT) exchanges the |0\u27E9 and |1\u27E9 amplitudes (reflection across the +45\u00B0 axis), mapping ' + inLabel + ' to ' + outLabel + '.';
+          return 'Pauli-X exchanges the |0\u27E9 and |1\u27E9 amplitudes, transforming ' + inLbl + ' into ' + outLbl + '.';
         }
-        var inIsBasis = ampEquals(input.beta, ZERO) || ampEquals(input.alpha, ZERO);
-        if (inIsBasis) {
-          var ang = getStateAngleDegrees(output);
-          var angStr = ang > 0 ? '+' + ang + '\u00B0' : ang + '\u00B0';
-          return 'Hadamard (H) rotates basis state ' + inLabel + ' into an equal superposition ' + outLabel + ' at ' + angStr + '.';
+        if (gateId === 'Y') {
+          return 'Pauli-Y swaps |0\u27E9 and |1\u27E9 while applying \u00B1i phase shifts, mapping ' + inLbl + ' to ' + outLbl + '.';
         }
-        return 'Applying Hadamard (H) again causes constructive/destructive interference, returning ' + inLabel + ' to basis state ' + outLabel + '.';
+        if (gateId === 'Z') {
+          return 'Pauli-Z preserves |0\u27E9 and applies a 180\u00B0 (-1) phase shift to |1\u27E9, transforming ' + inLbl + ' into ' + outLbl + '.';
+        }
+        if (gateId === 'S') {
+          return 'Phase gate (S) preserves |0\u27E9 and rotates the |1\u27E9 phase by +90\u00B0 (\u00D7i), transforming ' + inLbl + ' into ' + outLbl + '.';
+        }
+        return 'Hadamard (H) interferes \u03B1 and \u03B2 via (\u03B1+\u03B2)/\u221A2 and (\u03B1-\u03B2)/\u221A2, mapping ' + inLbl + ' to ' + outLbl + '.';
       }
 
       function applyGate(state, gateId) {
         var gate = GATES[gateId];
-        var m00 = gate.exactMatrix[0][0];
-        var m01 = gate.exactMatrix[0][1];
-        var m10 = gate.exactMatrix[1][0];
-        var m11 = gate.exactMatrix[1][1];
+        var m00 = gate.matrix[0][0];
+        var m01 = gate.matrix[0][1];
+        var m10 = gate.matrix[1][0];
+        var m11 = gate.matrix[1][1];
 
-        var p00 = mulExact(m00, state.alpha);
-        var p01 = mulExact(m01, state.beta);
-        var p10 = mulExact(m10, state.alpha);
-        var p11 = mulExact(m11, state.beta);
+        var p00 = cMul(m00, state.alpha);
+        var p01 = cMul(m01, state.beta);
+        var p10 = cMul(m10, state.alpha);
+        var p11 = cMul(m11, state.beta);
 
         var output = {
-          alpha: addExact(p00, p01),
-          beta: addExact(p10, p11)
+          alpha: cAdd(p00, p01),
+          beta: cAdd(p10, p11)
         };
 
-        var aStr = formatExactAmp(state.alpha);
-        var bStr = formatExactAmp(state.beta);
+        var aStr = formatComplexExact(state.alpha);
+        var bStr = formatComplexExact(state.beta);
 
         return {
           gateId: gateId,
           gate: gate,
           input: state,
           output: output,
-          row0Terms: [
-            '(' + formatExactAmp(m00) + ')(' + aStr + ')',
-            '(' + formatExactAmp(m01) + ')(' + bStr + ')'
-          ],
-          row1Terms: [
-            '(' + formatExactAmp(m10) + ')(' + aStr + ')',
-            '(' + formatExactAmp(m11) + ')(' + bStr + ')'
-          ],
-          row0Simplified: [formatExactAmp(p00), formatExactAmp(p01)],
-          row1Simplified: [formatExactAmp(p10), formatExactAmp(p11)],
+          row0Terms: ['(' + formatComplexExact(m00) + ')(' + aStr + ')', '(' + formatComplexExact(m01) + ')(' + bStr + ')'],
+          row1Terms: ['(' + formatComplexExact(m10) + ')(' + aStr + ')', '(' + formatComplexExact(m11) + ')(' + bStr + ')'],
+          row0Simplified: [formatComplexExact(p00), formatComplexExact(p01)],
+          row1Simplified: [formatComplexExact(p10), formatComplexExact(p11)],
           interpretation: describeStep(gateId, state, output)
         };
       }
 
-      function evaluateCircuit(initialBasis, gateSequence) {
-        var initialState = createBasisState(initialBasis);
+      function evaluateCircuit(initialId, gateSequence) {
+        var initialState = createCardinalState(initialId);
         var steps = [];
         var cursor = initialState;
 
@@ -1607,7 +1935,7 @@
         }
 
         return {
-          initialBasis: initialBasis,
+          initialId: initialId,
           initialState: initialState,
           steps: steps,
           finalState: cursor,
@@ -1644,14 +1972,20 @@
         };
       }
 
-      /* Expose pure kernel for automated Node/unit verification when loaded without DOM */
+      /* Expose pure kernel for automated Node/unit verification */
       if (typeof window !== 'undefined') {
         window.__QUBIT_KERNEL__ = {
+          CARDINAL_ORDER: CARDINAL_ORDER,
+          CARDINAL_STATES: CARDINAL_STATES,
           GATES: GATES,
-          createBasisState: createBasisState,
-          ampToFloat: ampToFloat,
-          formatExactAmp: formatExactAmp,
-          formatSignedDecimal: formatSignedDecimal,
+          createCardinalState: createCardinalState,
+          cMag: cMag,
+          cMagSq: cMagSq,
+          cPhaseDeg: cPhaseDeg,
+          getRelativePhaseDeg: getRelativePhaseDeg,
+          getRelativePhaseStatus: getRelativePhaseStatus,
+          formatComplexExact: formatComplexExact,
+          formatComplexDecimal: formatComplexDecimal,
           getStateProbabilities: getStateProbabilities,
           formatKetNotation: formatKetNotation,
           getStateAngleDegrees: getStateAngleDegrees,
@@ -1669,7 +2003,7 @@
        * Application State
        * ===================================================================== */
       var appState = {
-        initialBasis: '0',
+        initialId: '0',
         gateSequence: [],
         inspectedIndex: -1,
         evaluation: evaluateCircuit('0', []),
@@ -1683,8 +2017,13 @@
       var btnToggleInit = document.getElementById('btn-toggle-init');
       var elInitKet = document.getElementById('init-ket-label');
       var elInitVec = document.getElementById('init-vec-label');
+      var cardinalBtns = document.querySelectorAll('.btn-cardinal');
+
       var btnGateX = document.getElementById('btn-gate-X');
+      var btnGateY = document.getElementById('btn-gate-Y');
+      var btnGateZ = document.getElementById('btn-gate-Z');
       var btnGateH = document.getElementById('btn-gate-H');
+      var btnGateS = document.getElementById('btn-gate-S');
       var btnGateI = document.getElementById('btn-gate-I');
       var btnUndo = document.getElementById('btn-undo');
       var btnReset = document.getElementById('btn-reset');
@@ -1705,10 +2044,16 @@
       var elKetOutput = document.getElementById('ket-output');
       var elKetAlias = document.getElementById('ket-alias');
       var elOutputType = document.getElementById('output-state-type');
+      var elRelativePhaseBox = document.getElementById('relative-phase-status');
+      var elRelativePhaseLabel = document.getElementById('relative-phase-label');
       var elAlphaExact = document.getElementById('alpha-exact');
       var elAlphaDec = document.getElementById('alpha-decimal');
+      var elAlphaMag = document.getElementById('alpha-mag');
+      var elAlphaPhase = document.getElementById('alpha-phase');
       var elBetaExact = document.getElementById('beta-exact');
       var elBetaDec = document.getElementById('beta-decimal');
+      var elBetaMag = document.getElementById('beta-mag');
+      var elBetaPhase = document.getElementById('beta-phase');
       var elProb0Text = document.getElementById('prob0-text');
       var elProb1Text = document.getElementById('prob1-text');
       var elBarTrack0 = document.getElementById('bar-track-0');
@@ -1734,23 +2079,27 @@
       function renderWire() {
         var ev = appState.evaluation;
         var probs = getStateProbabilities(ev.finalState);
+        var cardDef = CARDINAL_STATES[appState.initialId];
 
-        // Toggleable initial state block
-        elInitKet.textContent = '|' + appState.initialBasis + '\u27E9';
-        elInitVec.textContent = appState.initialBasis === '0' ? '[1, 0]\u1D40' : '[0, 1]\u1D40';
-        var nextBasis = appState.initialBasis === '0' ? '1' : '0';
+        elInitKet.textContent = cardDef.ketLabel;
+        elInitVec.textContent = cardDef.compactVec;
+        var curIdx = CARDINAL_ORDER.indexOf(appState.initialId);
+        var nextId = CARDINAL_ORDER[(curIdx + 1) % CARDINAL_ORDER.length];
         btnToggleInit.setAttribute(
           'aria-label',
-          'Toggle initial qubit state, currently ket ' + appState.initialBasis + '. Click to switch to ket ' + nextBasis + '.'
+          'Cycle initial cardinal qubit state, currently ' + cardDef.ketLabel + '. Click to switch to ' + CARDINAL_STATES[nextId].ketLabel + '.'
         );
 
-        // Undo button state
+        for (var c = 0; c < cardinalBtns.length; c += 1) {
+          var bId = cardinalBtns[c].getAttribute('data-init-id');
+          cardinalBtns[c].setAttribute('aria-pressed', bId === appState.initialId ? 'true' : 'false');
+        }
+
         btnUndo.disabled = appState.gateSequence.length === 0;
 
-        // Placed square gate tiles
         elWireTrack.innerHTML = '';
         if (appState.gateSequence.length === 0) {
-          var hint = el('span', 'wire-empty-hint', 'Wire ready \u2014 click X, H, or I above to place gates');
+          var hint = el('span', 'wire-empty-hint', 'Wire ready \u2014 click X, Y, Z, H, S, or I above to place gates');
           elWireTrack.appendChild(hint);
         } else {
           for (var i = 0; i < appState.gateSequence.length; i += 1) {
@@ -1762,10 +2111,7 @@
               tileBtn.type = 'button';
               tileBtn.setAttribute('data-gate-index', String(idx));
               tileBtn.setAttribute('aria-pressed', isInspected ? 'true' : 'false');
-              tileBtn.setAttribute(
-                'aria-label',
-                'Inspect step ' + (idx + 1) + ': ' + GATES[gateId].name + ' gate'
-              );
+              tileBtn.setAttribute('aria-label', 'Inspect step ' + (idx + 1) + ': ' + GATES[gateId].name + ' gate');
               tileBtn.setAttribute('title', 'Click to inspect Step ' + (idx + 1) + ' (' + GATES[gateId].name + ')');
               tileBtn.appendChild(el('span', 'tile-symbol', gateId));
               tileBtn.appendChild(el('span', 'tile-step-num', '#' + (idx + 1)));
@@ -1776,10 +2122,7 @@
               var rmBtn = el('button', 'tile-remove-btn', '\u00D7');
               rmBtn.type = 'button';
               rmBtn.setAttribute('data-remove-index', String(idx));
-              rmBtn.setAttribute(
-                'aria-label',
-                'Remove step ' + (idx + 1) + ' ' + GATES[gateId].name + ' gate from circuit'
-              );
+              rmBtn.setAttribute('aria-label', 'Remove step ' + (idx + 1) + ' ' + GATES[gateId].name + ' gate from circuit');
               rmBtn.setAttribute('title', 'Remove ' + GATES[gateId].name + ' gate');
               rmBtn.addEventListener('click', function (evt) {
                 evt.stopPropagation();
@@ -1793,24 +2136,22 @@
           }
         }
 
-        // Compact readout box at right end of wire
         elReadoutFill0.style.width = (probs.p0 * 100).toFixed(1) + '%';
         elReadoutFill1.style.width = (probs.p1 * 100).toFixed(1) + '%';
         elReadoutVal0.textContent = probs.p0ShortPct;
         elReadoutVal1.textContent = probs.p1ShortPct;
 
-        // Wire sequence summary line
         var ketInfo = formatKetNotation(ev.finalState);
-        var compactOut = ketInfo.alias ? ketInfo.alias.replace(/^=\s*/, '') : ketInfo.ket;
+        var compactOut = ketInfo.alias ? ketInfo.alias.replace(/^[=\u2261]\s*/, '').split(' ')[0] : ketInfo.ket;
         if (appState.gateSequence.length === 0) {
-          elWireSummary.textContent = 'Circuit: |' + appState.initialBasis + '\u27E9 (0 gates)';
+          elWireSummary.textContent = 'Circuit: ' + cardDef.ketLabel + ' (0 gates)';
         } else {
           elWireSummary.textContent =
-            'Circuit: |' +
-            appState.initialBasis +
-            '\u27E9 \u2192 ' +
+            'Circuit: ' +
+            cardDef.ketLabel +
+            ' \u2192 ' +
             appState.gateSequence.join(' \u2192 ') +
-            ' = ' +
+            ' \u2192 ' +
             compactOut +
             ' (' +
             appState.gateSequence.length +
@@ -1819,7 +2160,7 @@
       }
 
       /* =====================================================================
-       * Render: Step-by-Step Matrix Calculation (Supports Step Inspection)
+       * Render: Step-by-Step Complex Matrix Calculation
        * ===================================================================== */
       function buildMatrix2x2(gate) {
         var block = el('div', 'matrix-block');
@@ -1842,16 +2183,16 @@
         var block = el('div', 'matrix-block');
         block.appendChild(el('div', 'matrix-caption', caption));
         var grid = el('div', 'matrix-brackets mat-2x1' + (isOutput ? ' is-output' : ''));
-        grid.appendChild(el('span', 'mat-cell' + (isOutput ? ' is-accent' : ''), formatExactAmp(state.alpha)));
-        grid.appendChild(el('span', 'mat-cell' + (isOutput ? ' is-accent' : ''), formatExactAmp(state.beta)));
+        grid.appendChild(el('span', 'mat-cell' + (isOutput ? ' is-accent' : ''), formatComplexExact(state.alpha)));
+        grid.appendChild(el('span', 'mat-cell' + (isOutput ? ' is-accent' : ''), formatComplexExact(state.beta)));
         block.appendChild(grid);
         return block;
       }
 
       function formatSumLine(termA, termB, simpA, simpB) {
         var joinedTerms = termA + ' + ' + termB;
-        var secondSimp = simpB.charAt(0) === '-' ? ' - ' + simpB.slice(1) : ' + ' + simpB;
-        var simplified = simpA + secondSimp;
+        var secondPart = simpB.charAt(0) === '-' ? ' - ' + simpB.slice(1) : ' + ' + simpB;
+        var simplified = simpA + secondPart;
         if (joinedTerms === simplified) {
           return joinedTerms;
         }
@@ -1861,19 +2202,20 @@
       function renderMatrixCalculation() {
         elMatrixEq.innerHTML = '';
         var ev = appState.evaluation;
+        var cardDef = CARDINAL_STATES[appState.initialId];
 
         if (ev.steps.length === 0 || appState.inspectedIndex < 0) {
           elMatrixStepLabel.textContent = 'Initial state prepared (Step 0)';
           elMatrixEq.appendChild(buildMatrix2x2(GATES.I));
           elMatrixEq.appendChild(el('span', 'mat-op', '\u00D7'));
-          elMatrixEq.appendChild(buildVector2x1(ev.initialState, 'Initial |' + appState.initialBasis + '\u27E9', false));
+          elMatrixEq.appendChild(buildVector2x1(ev.initialState, 'Initial ' + cardDef.ketLabel, false));
           elMatrixEq.appendChild(el('span', 'mat-op', '='));
 
           var initBlock = el('div', 'matrix-block');
           initBlock.appendChild(el('div', 'matrix-caption', 'Row \u00D7 Column Expansion'));
           var initGrid = el('div', 'matrix-brackets mat-expanded');
-          var aExact = formatExactAmp(ev.initialState.alpha);
-          var bExact = formatExactAmp(ev.initialState.beta);
+          var aExact = formatComplexExact(ev.initialState.alpha);
+          var bExact = formatComplexExact(ev.initialState.beta);
           initGrid.appendChild(el('span', 'mat-cell', '(1)(' + aExact + ') + (0)(' + bExact + ')'));
           initGrid.appendChild(el('span', 'mat-cell', '(0)(' + aExact + ') + (1)(' + bExact + ')'));
           initBlock.appendChild(initGrid);
@@ -1883,9 +2225,9 @@
           elMatrixEq.appendChild(buildVector2x1(ev.initialState, 'Current |\u03C8\u27E9', true));
 
           elMatrixInterp.innerHTML =
-            '<strong>Ready:</strong> Qubit initialized to <strong>|' +
-            appState.initialBasis +
-            '\u27E9</strong>. Place <strong>X</strong>, <strong>H</strong>, or <strong>I</strong> gates on the horizontal wire to inspect |&#968;<sub>out</sub>&#10217; = U |&#968;<sub>in</sub>&#10217;.';
+            '<strong>Ready:</strong> Qubit prepared in <strong>' +
+            cardDef.ketLabel +
+            '</strong>. Append <strong>X, Y, Z, H, S,</strong> or <strong>I</strong> gates to inspect complex matrix evolution |&#968;<sub>out</sub>&#10217; = U |&#968;<sub>in</sub>&#10217;.';
           return;
         }
 
@@ -1925,27 +2267,39 @@
         elMatrixEq.appendChild(buildVector2x1(step.output, 'Output |\u03C8' + (idx + 1) + '\u27E9', true));
 
         elMatrixInterp.textContent = '';
-        var strong = el('strong', null, 'Step ' + (idx + 1) + ' effect: ');
-        elMatrixInterp.appendChild(strong);
+        elMatrixInterp.appendChild(el('strong', null, 'Step ' + (idx + 1) + ' effect: '));
         elMatrixInterp.appendChild(document.createTextNode(step.interpretation));
       }
 
       /* =====================================================================
-       * Render: Output Ket, Amplitudes & Normalization
+       * Render: Output Ket, Complex Amplitudes & Normalization
        * ===================================================================== */
       function renderOutputAndProbabilities() {
         var finalState = appState.evaluation.finalState;
         var ketInfo = formatKetNotation(finalState);
+        var phaseStatus = getRelativePhaseStatus(finalState);
         var probs = getStateProbabilities(finalState);
+        var pAlpha = cPhaseDeg(finalState.alpha);
+        var pBeta = cPhaseDeg(finalState.beta);
+        var magAlpha = cMag(finalState.alpha);
+        var magBeta = cMag(finalState.beta);
 
         elKetOutput.textContent = '|\u03C8\u27E9 = ' + ketInfo.ket;
         elKetAlias.textContent = ketInfo.alias || '';
-        elOutputType.textContent = ketInfo.kind;
+        elOutputType.textContent = phaseStatus.isSuperposition ? 'Superposition (\u0394\u03C6 = ' + phaseStatus.deltaPhi + '\u00B0)' : ketInfo.kind;
 
-        elAlphaExact.textContent = formatExactAmp(finalState.alpha);
-        elAlphaDec.textContent = formatSignedDecimal(finalState.alpha);
-        elBetaExact.textContent = formatExactAmp(finalState.beta);
-        elBetaDec.textContent = formatSignedDecimal(finalState.beta);
+        elRelativePhaseBox.className = 'phase-status-row ' + (phaseStatus.isSuperposition ? 'is-superposition' : 'is-basis');
+        elRelativePhaseLabel.textContent = phaseStatus.label;
+
+        elAlphaExact.textContent = formatComplexExact(finalState.alpha);
+        elAlphaDec.textContent = formatComplexDecimal(finalState.alpha);
+        elAlphaMag.textContent = '|\u03B1| = ' + magAlpha.toFixed(4);
+        elAlphaPhase.textContent = 'arg(\u03B1) = ' + formatPhaseCardinal(pAlpha);
+
+        elBetaExact.textContent = formatComplexExact(finalState.beta);
+        elBetaDec.textContent = formatComplexDecimal(finalState.beta);
+        elBetaMag.textContent = '|\u03B2| = ' + magBeta.toFixed(4);
+        elBetaPhase.textContent = 'arg(\u03B2) = ' + formatPhaseCardinal(pBeta);
 
         elProb0Text.innerHTML = 'Fraction: <strong>' + probs.p0Fraction + '</strong> &middot; <strong>' + probs.p0Percent + '</strong>';
         elProb1Text.innerHTML = 'Fraction: <strong>' + probs.p1Fraction + '</strong> &middot; <strong>' + probs.p1Percent + '</strong>';
@@ -1958,9 +2312,14 @@
         elBarTrack1.setAttribute('aria-valuenow', String(pct1));
 
         var sumFixed = probs.sum.toFixed(4);
+        var pctSum = (probs.sum * 100).toFixed(1) + '%';
         elNormCheck.innerHTML =
-          '<span class="norm-equation">P(0) + P(1) = |\u03B1|\u00B2 + |\u03B2|\u00B2 = <strong>' + sumFixed + '</strong></span>' +
-          '<span class="norm-status">Normalized (Unit Vector)</span>';
+          '<span class="norm-equation">|\u03B1|\u00B2 + |\u03B2|\u00B2 = <strong>' +
+          sumFixed +
+          '</strong> <span class="norm-status">(Normalized)</span></span>' +
+          '<span class="panel-meta">P(0) + P(1) = ' +
+          pctSum +
+          '</span>';
       }
 
       /* =====================================================================
@@ -1980,7 +2339,7 @@
           empty.innerHTML =
             'Ready to measure <strong>|\u03C8\u27E9 = ' +
             formatKetNotation(finalState).ket +
-            '</strong>. Click <strong>Simulate 100 Shots</strong> to compare observed collapse counts against theoretical probabilities.';
+            '</strong>. Click <strong>Simulate 100 Shots</strong> to compare empirical collapse counts against Born-rule probabilities.';
           elMeasureContainer.appendChild(empty);
           return;
         }
@@ -2072,30 +2431,145 @@
       }
 
       /* =====================================================================
-       * Render: 2D State-Vector Plot (HTML Canvas)
+       * Render: 2D State-Vector Plot + Dual Complex Phase Indicators (Canvas)
        * ===================================================================== */
-      function drawArrow(ctx, x1, y1, x2, y2, color, lineWidth, dashed) {
+      function drawArrow(ctx, x1, y1, x2, y2, color, lineWidth, dashed, headScale) {
         ctx.save();
         ctx.strokeStyle = color;
         ctx.fillStyle = color;
         ctx.lineWidth = lineWidth;
         if (dashed) {
-          ctx.setLineDash([5, 4]);
+          ctx.setLineDash([4, 3]);
         }
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
 
-        var angle = Math.atan2(y2 - y1, x2 - x1);
-        var headLen = dashed ? 8 : 11;
-        ctx.setLineDash([]);
+        var dx = x2 - x1;
+        var dy = y2 - y1;
+        if (Math.hypot(dx, dy) > 4) {
+          var angle = Math.atan2(dy, dx);
+          var headLen = (dashed ? 7 : 10) * (headScale || 1);
+          ctx.setLineDash([]);
+          ctx.beginPath();
+          ctx.moveTo(x2, y2);
+          ctx.lineTo(x2 - headLen * Math.cos(angle - Math.PI / 7), y2 - headLen * Math.sin(angle - Math.PI / 7));
+          ctx.lineTo(x2 - headLen * Math.cos(angle + Math.PI / 7), y2 - headLen * Math.sin(angle + Math.PI / 7));
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      function drawPhaseDial(ctx, cx, cy, r, z, title, accentColor) {
+        var mag = cMag(z);
+        var deg = cPhaseDeg(z);
+
+        // Title above dial
+        ctx.save();
+        ctx.font = '600 10.5px "IBM Plex Sans", sans-serif';
+        ctx.fillStyle = '#1E293B';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(title, cx, cy - r - 14);
+        ctx.restore();
+
+        // Crosshair axes (Re horizontal, Im vertical)
+        ctx.save();
+        ctx.strokeStyle = '#CBD5E1';
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(x2, y2);
-        ctx.lineTo(x2 - headLen * Math.cos(angle - Math.PI / 7), y2 - headLen * Math.sin(angle - Math.PI / 7));
-        ctx.lineTo(x2 - headLen * Math.cos(angle + Math.PI / 7), y2 - headLen * Math.sin(angle + Math.PI / 7));
-        ctx.closePath();
+        ctx.moveTo(cx - r - 5, cy);
+        ctx.lineTo(cx + r + 5, cy);
+        ctx.moveTo(cx, cy - r - 5);
+        ctx.lineTo(cx, cy + r + 5);
+        ctx.stroke();
+
+        // Outer unit-magnitude circle
+        ctx.strokeStyle = '#1E293B';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Inner dashed 1/√2 magnitude reference ring
+        ctx.strokeStyle = 'rgba(30, 41, 59, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 3]);
+        ctx.beginPath();
+        ctx.arc(cx, cy, r * INV_SQRT2, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+
+        // Cardinal complex markers (+1 / 0°, +i / 90°, -1 / 180°, -i / 270°)
+        ctx.save();
+        ctx.font = '600 9.5px "IBM Plex Mono", monospace';
+        ctx.fillStyle = '#475569';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('+1', cx + r + 5, cy);
+        ctx.textAlign = 'right';
+        ctx.fillText('-1', cx - r - 5, cy);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('+i', cx, cy - r - 3);
+        ctx.textBaseline = 'top';
+        ctx.fillText('-i', cx, cy + r + 3);
+        ctx.restore();
+
+        if (mag > EPS && deg !== null) {
+          var rad = Math.atan2(z.im, z.re);
+          var tipX = cx + mag * r * Math.cos(rad);
+          var tipY = cy - mag * r * Math.sin(rad);
+
+          // Shaded phase wedge from 0° (+1) to arg(z)
+          if (deg !== 0) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(15, 118, 110, 0.12)';
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, r * 0.55, 0, -rad, true);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = accentColor;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r * 0.55, 0, -rad, true);
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          drawArrow(ctx, cx, cy, tipX, tipY, accentColor, 2.2, false, 0.78);
+
+          ctx.save();
+          ctx.fillStyle = '#FFFFFF';
+          ctx.strokeStyle = accentColor;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.arc(tipX, tipY, 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Center origin dot
+        ctx.save();
+        ctx.fillStyle = '#1E293B';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 2.4, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
+
+        // Phase readout below dial
+        ctx.save();
+        ctx.font = '600 10px "IBM Plex Mono", monospace';
+        ctx.fillStyle = deg === null ? '#64748B' : accentColor;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        var readoutStr = deg === null ? 'amp = 0' : formatPhaseCardinal(deg);
+        ctx.fillText(readoutStr, cx, cy + r + 15);
         ctx.restore();
       }
 
@@ -2103,10 +2577,11 @@
         var ev = appState.evaluation;
         var current = ev.finalState;
         var previous = ev.previousState;
+        var purelyReal = isPurelyRealState(current);
 
         var rect = canvas.getBoundingClientRect();
-        var width = Math.max(260, Math.round(rect.width || 390));
-        var height = Math.max(240, Math.round(rect.height || 278));
+        var width = Math.max(280, Math.round(rect.width || 580));
+        var height = Math.max(240, Math.round(rect.height || 274));
         var dpr = window.devicePixelRatio || 1;
 
         if (canvas.width !== Math.round(width * dpr) || canvas.height !== Math.round(height * dpr)) {
@@ -2118,27 +2593,47 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, width, height);
 
-        var cx = width / 2;
-        var cy = height / 2;
-        var compact = width < 350;
-        var radius = compact ? Math.min(width * 0.30, height * 0.34) : Math.min(width * 0.33, height * 0.355);
-        var axisExt = radius + (compact ? 16 : 22);
+        var stacked = width < 440;
+        var vecBoxW = stacked ? width : Math.round(width * 0.62);
+        var vecBoxH = stacked ? Math.round(height * 0.58) : height;
 
-        // Subtle drafting grid inside plot
+        // Subtle drafting grid across the main state-vector zone
+        var cx = vecBoxW / 2;
+        var cy = vecBoxH / 2 + (stacked ? 4 : 0);
+        var radius = Math.min(vecBoxW * 0.31, vecBoxH * 0.345);
+        var axisExt = radius + (stacked ? 16 : 20);
+
         ctx.save();
-        ctx.strokeStyle = 'rgba(30, 41, 59, 0.06)';
+        ctx.strokeStyle = 'rgba(30, 41, 59, 0.055)';
         ctx.lineWidth = 1;
         var step = radius / 2;
-        for (var gx = cx % step; gx < width; gx += step) {
+        for (var gx = cx % step; gx < vecBoxW; gx += step) {
           ctx.beginPath();
           ctx.moveTo(gx, 0);
-          ctx.lineTo(gx, height);
+          ctx.lineTo(gx, vecBoxH);
           ctx.stroke();
         }
-        for (var gy = cy % step; gy < height; gy += step) {
+        for (var gy = cy % step; gy < vecBoxH; gy += step) {
           ctx.beginPath();
           ctx.moveTo(0, gy);
-          ctx.lineTo(width, gy);
+          ctx.lineTo(vecBoxW, gy);
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // Divider between State-Vector Plane and Complex Phase Dials
+        ctx.save();
+        ctx.strokeStyle = '#CBD5E1';
+        ctx.lineWidth = 1;
+        if (stacked) {
+          ctx.beginPath();
+          ctx.moveTo(8, vecBoxH);
+          ctx.lineTo(width - 8, vecBoxH);
+          ctx.stroke();
+        } else {
+          ctx.beginPath();
+          ctx.moveTo(vecBoxW, 8);
+          ctx.lineTo(vecBoxW, height - 8);
           ctx.stroke();
         }
         ctx.restore();
@@ -2148,7 +2643,7 @@
         ctx.strokeStyle = 'rgba(15, 118, 110, 0.22)';
         ctx.lineWidth = 1;
         ctx.setLineDash([3, 4]);
-        var diagR = radius * 1.12;
+        var diagR = radius * 1.1;
         var dOff = diagR * INV_SQRT2;
         ctx.beginPath();
         ctx.moveTo(cx - dOff, cy + dOff);
@@ -2160,35 +2655,33 @@
 
         // Superposition guide labels (+45° and -45°)
         ctx.save();
-        ctx.font = '500 10.5px "IBM Plex Mono", monospace';
+        ctx.font = '500 10px "IBM Plex Mono", monospace';
         ctx.fillStyle = '#64748B';
-        var labelR = radius + 14;
+        var labelR = radius + 12;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'bottom';
-        ctx.fillText('|+\u27E9 (+45\u00B0)', cx + labelR * INV_SQRT2 + 2, cy - labelR * INV_SQRT2 - 2);
+        ctx.fillText('|+\u27E9 (+45\u00B0)', cx + labelR * INV_SQRT2 + 2, cy - labelR * INV_SQRT2 - 1);
         ctx.textBaseline = 'top';
-        ctx.fillText('|-\u27E9 (-45\u00B0)', cx + labelR * INV_SQRT2 + 2, cy + labelR * INV_SQRT2 + 2);
+        ctx.fillText('|-\u27E9 (-45\u00B0)', cx + labelR * INV_SQRT2 + 2, cy + labelR * INV_SQRT2 + 1);
         ctx.restore();
 
-        // Coordinate axes (horizontal = |0>, vertical = |1>)
+        // Coordinate axes
         ctx.save();
         ctx.strokeStyle = '#334155';
-        ctx.lineWidth = 1.25;
+        ctx.lineWidth = 1.2;
         ctx.beginPath();
         ctx.moveTo(cx - axisExt, cy);
         ctx.lineTo(cx + axisExt, cy);
-        ctx.stroke();
-        ctx.beginPath();
         ctx.moveTo(cx, cy - axisExt);
         ctx.lineTo(cx, cy + axisExt);
         ctx.stroke();
 
-        // Axis ticks at ±1
+        // Unit ticks
         [
-          [cx + radius, cy - 4, cx + radius, cy + 4],
-          [cx - radius, cy - 4, cx - radius, cy + 4],
-          [cx - 4, cy - radius, cx + 4, cy - radius],
-          [cx - 4, cy + radius, cx + 4, cy + radius]
+          [cx + radius, cy - 3.5, cx + radius, cy + 3.5],
+          [cx - radius, cy - 3.5, cx - radius, cy + 3.5],
+          [cx - 3.5, cy - radius, cx + 3.5, cy - radius],
+          [cx - 3.5, cy + radius, cx + 3.5, cy + radius]
         ].forEach(function (t) {
           ctx.beginPath();
           ctx.moveTo(t[0], t[1]);
@@ -2197,10 +2690,10 @@
         });
         ctx.restore();
 
-        // Unit Circle
+        // Unit circle
         ctx.save();
         ctx.strokeStyle = '#1E293B';
-        ctx.lineWidth = 1.35;
+        ctx.lineWidth = 1.3;
         ctx.beginPath();
         ctx.arc(cx, cy, radius, 0, Math.PI * 2);
         ctx.stroke();
@@ -2208,44 +2701,42 @@
 
         // Axis labels
         ctx.save();
-        ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+        ctx.font = '600 11px "IBM Plex Mono", monospace';
         ctx.fillStyle = '#1E293B';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText('+|0\u27E9', cx + axisExt + 5, cy);
+        ctx.fillText('+|0\u27E9', cx + axisExt + 4, cy);
         ctx.textAlign = 'right';
-        ctx.fillText('-|0\u27E9', cx - axisExt - 5, cy);
+        ctx.fillText('-|0\u27E9', cx - axisExt - 4, cy);
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
-        ctx.fillText('+|1\u27E9', cx, cy - axisExt - 4);
+        ctx.fillText('+|1\u27E9', cx, cy - axisExt - 3);
         ctx.textBaseline = 'top';
-        ctx.fillText('-|1\u27E9', cx, cy + axisExt + 4);
+        ctx.fillText('-|1\u27E9', cx, cy + axisExt + 3);
         ctx.restore();
 
-        var alpha = ampToFloat(current.alpha);
-        var beta = ampToFloat(current.beta);
-        var tipX = cx + alpha * radius;
-        var tipY = cy - beta * radius;
+        // Compute plotted vector coordinates: signed real (Re α, Re β) when purely real, else magnitude (|α|, |β|)
+        var vx = purelyReal ? current.alpha.re : cMag(current.alpha);
+        var vy = purelyReal ? current.beta.re : cMag(current.beta);
+        var tipX = cx + vx * radius;
+        var tipY = cy - vy * radius;
 
-        // Previous state ghost vector & transition arc (if changed)
+        // Prior state ghost vector & arc when previous state differs
         if (previous) {
-          var prevA = ampToFloat(previous.alpha);
-          var prevB = ampToFloat(previous.beta);
-          var sameState = Math.abs(prevA - alpha) < 1e-9 && Math.abs(prevB - beta) < 1e-9;
-          if (!sameState) {
-            var pTipX = cx + prevA * radius;
-            var pTipY = cy - prevB * radius;
-            drawArrow(ctx, cx, cy, pTipX, pTipY, '#94A3B8', 1.5, true);
-
-            var a1 = Math.atan2(-prevB, prevA);
-            var a2 = Math.atan2(-beta, alpha);
+          var prevReal = isPurelyRealState(previous);
+          var pvx = prevReal ? previous.alpha.re : cMag(previous.alpha);
+          var pvy = prevReal ? previous.beta.re : cMag(previous.beta);
+          var sameVec = Math.abs(pvx - vx) < 1e-9 && Math.abs(pvy - vy) < 1e-9;
+          if (!sameVec) {
+            drawArrow(ctx, cx, cy, cx + pvx * radius, cy - pvy * radius, '#94A3B8', 1.4, true, 0.9);
+            var a1 = Math.atan2(-pvy, pvx);
+            var a2 = Math.atan2(-vy, vx);
             var diff = a2 - a1;
             while (diff > Math.PI) diff -= Math.PI * 2;
             while (diff < -Math.PI) diff += Math.PI * 2;
-
             ctx.save();
             ctx.strokeStyle = 'rgba(15, 118, 110, 0.45)';
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 1.4;
             ctx.setLineDash([4, 3]);
             ctx.beginPath();
             ctx.arc(cx, cy, radius * 0.42, a1, a1 + diff, diff < 0);
@@ -2254,97 +2745,117 @@
           }
         }
 
-        // Projection drop lines onto |0> and |1> axes
-        ctx.save();
-        ctx.strokeStyle = 'rgba(15, 118, 110, 0.55)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([3, 3]);
-        if (Math.abs(alpha) > 1e-6 && Math.abs(beta) > 1e-6) {
+        // Projection drop lines
+        if (Math.abs(vx) > 1e-6 && Math.abs(vy) > 1e-6) {
+          ctx.save();
+          ctx.strokeStyle = 'rgba(15, 118, 110, 0.55)';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([3, 3]);
           ctx.beginPath();
           ctx.moveTo(tipX, tipY);
           ctx.lineTo(tipX, cy);
           ctx.moveTo(tipX, tipY);
           ctx.lineTo(cx, tipY);
           ctx.stroke();
+          ctx.restore();
         }
-        ctx.restore();
 
-        // Angle arc from +|0> axis if non-zero
+        // Angle arc from +|0> axis
         var deg = getStateAngleDegrees(current);
         if (deg !== 0) {
-          var canvasAng = Math.atan2(-beta, alpha);
+          var canvasAng = Math.atan2(-vy, vx);
           ctx.save();
           ctx.strokeStyle = '#0F766E';
-          ctx.lineWidth = 1.25;
+          ctx.lineWidth = 1.2;
           ctx.beginPath();
-          ctx.arc(cx, cy, 22, 0, canvasAng, canvasAng < 0);
+          ctx.arc(cx, cy, 20, 0, canvasAng, canvasAng < 0);
           ctx.stroke();
           ctx.restore();
         }
 
-        // Current State Vector (bold deep teal arrow)
-        drawArrow(ctx, cx, cy, tipX, tipY, '#0F766E', 2.75, false);
+        // State vector arrow
+        drawArrow(ctx, cx, cy, tipX, tipY, '#0F766E', 2.6, false, 1);
 
-        // Origin & tip anchor dots
+        // Origin & tip markers
         ctx.save();
         ctx.fillStyle = '#1E293B';
         ctx.beginPath();
-        ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+        ctx.arc(cx, cy, 2.8, 0, Math.PI * 2);
         ctx.fill();
-
         ctx.fillStyle = '#FFFFFF';
         ctx.strokeStyle = '#0F766E';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1.9;
         ctx.beginPath();
-        ctx.arc(tipX, tipY, 4, 0, Math.PI * 2);
+        ctx.arc(tipX, tipY, 3.8, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
         ctx.restore();
 
-        // Coordinate callout in upper-left corner (zero overlap with axes or ±45° labels)
-        var coordText = compact
-          ? '(' + formatExactAmp(current.alpha) + ', ' + formatExactAmp(current.beta) + ')'
-          : '(\u03B1, \u03B2) = (' + formatExactAmp(current.alpha) + ', ' + formatExactAmp(current.beta) + ')';
+        // Compact corner mode/coordinate box (never collides with +|1>)
+        var coordText = purelyReal
+          ? '(' + formatComplexExact(current.alpha) + ', ' + formatComplexExact(current.beta) + ')'
+          : '(|a|,|b|) = (' + formatRealExact(cMag(current.alpha)) + ', ' + formatRealExact(cMag(current.beta)) + ')';
+        if (stacked) {
+          coordText = purelyReal
+            ? '(' + formatComplexExact(current.alpha) + ',' + formatComplexExact(current.beta) + ')'
+            : '|a|,' + '|b|=' + formatRealExact(cMag(current.alpha)) + ',' + formatRealExact(cMag(current.beta));
+        }
         ctx.save();
-        ctx.font = compact ? '600 10px "IBM Plex Mono", monospace' : '600 11px "IBM Plex Mono", monospace';
+        ctx.font = '600 10px "IBM Plex Mono", monospace';
         var tw = ctx.measureText(coordText).width;
         var boxW = tw + 10;
-        var boxH = compact ? 20 : 22;
-        var bx = 6;
-        var by = 6;
-
+        var boxH = 20;
         ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
         ctx.strokeStyle = '#0F766E';
         ctx.lineWidth = 1;
-        ctx.fillRect(bx, by, boxW, boxH);
-        ctx.strokeRect(bx, by, boxW, boxH);
-
+        ctx.fillRect(6, 6, boxW, boxH);
+        ctx.strokeRect(6, 6, boxW, boxH);
         ctx.fillStyle = '#0F766E';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText(coordText, bx + 6, by + boxH / 2 + 0.5);
+        ctx.fillText(coordText, 11, 16.5);
         ctx.restore();
 
-        // Update canvas attributes & header readout
-        var degSign = deg > 0 ? '+' + deg + '\u00B0' : deg + '\u00B0';
-        var aDec = alpha.toFixed(4);
-        var bDec = beta.toFixed(4);
-        elPlotAngle.textContent = '\u03B8 = ' + degSign + ' \u00B7 (' + aDec + ', ' + bDec + ')';
+        // Right/Bottom Zone: Dual Complex Phase Dials for α and β
+        if (stacked) {
+          var dialY = vecBoxH + (height - vecBoxH) / 2;
+          var dialR = Math.min(width * 0.14, (height - vecBoxH) * 0.27, 36);
+          drawPhaseDial(ctx, width * 0.27, dialY, dialR, current.alpha, 'Phase of \u03B1 (|0\u27E9)', '#0F766E');
+          drawPhaseDial(ctx, width * 0.73, dialY, dialR, current.beta, 'Phase of \u03B2 (|1\u27E9)', '#1E293B');
+        } else {
+          var dialZoneW = width - vecBoxW;
+          var dialX = vecBoxW + dialZoneW / 2;
+          var dialRDesktop = Math.min(dialZoneW * 0.21, height * 0.145, 37);
+          drawPhaseDial(ctx, dialX, height * 0.265, dialRDesktop, current.alpha, 'Phase of \u03B1 (|0\u27E9)', '#0F766E');
+          drawPhaseDial(ctx, dialX, height * 0.745, dialRDesktop, current.beta, 'Phase of \u03B2 (|1\u27E9)', '#1E293B');
+        }
 
-        canvas.setAttribute('data-alpha', formatExactAmp(current.alpha));
-        canvas.setAttribute('data-beta', formatExactAmp(current.beta));
+        // Update header readout & accessible attributes
+        var pAlpha = cPhaseDeg(current.alpha);
+        var pBeta = cPhaseDeg(current.beta);
+        var rel = getRelativePhaseDeg(current);
+        var degSign = deg > 0 ? '+' + deg + '\u00B0' : deg + '\u00B0';
+        var relText = rel === null ? '\u2014' : formatPhaseCardinal(rel);
+        elPlotAngle.textContent = (purelyReal ? '\u03B8 = ' + degSign : '|\u03B8| = ' + deg + '\u00B0') + ' \u00B7 \u0394\u03C6 = ' + relText;
+
+        canvas.setAttribute('data-alpha', formatComplexExact(current.alpha));
+        canvas.setAttribute('data-beta', formatComplexExact(current.beta));
         canvas.setAttribute('data-angle-deg', String(deg));
+        canvas.setAttribute('data-phase-alpha-deg', pAlpha === null ? 'none' : String(pAlpha));
+        canvas.setAttribute('data-phase-beta-deg', pBeta === null ? 'none' : String(pBeta));
+        canvas.setAttribute('data-rel-phase-deg', rel === null ? 'none' : String(rel));
+        canvas.setAttribute('data-is-complex', purelyReal ? 'false' : 'true');
         canvas.setAttribute('data-ket', formatKetNotation(current).ket);
         canvas.setAttribute(
           'aria-label',
-          '2D state vector plot: final state ' +
+          'State vector and complex phase plot: final state ' +
             formatKetNotation(current).ket +
-            ' at angle ' +
-            degSign +
-            ' with coordinates alpha ' +
-            aDec +
-            ' and beta ' +
-            bDec
+            ', alpha phase ' +
+            formatPhaseCardinal(pAlpha) +
+            ', beta phase ' +
+            formatPhaseCardinal(pBeta) +
+            ', relative phase ' +
+            relText
         );
       }
 
@@ -2352,7 +2863,7 @@
        * State Mutations & Recompute
        * ===================================================================== */
       function recomputeAndRender(clearMeasurement, scrollWireToEnd) {
-        appState.evaluation = evaluateCircuit(appState.initialBasis, appState.gateSequence);
+        appState.evaluation = evaluateCircuit(appState.initialId, appState.gateSequence);
         if (appState.gateSequence.length === 0) {
           appState.inspectedIndex = -1;
         } else if (appState.inspectedIndex >= appState.gateSequence.length || appState.inspectedIndex < 0) {
@@ -2372,8 +2883,15 @@
         }
       }
 
-      function handleToggleInitialBasis() {
-        appState.initialBasis = appState.initialBasis === '0' ? '1' : '0';
+      function handleCycleInitialState() {
+        var idx = CARDINAL_ORDER.indexOf(appState.initialId);
+        appState.initialId = CARDINAL_ORDER[(idx + 1) % CARDINAL_ORDER.length];
+        recomputeAndRender(true, false);
+      }
+
+      function handleSetInitialState(id) {
+        if (!CARDINAL_STATES[id]) return;
+        appState.initialId = id;
         recomputeAndRender(true, false);
       }
 
@@ -2412,7 +2930,7 @@
       }
 
       function handleResetCircuit() {
-        appState.initialBasis = '0';
+        appState.initialId = '0';
         appState.gateSequence = [];
         appState.inspectedIndex = -1;
         recomputeAndRender(true, false);
@@ -2425,16 +2943,21 @@
       }
 
       /* Wire Event Listeners */
-      btnToggleInit.addEventListener('click', handleToggleInitialBasis);
-      btnGateX.addEventListener('click', function () {
-        handleAppendGate('X');
-      });
-      btnGateH.addEventListener('click', function () {
-        handleAppendGate('H');
-      });
-      btnGateI.addEventListener('click', function () {
-        handleAppendGate('I');
-      });
+      btnToggleInit.addEventListener('click', handleCycleInitialState);
+      for (var k = 0; k < cardinalBtns.length; k += 1) {
+        (function (btn) {
+          btn.addEventListener('click', function () {
+            handleSetInitialState(btn.getAttribute('data-init-id'));
+          });
+        })(cardinalBtns[k]);
+      }
+
+      btnGateX.addEventListener('click', function () { handleAppendGate('X'); });
+      btnGateY.addEventListener('click', function () { handleAppendGate('Y'); });
+      btnGateZ.addEventListener('click', function () { handleAppendGate('Z'); });
+      btnGateH.addEventListener('click', function () { handleAppendGate('H'); });
+      btnGateS.addEventListener('click', function () { handleAppendGate('S'); });
+      btnGateI.addEventListener('click', function () { handleAppendGate('I'); });
       btnUndo.addEventListener('click', handleUndoLast);
       btnReset.addEventListener('click', handleResetCircuit);
       btnSimulate.addEventListener('click', handleSimulateShots);
