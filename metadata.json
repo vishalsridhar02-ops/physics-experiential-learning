@@ -1,0 +1,6 @@
+{
+  "name": "Interactive Single-Qubit Quantum Gate & Superposition Simulator",
+  "description": "An interactive single-qubit quantum gate and superposition simulator for Applied Physics Experiential Learning at Jain (Deemed-to-be University).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
