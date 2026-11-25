@@ -8,31 +8,69 @@
   <meta property="og:title" content="Interactive Single-Qubit Quantum Gate &amp; Superposition Simulator" />
   <meta property="og:description" content="Interactive Single-Qubit Quantum Gate &amp; Superposition Simulator with complex-number amplitudes and phase visualization for Applied Physics Experiential Learning at Jain (Deemed-to-be University)." />
   <meta property="og:type" content="website" />
+  <script data-guard="extension">
+    window.addEventListener('error', function (evt) {
+      var fromExtension =
+        (evt && typeof evt.filename === 'string' && evt.filename.indexOf('chrome-extension://') === 0) ||
+        (evt && evt.error && typeof evt.error.stack === 'string' && evt.error.stack.indexOf('chrome-extension://') !== -1);
+      if (fromExtension) {
+        evt.preventDefault();
+        evt.stopImmediatePropagation();
+      }
+    }, true);
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-paper: #F8F7F4;
+      --bg-white: #FFFFFF;
+      --bg-sky: #F0F7FF;
+      --bg-paper: #F8FAFC;
       --bg-surface: #FFFFFF;
-      --bg-subtle: #F2F0EB;
-      --ink-primary: #1E293B;
+      --bg-subtle: #F1F5F9;
+
+      --ink-primary: #0F172A;
+      --ink-body: #334155;
       --ink-secondary: #475569;
       --ink-muted: #64748B;
-      --accent: #0F766E;
-      --accent-hover: #115E59;
-      --accent-soft: rgba(15, 118, 110, 0.08);
-      --grid-minor: rgba(30, 41, 59, 0.045);
-      --grid-major: rgba(30, 41, 59, 0.09);
-      --border-ink: #1E293B;
-      --border-hairline: #CBD5E1;
-      --radius: 3px;
-      --font-sans: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+      /* Bright Scientific Editorial Palette */
+      --cobalt: #1D4ED8;
+      --cobalt-hover: #1E40AF;
+      --cobalt-soft: #EFF6FF;
+      --cobalt-border: #BFDBFE;
+
+      --accent: #0891B2;
+      --accent-hover: #0E7490;
+      --accent-soft: #ECFEFF;
+      --accent-border: #A5F3FC;
+
+      --indigo: #4338CA;
+      --indigo-soft: #EEF2FF;
+      --indigo-border: #C7D2FE;
+
+      --amber: #D97706;
+      --amber-text: #B45309;
+      --amber-soft: #FFFBEB;
+      --amber-border: #FDE68A;
+
+      --border-ink: #CBD5E1;
+      --border-strong: #94A3B8;
+      --border-hairline: #E2E8F0;
+      --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+      --radius: 8px;
+      --radius-sm: 6px;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
     *, *::before, *::after {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     html, body {
@@ -41,100 +79,883 @@
       min-height: 100%;
       color: var(--ink-primary);
       font-family: var(--font-sans);
-      font-size: 14px;
-      line-height: 1.45;
-      background-color: var(--bg-paper);
-      background-image:
-        linear-gradient(to right, var(--grid-major) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--grid-major) 1px, transparent 1px),
-        linear-gradient(to right, var(--grid-minor) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--grid-minor) 1px, transparent 1px);
-      background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+      font-size: 15px;
+      line-height: 1.55;
+      background-color: var(--bg-white);
       -webkit-font-smoothing: antialiased;
+    }
+
+    #top,
+    #concepts,
+    #physics-laws,
+    #gates,
+    #applications,
+    #simulator-lab,
+    #simulator-main {
+      scroll-margin-top: 74px;
     }
 
     .skip-link {
       position: absolute;
       left: -9999px;
       top: 0;
-      background: var(--accent);
+      background: var(--cobalt);
       color: #FFFFFF;
-      padding: 8px 14px;
+      padding: 10px 16px;
       font-weight: 600;
       text-decoration: none;
-      z-index: 100;
+      border-radius: 0 0 6px 0;
+      z-index: 200;
     }
     .skip-link:focus {
       left: 12px;
       top: 12px;
     }
 
-    .app-shell {
-      max-width: 1380px;
+    /* =====================================================================
+     * Sticky Top Navigation Bar (Strict 3-Zone Contract)
+     * ===================================================================== */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .site-nav-inner {
+      max-width: 1320px;
       margin: 0 auto;
-      padding: 10px 20px 16px;
+      padding: 11px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+    }
+
+    .nav-brand {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--ink-primary);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .nav-brand .brand-accent {
+      color: var(--cobalt);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-link {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      padding: 4px 0;
+      border-bottom: 2px solid transparent;
+      transition: color 150ms ease, border-color 150ms ease;
+    }
+
+    .nav-link:hover {
+      color: var(--cobalt);
+      border-bottom-color: var(--cobalt);
+    }
+
+    .nav-link:focus-visible {
+      outline: 2px solid var(--cobalt);
+      outline-offset: 4px;
+      border-radius: 3px;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      min-height: 38px;
+      background: var(--cobalt);
+      color: #FFFFFF;
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background-color 150ms ease, transform 100ms ease;
+    }
+
+    .nav-cta:hover {
+      background: var(--cobalt-hover);
+    }
+
+    .nav-cta:active {
+      transform: translateY(1px);
+    }
+
+    .nav-cta:focus-visible {
+      outline: 2px solid var(--cobalt);
+      outline-offset: 2px;
+    }
+
+    /* =====================================================================
+     * Editorial Page Bands & Shared Containers
+     * ===================================================================== */
+    .band {
+      width: 100%;
+      padding: 44px 0;
+    }
+
+    .band-white {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .band-sky {
+      background: var(--bg-sky);
+      border-bottom: 1px solid #DBEAFE;
+    }
+
+    .band-hero {
+      background: linear-gradient(180deg, #F0F7FF 0%, #FFFFFF 100%);
+      border-bottom: 1px solid #DBEAFE;
+      padding: 42px 0 46px;
+    }
+
+    .band-lab {
+      background: var(--bg-sky);
+      border-bottom: 1px solid #DBEAFE;
+      padding: 42px 0 52px;
+    }
+
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-head {
+      max-width: 780px;
+      margin-bottom: 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .section-kicker {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--cobalt);
+      letter-spacing: 0.01em;
+    }
+
+    .section-kicker.is-teal {
+      color: var(--accent);
+    }
+
+    .section-kicker.is-indigo {
+      color: var(--indigo);
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: clamp(24px, 2.5vw, 32px);
+      font-weight: 800;
+      color: var(--ink-primary);
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+      text-wrap: balance;
+    }
+
+    .section-lead {
+      margin: 2px 0 0;
+      font-size: 15.5px;
+      line-height: 1.6;
+      color: var(--ink-body);
+    }
+
+    /* =====================================================================
+     * Hero Banner (Learn -> Visualize -> Practice)
+     * ===================================================================== */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 36px;
+      align-items: center;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .hero-pathway {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.01em;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-size: clamp(30px, 3.3vw, 44px);
+      font-weight: 800;
+      color: var(--ink-primary);
+      letter-spacing: -0.03em;
+      line-height: 1.14;
+      text-wrap: balance;
+    }
+
+    .hero-title-accent {
+      color: var(--cobalt);
+    }
+
+    .hero-tagline {
+      margin: 0;
+      font-size: 16.5px;
+      line-height: 1.62;
+      color: var(--ink-body);
+      max-width: 62ch;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .hero-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      min-height: 44px;
+      background: var(--cobalt);
+      color: #FFFFFF;
+      font-size: 14.5px;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--cobalt);
+      white-space: nowrap;
+      transition: background-color 150ms ease, transform 100ms ease;
+    }
+
+    .hero-btn-primary:hover {
+      background: var(--cobalt-hover);
+      border-color: var(--cobalt-hover);
+    }
+
+    .hero-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      min-height: 44px;
+      background: var(--bg-white);
+      color: var(--ink-primary);
+      font-size: 14.5px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-ink);
+      white-space: nowrap;
+      transition: border-color 150ms ease, color 150ms ease, background-color 150ms ease;
+    }
+
+    .hero-btn-secondary:hover {
+      border-color: var(--cobalt);
+      color: var(--cobalt);
+      background: var(--cobalt-soft);
+    }
+
+    .hero-btn-primary:focus-visible,
+    .hero-btn-secondary:focus-visible {
+      outline: 2px solid var(--cobalt);
+      outline-offset: 2px;
+    }
+
+    .hero-specs {
+      margin-top: 6px;
+      padding-top: 14px;
+      border-top: 1px solid #DBEAFE;
+      font-size: 13px;
+      color: var(--ink-secondary);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+      align-items: center;
+    }
+
+    .hero-specs strong {
+      color: var(--ink-primary);
+      font-weight: 700;
+    }
+
+    .hero-visual-frame {
+      background: var(--bg-white);
+      border: 1px solid #DBEAFE;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(29, 78, 216, 0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-svg {
+      width: 100%;
+      height: auto;
+      max-width: 470px;
+      display: block;
+    }
+
+    .hero-visual-caption {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--ink-secondary);
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* =====================================================================
+     * Section 1: From Bits to Qubits (Comparison + Did You Know Callout)
+     * ===================================================================== */
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .concept-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .concept-card.is-classical {
+      border-color: var(--amber-border);
+    }
+
+    .concept-card.is-quantum {
+      border-color: var(--accent-border);
+    }
+
+    .concept-card-top {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .concept-card.is-classical .concept-card-top {
+      background: var(--amber-soft);
+      border-bottom-color: var(--amber-border);
+    }
+
+    .concept-card.is-quantum .concept-card-top {
+      background: var(--accent-soft);
+      border-bottom-color: var(--accent-border);
+    }
+
+    .concept-card-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink-primary);
+    }
+
+    .concept-card-tag {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .concept-card.is-classical .concept-card-tag {
+      color: var(--amber-text);
+    }
+
+    .concept-card.is-quantum .concept-card-tag {
+      color: var(--accent-hover);
+    }
+
+    .concept-card-body {
+      padding: 18px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .concept-svg-box {
+      background: var(--bg-paper);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .concept-svg-box svg {
+      width: 100%;
+      max-width: 440px;
+      height: auto;
+      display: block;
+    }
+
+    .concept-points {
+      margin: 0;
+      padding: 0 0 0 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      font-size: 14px;
+      color: var(--ink-body);
+    }
+
+    .concept-points strong {
+      color: var(--ink-primary);
+    }
+
+    .concept-points code {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--indigo);
+      font-weight: 600;
+    }
+
+    .callout-dyk {
+      margin-top: 20px;
+      background: var(--amber-soft);
+      border: 1px solid var(--amber-border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .callout-dyk-copy {
+      max-width: 860px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .callout-dyk-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--amber-text);
+    }
+
+    .callout-dyk-text {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--ink-primary);
+    }
+
+    .callout-dyk-text code {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--cobalt);
+    }
+
+    .btn-amber {
+      background: var(--amber);
+      border-color: var(--amber);
+      color: #FFFFFF;
+    }
+
+    .btn-amber:hover:not(:disabled) {
+      background: #B45309;
+      border-color: #B45309;
+    }
+
+    /* =====================================================================
+     * Section 2: The 7 Physics Laws Grid
+     * ===================================================================== */
+    .laws-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .law-card {
+      background: var(--bg-white);
+      border: 1px solid #DBEAFE;
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .law-card.is-wide {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: 20px;
+      align-items: center;
+      background: linear-gradient(90deg, #FFFFFF 0%, #EEF2FF 100%);
+      border-color: var(--indigo-border);
+    }
+
+    .law-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .law-num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--cobalt);
+    }
+
+    .law-card.is-teal .law-num { color: var(--accent); }
+    .law-card.is-indigo .law-num { color: var(--indigo); }
+    .law-card.is-amber .law-num { color: var(--amber-text); }
+
+    .law-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink-primary);
+      line-height: 1.3;
+    }
+
+    .law-formula {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--cobalt);
+      background: var(--cobalt-soft);
+      border: 1px solid var(--cobalt-border);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      line-height: 1.4;
+    }
+
+    .law-card.is-teal .law-formula {
+      color: var(--accent-hover);
+      background: var(--accent-soft);
+      border-color: var(--accent-border);
+    }
+
+    .law-card.is-indigo .law-formula {
+      color: var(--indigo);
+      background: var(--indigo-soft);
+      border-color: var(--indigo-border);
+    }
+
+    .law-card.is-amber .law-formula {
+      color: var(--amber-text);
+      background: var(--amber-soft);
+      border-color: var(--amber-border);
+    }
+
+    .law-desc {
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: var(--ink-body);
+    }
+
+    .law-bloch-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--bg-white);
+      border: 1px solid var(--indigo-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-variant-numeric: tabular-nums;
+      color: var(--ink-primary);
+    }
+
+    .law-bloch-box span strong {
+      color: var(--indigo);
+    }
+
+    /* =====================================================================
+     * Section 3: 6 Quantum Gates + Real-World Applications
+     * ===================================================================== */
+    .gate-ref-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .gate-ref-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
 
-    /* Academic Top Bar */
-    .academic-header {
-      background: var(--bg-surface);
-      border: 1.5px solid var(--border-ink);
+    .gate-ref-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .gate-ref-id {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .gate-ref-tile {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 700;
+      flex-shrink: 0;
+      color: #FFFFFF;
+      background: var(--cobalt);
+    }
+
+    .gate-ref-tile.is-teal { background: var(--accent); }
+    .gate-ref-tile.is-indigo { background: var(--indigo); }
+    .gate-ref-tile.is-slate { background: #334155; }
+
+    .gate-ref-name {
+      margin: 0;
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--ink-primary);
+      line-height: 1.2;
+    }
+
+    .gate-ref-axis {
+      font-size: 12px;
+      color: var(--ink-secondary);
+    }
+
+    .ref-mat-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      color: var(--ink-primary);
+      flex-shrink: 0;
+    }
+
+    .ref-mat-scalar {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .ref-mat-box {
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      column-gap: 8px;
+      row-gap: 2px;
+      padding: 3px 7px;
+      border-left: 1.5px solid var(--ink-primary);
+      border-right: 1.5px solid var(--ink-primary);
+      border-radius: 2px;
+      text-align: right;
+      line-height: 1.3;
+      font-weight: 600;
+      background: var(--bg-paper);
+    }
+
+    .gate-ref-action {
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--ink-body);
+    }
+
+    .apps-subhead {
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border-hairline);
+    }
+
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .app-card {
+      background: var(--bg-paper);
+      border: 1px solid var(--border-hairline);
       border-radius: var(--radius);
-      padding: 8px 16px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 12px;
     }
 
-    .academic-institution {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--ink-secondary);
-      letter-spacing: 0.01em;
-    }
-
-    .academic-title-row {
+    .app-svg-wrap {
+      background: var(--bg-white);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-sm);
+      padding: 10px;
       display: flex;
-      align-items: baseline;
+      align-items: center;
+      justify-content: center;
+      min-height: 126px;
+    }
+
+    .app-svg-wrap svg {
+      width: 100%;
+      max-width: 280px;
+      height: auto;
+      display: block;
+    }
+
+    .app-card-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink-primary);
+    }
+
+    .app-card-desc {
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: var(--ink-body);
+    }
+
+    /* =====================================================================
+     * Final Section (#simulator-lab): Hands-On Quantum Workbench Banner
+     * ===================================================================== */
+    .lab-banner {
+      background: linear-gradient(120deg, #1D4ED8 0%, #4338CA 55%, #0891B2 100%);
+      color: #FFFFFF;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 18px;
       flex-wrap: wrap;
     }
 
-    .academic-title {
-      margin: 0;
-      font-size: clamp(18px, 1.75vw, 21px);
-      font-weight: 700;
-      color: var(--ink-primary);
-      letter-spacing: -0.015em;
-      line-height: 1.25;
-      text-wrap: balance;
+    .lab-banner-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-width: 780px;
     }
 
-    .academic-notation-hint {
+    .lab-banner-kicker {
       font-family: var(--font-mono);
-      font-size: 11.5px;
-      color: var(--ink-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      color: #BAE6FD;
+    }
+
+    .lab-banner-title {
+      margin: 0;
+      font-size: clamp(22px, 2.2vw, 28px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color: #FFFFFF;
+    }
+
+    .lab-banner-sub {
+      margin: 0;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.5;
+    }
+
+    .lab-banner-eq {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
       white-space: nowrap;
     }
 
-    /* Drafting Sheet Panel */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Harmonized Workbench Panel */
     .panel {
       background: var(--bg-surface);
       border: 1px solid var(--border-ink);
       border-radius: var(--radius);
+      box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
       min-width: 0;
+      overflow: hidden;
     }
 
     .panel-header {
-      padding: 7px 14px;
+      padding: 9px 14px;
       border-bottom: 1px solid var(--border-hairline);
-      background: var(--bg-subtle);
+      background: var(--bg-paper);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -143,10 +964,10 @@
 
     .panel-title {
       margin: 0;
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 13.5px;
+      font-weight: 700;
       color: var(--ink-primary);
-      letter-spacing: 0.01em;
+      letter-spacing: -0.01em;
     }
 
     .panel-meta {
@@ -158,11 +979,11 @@
     }
 
     .panel-body {
-      padding: 10px 14px;
+      padding: 12px 14px;
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 9px;
+      gap: 10px;
       min-width: 0;
     }
 
@@ -173,13 +994,15 @@
       background: var(--bg-surface);
       border: 1px solid var(--border-ink);
       border-radius: var(--radius);
+      box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     .palette-bar {
-      padding: 7px 14px;
-      background: var(--bg-subtle);
+      padding: 9px 14px;
+      background: var(--bg-paper);
       border-bottom: 1px solid var(--border-hairline);
       display: flex;
       align-items: center;
@@ -633,8 +1456,15 @@
     }
 
     /* =====================================================================
-     * Main 2-Column Technical Workbench Grid
+     * Visualization Row (2D Plots + 3D Bloch Sphere) & Workbench Grid
      * ===================================================================== */
+    .viz-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.32fr) minmax(0, 0.88fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
     .workbench-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.06fr) minmax(0, 1.14fr);
@@ -653,16 +1483,16 @@
       flex: 1;
     }
 
-    /* 2D State-Vector & Complex Phase Plot Canvas */
+    /* 2D State-Vector & 3D Bloch Sphere Canvases */
     .canvas-stage {
       position: relative;
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #FCFBF9;
+      background: #FFFFFF;
       border: 1px solid var(--border-hairline);
-      border-radius: 2px;
+      border-radius: var(--radius-sm);
       padding: 4px;
     }
 
@@ -671,6 +1501,32 @@
       width: 100%;
       height: 274px;
       cursor: crosshair;
+    }
+
+    #blochCanvas {
+      display: block;
+      width: 100%;
+      height: 274px;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    #blochCanvas.is-dragging {
+      cursor: grabbing;
+    }
+
+    .panel-header-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-compact {
+      min-height: 24px;
+      padding: 3px 8px;
+      font-size: 11.5px;
+      font-weight: 600;
     }
 
     .plot-legend {
@@ -893,27 +1749,24 @@
       justify-content: space-between;
       gap: 8px;
       flex-wrap: wrap;
-      padding: 5px 10px;
+      padding: 7px 11px;
       border: 1px solid var(--border-hairline);
-      border-left: 3px solid var(--ink-muted);
-      border-radius: 2px;
-      background: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--bg-paper);
       font-size: 12px;
       line-height: 1.35;
     }
 
     .phase-status-row.is-superposition {
-      background: var(--accent-soft);
-      border-color: #99F6E4;
-      border-left: 3px solid var(--accent);
+      background: var(--indigo-soft);
+      border-color: var(--indigo-border);
     }
 
     .phase-status-key {
       font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
+      font-weight: 700;
+      letter-spacing: 0.01em;
       color: var(--ink-secondary);
-      text-transform: uppercase;
     }
 
     .phase-status-val {
@@ -925,7 +1778,7 @@
     }
 
     .phase-status-row.is-superposition .phase-status-val {
-      color: #115E59;
+      color: var(--indigo);
     }
 
     .amp-grid {
@@ -1157,23 +2010,285 @@
       padding: 8px 0;
     }
 
-    /* Responsive Breakpoints */
+    /* =====================================================================
+     * Live Quantum vs. Classical Comparison Strip (inside #simulator-lab)
+     * ===================================================================== */
+    .qvc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .qvc-col {
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      border: 1px solid var(--border-hairline);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .qvc-col.is-quantum {
+      background: var(--accent-soft);
+      border-color: var(--accent-border);
+    }
+
+    .qvc-col.is-classical {
+      background: var(--amber-soft);
+      border-color: var(--amber-border);
+    }
+
+    .qvc-col-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--ink-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .qvc-col.is-quantum .qvc-col-title { color: var(--accent-hover); }
+    .qvc-col.is-classical .qvc-col-title { color: var(--amber-text); }
+
+    .qvc-metric {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .qvc-desc {
+      margin: 0;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--ink-body);
+    }
+
+    /* =====================================================================
+     * Academic Footer
+     * ===================================================================== */
+    .academic-footer {
+      background: #0F172A;
+      color: #E2E8F0;
+      padding: 38px 0 26px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: 28px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .footer-institution {
+      font-size: 17px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+    }
+
+    .footer-unit {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #7DD3FC;
+    }
+
+    .footer-course {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #CBD5E1;
+    }
+
+    .footer-desc {
+      margin: 6px 0 0;
+      font-size: 13px;
+      color: #94A3B8;
+      line-height: 1.55;
+      max-width: 60ch;
+    }
+
+    .footer-credits-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-credit-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .footer-credit-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: #7DD3FC;
+    }
+
+    .footer-credit-val {
+      font-size: 13px;
+      color: #F1F5F9;
+      line-height: 1.45;
+    }
+
+    .footer-credit-val a {
+      color: #93C5FD;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .footer-credit-val a:hover {
+      color: #FFFFFF;
+    }
+
+    .footer-bottom {
+      padding-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .footer-nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-nav-link {
+      font-size: 13px;
+      font-weight: 600;
+      color: #CBD5E1;
+      text-decoration: none;
+      transition: color 140ms ease;
+    }
+
+    .footer-nav-link:hover {
+      color: #FFFFFF;
+    }
+
+    .footer-nav-link:focus-visible {
+      outline: 2px solid #7DD3FC;
+      outline-offset: 3px;
+      border-radius: 3px;
+    }
+
+    .footer-copy-note {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: #94A3B8;
+    }
+
+    /* =====================================================================
+     * Responsive Breakpoints
+     * ===================================================================== */
     @media (max-width: 1080px) {
-      .workbench-grid {
+      .hero-grid,
+      .viz-grid,
+      .workbench-grid,
+      .laws-grid,
+      .gate-ref-grid,
+      .apps-grid,
+      .footer-grid {
         grid-template-columns: 1fr;
       }
-      #stateCanvas {
+      .law-card.is-wide {
+        grid-template-columns: 1fr;
+      }
+      #stateCanvas,
+      #blochCanvas {
         height: 295px;
       }
     }
 
+    @media (max-width: 920px) {
+      .nav-links {
+        display: none;
+      }
+      .concept-grid,
+      .qvc-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 680px) {
-      .app-shell {
-        padding: 10px 12px 18px;
+      .site-nav-inner {
+        padding: 10px 14px;
+        gap: 10px;
+      }
+      .nav-brand {
+        font-size: 12.5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 60vw;
+      }
+      .nav-cta {
+        padding: 8px 12px;
+        font-size: 12.5px;
+        min-height: 36px;
+      }
+      .hero-visual-caption {
+        font-size: 11px;
+        line-height: 1.5;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .nav-brand {
+        max-width: none;
+        font-size: 12.5px;
+      }
+      .nav-brand .brand-accent {
+        display: none;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .band,
+      .band-hero,
+      .band-lab {
+        padding: 28px 0;
+      }
+      .container {
+        padding: 0 14px;
+      }
+      .hero-actions {
+        width: 100%;
+      }
+      .hero-btn-primary,
+      .hero-btn-secondary {
+        flex: 1 1 auto;
+      }
+      .lab-banner {
+        padding: 16px;
+      }
+      .lab-banner-eq {
+        white-space: normal;
+        font-size: 11.5px;
       }
       .btn {
         min-height: 38px;
         padding: 8px 10px;
+      }
+      .btn-compact {
+        min-height: 30px;
+        padding: 4px 9px;
       }
       .wire-row {
         flex-wrap: wrap;
@@ -1190,20 +2305,28 @@
       .amp-grid {
         grid-template-columns: 1fr;
       }
-      .academic-notation-hint {
-        display: none;
-      }
       #stateCanvas {
-        height: 390px;
+        height: 430px;
+      }
+      #blochCanvas {
+        height: 310px;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
       .btn,
+      .nav-link,
+      .nav-cta,
+      .hero-btn-primary,
+      .hero-btn-secondary,
       .init-block-btn,
       .wire-gate-tile,
       .tile-remove-btn,
       .btn-cardinal,
+      .footer-nav-link,
       .bar-fill-0,
       .bar-fill-1,
       .readout-fill-0,
@@ -1214,21 +2337,558 @@
   </style>
 </head>
 <body>
-  <a href="#simulator-main" class="skip-link">Skip to simulator</a>
+  <a href="#simulator-lab" class="skip-link">Skip to interactive simulator</a>
 
-  <div class="app-shell">
-    <!-- Academic Header -->
-    <header class="academic-header" role="banner">
-      <div class="academic-institution">
-        Jain (Deemed-to-be University) | Department of Physics | Applied Physics - Experiential Learning
-      </div>
-      <div class="academic-title-row">
-        <h1 class="academic-title">Interactive Single-Qubit Quantum Gate &amp; Superposition Simulator</h1>
-        <span class="academic-notation-hint" aria-label="Complex single qubit state equation">|&#968;&#10217; = &#945;|0&#10217; + &#946;|1&#10217;, &#945;,&#946; &#8712; &#8450;, |&#945;|&sup2; + |&#946;|&sup2; = 1</span>
-      </div>
-    </header>
+  <!-- Sticky 3-Zone Top Navigation Bar -->
+  <header class="site-nav" role="banner">
+    <div class="site-nav-inner">
+      <a href="#top" class="nav-brand">
+        Jain (Deemed-to-be University) <span class="brand-accent">| Applied Physics</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary learning sections">
+        <a href="#concepts" class="nav-link">Concepts</a>
+        <a href="#physics-laws" class="nav-link">Physics Laws</a>
+        <a href="#gates" class="nav-link">Gates</a>
+        <a href="#applications" class="nav-link">Applications</a>
+      </nav>
+      <a href="#simulator-lab" class="nav-cta" aria-label="Scroll down to launch the interactive quantum simulator">Launch Simulator &#8595;</a>
+    </div>
+  </header>
 
-    <main id="simulator-main" aria-label="Single-Qubit Quantum Gate Simulator">
+  <!-- Hero Banner: Learn -> Visualize -> Practice -->
+  <section id="top" class="band-hero" aria-labelledby="hero-title">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="hero-pathway">Learn &rarr; Visualize &rarr; Practice &middot; Applied Physics Experiential Learning</div>
+          <h1 id="hero-title" class="hero-title">
+            Interactive Single-Qubit <span class="hero-title-accent">Quantum Gate &amp; Superposition</span> Simulator
+          </h1>
+          <p class="hero-tagline">
+            Discover how a single quantum bit goes far beyond classical 0 and 1 using complex probability amplitudes, continuous 3D Bloch sphere rotations, relative quantum phase, and Born-rule wavefunction collapse.
+          </p>
+          <div class="hero-actions">
+            <a href="#simulator-lab" class="hero-btn-primary">Launch Simulator &#8595;</a>
+            <a href="#concepts" class="hero-btn-secondary">Start Learning &#8595;</a>
+          </div>
+          <div class="hero-specs">
+            <span><strong>6 Cardinal States</strong> |0&#10217;, |1&#10217;, |+&#10217;, |&minus;&#10217;, |+i&#10217;, |&minus;i&#10217;</span>
+            <span aria-hidden="true">&middot;</span>
+            <span><strong>6 Unitary Gates</strong> X, Y, Z, H, S, I</span>
+            <span aria-hidden="true">&middot;</span>
+            <span><strong>Live 2D Phase &amp; 3D Bloch</strong></span>
+          </div>
+        </div>
+
+        <!-- Crisp Custom Inline SVG Hero Illustration: Glowing 3D Bloch Sphere & Quantum Wave Rings -->
+        <div class="hero-visual-frame">
+          <svg class="hero-svg" viewBox="0 0 460 320" role="img" aria-label="Stylized glowing 3D Bloch sphere surrounded by concentric quantum wave rings showing ket 0, ket 1, ket plus, ket plus i, and state vector ket psi">
+            <defs>
+              <radialGradient id="heroHalo" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.28" />
+                <stop offset="55%" stop-color="#4338CA" stop-opacity="0.10" />
+                <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+              </radialGradient>
+              <radialGradient id="sphereFill" cx="38%" cy="32%" r="68%">
+                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.98" />
+                <stop offset="55%" stop-color="#E0F2FE" stop-opacity="0.65" />
+                <stop offset="100%" stop-color="#C7D2FE" stop-opacity="0.52" />
+              </radialGradient>
+              <linearGradient id="vecGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#1D4ED8" />
+                <stop offset="55%" stop-color="#0891B2" />
+                <stop offset="100%" stop-color="#06B6D4" />
+              </linearGradient>
+              <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1D4ED8" stop-opacity="0.42" />
+                <stop offset="50%" stop-color="#0891B2" stop-opacity="0.55" />
+                <stop offset="100%" stop-color="#4338CA" stop-opacity="0.38" />
+              </linearGradient>
+            </defs>
+
+            <!-- Soft luminous aura -->
+            <circle cx="230" cy="160" r="150" fill="url(#heroHalo)" />
+
+            <!-- Concentric Quantum Wave Rings -->
+            <ellipse cx="230" cy="160" rx="192" ry="62" fill="none" stroke="url(#ringGrad)" stroke-width="1.4" stroke-dasharray="6 6" transform="rotate(-14 230 160)" />
+            <ellipse cx="230" cy="160" rx="164" ry="48" fill="none" stroke="#0891B2" stroke-opacity="0.30" stroke-width="1.3" transform="rotate(11 230 160)" />
+            <ellipse cx="230" cy="160" rx="140" ry="38" fill="none" stroke="#4338CA" stroke-opacity="0.22" stroke-width="1.2" stroke-dasharray="3 5" transform="rotate(-4 230 160)" />
+
+            <!-- Main Bloch Sphere Body -->
+            <circle cx="230" cy="160" r="102" fill="url(#sphereFill)" stroke="#1D4ED8" stroke-width="1.8" />
+
+            <!-- Back dashed meridian & equator arcs -->
+            <ellipse cx="230" cy="160" rx="102" ry="34" fill="none" stroke="#4338CA" stroke-opacity="0.35" stroke-width="1.3" stroke-dasharray="4 4" />
+            <ellipse cx="230" cy="160" rx="44" ry="102" fill="none" stroke="#1D4ED8" stroke-opacity="0.25" stroke-width="1.2" stroke-dasharray="4 4" />
+
+            <!-- Front Equator Arc -->
+            <path d="M 128 160 A 102 34 0 0 0 332 160" fill="none" stroke="#4338CA" stroke-width="1.8" />
+            <!-- Front Prime Meridian Arc -->
+            <path d="M 230 58 A 44 102 0 0 1 230 262" fill="none" stroke="#1D4ED8" stroke-opacity="0.55" stroke-width="1.4" />
+
+            <!-- Orthogonal Axes -->
+            <line x1="230" y1="36" x2="230" y2="284" stroke="#0F172A" stroke-opacity="0.55" stroke-width="1.3" />
+            <line x1="112" y1="160" x2="348" y2="160" stroke="#0F172A" stroke-opacity="0.45" stroke-width="1.2" />
+            <line x1="166" y1="196" x2="294" y2="124" stroke="#0F172A" stroke-opacity="0.40" stroke-width="1.2" stroke-dasharray="3 3" />
+
+            <!-- Equatorial Projection Lines for |psi> -->
+            <line x1="230" y1="160" x2="286" y2="177" stroke="#4338CA" stroke-width="1.4" stroke-dasharray="4 3" />
+            <line x1="286" y1="100" x2="286" y2="177" stroke="#0891B2" stroke-width="1.4" stroke-dasharray="4 3" />
+            <circle cx="286" cy="177" r="3.5" fill="#4338CA" />
+
+            <!-- Polar angle theta & azimuthal angle phi arcs -->
+            <path d="M 230 124 A 36 36 0 0 1 258 134" fill="none" stroke="#0891B2" stroke-width="1.7" />
+            <text x="247" y="121" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700" fill="#0891B2">&#952;</text>
+            <path d="M 206 174 A 34 14 0 0 0 256 168" fill="none" stroke="#4338CA" stroke-width="1.6" />
+            <text x="242" y="185" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700" fill="#4338CA">&#966;</text>
+
+            <!-- Bold Quantum State Vector |psi> -->
+            <line x1="230" y1="160" x2="283" y2="103" stroke="url(#vecGrad)" stroke-width="3.6" stroke-linecap="round" />
+            <polygon points="287,98 274,104 282,112" fill="#0891B2" />
+            <circle cx="230" cy="160" r="4" fill="#0F172A" />
+            <circle cx="286" cy="100" r="9" fill="#0891B2" fill-opacity="0.22" />
+            <circle cx="286" cy="100" r="4.8" fill="#FFFFFF" stroke="#0891B2" stroke-width="2.4" />
+
+            <!-- State Tag |psi> -->
+            <rect x="296" y="76" width="104" height="24" rx="5" fill="#FFFFFF" stroke="#0891B2" stroke-width="1.4" />
+            <text x="348" y="92" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="700" fill="#0E7490">|&#968;&#10217; = &#945;|0&#10217;+&#946;|1&#10217;</text>
+
+            <!-- Cardinal Pole & Equator Labels -->
+            <circle cx="230" cy="58" r="3.8" fill="#1D4ED8" />
+            <text x="230" y="26" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="700" fill="#1D4ED8" paint-order="stroke" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round">|0&#10217; (+Z)</text>
+
+            <circle cx="230" cy="262" r="3.8" fill="#1D4ED8" />
+            <text x="230" y="302" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="700" fill="#1D4ED8" paint-order="stroke" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round">|1&#10217; (&minus;Z)</text>
+
+            <circle cx="174" cy="191" r="3.5" fill="#0891B2" />
+            <text x="136" y="218" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700" fill="#0E7490" paint-order="stroke" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round">|+&#10217; (+X)</text>
+
+            <circle cx="332" cy="160" r="3.5" fill="#4338CA" />
+            <text x="384" y="164" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700" fill="#4338CA" paint-order="stroke" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round">|+i&#10217; (+Y)</text>
+
+            <circle cx="128" cy="160" r="3.2" fill="#64748B" />
+            <text x="76" y="164" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="600" fill="#475569" paint-order="stroke" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round">|&minus;i&#10217; (&minus;Y)</text>
+          </svg>
+          <div class="hero-visual-caption">Bloch Sphere State Representation &middot; |&#968;&#10217; = cos(&#952;/2)|0&#10217; + e<sup>i&#966;</sup>sin(&#952;/2)|1&#10217;</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 1: From Bits to Qubits -->
+  <section id="concepts" class="band band-white" aria-labelledby="concepts-heading">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-kicker">01 &middot; Core Concepts</span>
+        <h2 id="concepts-heading" class="section-title">From Bits to Qubits: Why Quantum Is Different</h2>
+        <p class="section-lead">
+          Classical computers store information in binary switches that are strictly 0 or 1. A qubit lives in a continuous two-dimensional complex vector space, unlocking superposition and phase interference.
+        </p>
+      </div>
+
+      <div class="concept-grid">
+        <!-- Classical Bit Card -->
+        <article class="concept-card is-classical" aria-labelledby="classical-card-title">
+          <div class="concept-card-top">
+            <h3 id="classical-card-title" class="concept-card-title">Classical Bit</h3>
+            <span class="concept-card-tag">Rigid Binary: {0, 1}</span>
+          </div>
+          <div class="concept-card-body">
+            <div class="concept-svg-box">
+              <svg viewBox="0 0 420 130" role="img" aria-label="Diagram of a classical binary switch restricted strictly to 0 or 1 discrete states">
+                <!-- Left 0 state -->
+                <rect x="18" y="26" width="96" height="78" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2" />
+                <text x="66" y="64" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="28" font-weight="700" fill="#B45309">0</text>
+                <text x="66" y="88" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="600" fill="#64748B">OFF / LOW</text>
+
+                <!-- Center Toggle Switch -->
+                <line x1="126" y1="65" x2="162" y2="65" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="4 3" />
+                <rect x="166" y="42" width="88" height="46" rx="23" fill="#FEF3C7" stroke="#D97706" stroke-width="2" />
+                <circle cx="190" cy="65" r="16" fill="#D97706" />
+                <text x="210" y="106" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600" fill="#B45309">Either 0 OR 1</text>
+                <line x1="258" y1="65" x2="294" y2="65" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="4 3" />
+
+                <!-- Right 1 state -->
+                <rect x="306" y="26" width="96" height="78" rx="8" fill="#FFFBEB" stroke="#F59E0B" stroke-width="2" />
+                <text x="354" y="64" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="28" font-weight="700" fill="#D97706">1</text>
+                <text x="354" y="88" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="600" fill="#64748B">ON / HIGH</text>
+              </svg>
+            </div>
+            <ul class="concept-points">
+              <li><strong>Discrete two-point state:</strong> At any instant, a bit holds strictly <code>0</code> or <code>1</code> with zero intermediate superposition.</li>
+              <li><strong>No relative phase:</strong> Even a classical coin flip only carries real positive probabilities, never negative or imaginary amplitudes.</li>
+              <li><strong>Only one non-trivial 1-bit gate:</strong> The classical <code>NOT</code> gate flips 0 &#8596; 1, whereas a qubit admits infinite continuous rotations.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Quantum Qubit Card -->
+        <article class="concept-card is-quantum" aria-labelledby="quantum-card-title">
+          <div class="concept-card-top">
+            <h3 id="quantum-card-title" class="concept-card-title">Quantum Qubit</h3>
+            <span class="concept-card-tag">|&#968;&#10217; = &#945;|0&#10217; + &#946;|1&#10217;</span>
+          </div>
+          <div class="concept-card-body">
+            <div class="concept-svg-box">
+              <svg viewBox="0 0 420 130" role="img" aria-label="Diagram of a quantum qubit combining continuous amplitude magnitude circle and complex phase compass +1, -1, +i, -i">
+                <!-- Left: Amplitude Circle -->
+                <circle cx="96" cy="66" r="42" fill="#ECFEFF" stroke="#0891B2" stroke-width="1.8" />
+                <line x1="46" y1="66" x2="146" y2="66" stroke="#475569" stroke-width="1" />
+                <line x1="96" y1="18" x2="96" y2="114" stroke="#475569" stroke-width="1" />
+                <line x1="96" y1="66" x2="124" y2="38" stroke="#0891B2" stroke-width="2.8" stroke-linecap="round" />
+                <circle cx="126" cy="36" r="4" fill="#FFFFFF" stroke="#0891B2" stroke-width="2.2" />
+                <text x="150" y="70" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700" fill="#0F172A">|0&#10217;</text>
+                <text x="96" y="13" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700" fill="#0F172A">|1&#10217;</text>
+                <text x="96" y="126" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="10.5" font-weight="600" fill="#0E7490">Magnitude (|&#945;|, |&#946;|)</text>
+
+                <!-- Plus connector -->
+                <text x="206" y="71" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="20" font-weight="700" fill="#1D4ED8">+</text>
+
+                <!-- Right: Complex Phase Compass -->
+                <circle cx="318" cy="66" r="42" fill="#EEF2FF" stroke="#4338CA" stroke-width="1.8" />
+                <line x1="268" y1="66" x2="368" y2="66" stroke="#475569" stroke-width="1" />
+                <line x1="318" y1="18" x2="318" y2="114" stroke="#475569" stroke-width="1" />
+                <line x1="318" y1="66" x2="318" y2="27" stroke="#4338CA" stroke-width="2.8" stroke-linecap="round" />
+                <circle cx="318" cy="24" r="4" fill="#FFFFFF" stroke="#4338CA" stroke-width="2.2" />
+                <text x="374" y="70" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700" fill="#0F172A">+1</text>
+                <text x="262" y="70" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700" fill="#0F172A">&minus;1</text>
+                <text x="318" y="13" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700" fill="#4338CA">+i</text>
+                <text x="318" y="126" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="10.5" font-weight="600" fill="#4338CA">Relative Phase (&#916;&#966;)</text>
+              </svg>
+            </div>
+            <ul class="concept-points">
+              <li><strong>Complex superposition:</strong> Exists as a normalized vector <code>|&#968;&#10217; = &#945;|0&#10217; + &#946;|1&#10217;</code> where both <code>&#945;, &#946; &#8712; &#8450;</code>.</li>
+              <li><strong>Four cardinal phase axes:</strong> States <code>|+&#10217;, |&minus;&#10217;, |+i&#10217;, |&minus;i&#10217;</code> all measure 50% / 50%, yet differ physically by phase <code>+1, &minus;1, +i, &minus;i</code>.</li>
+              <li><strong>Reversible interference:</strong> Unitary gates rotate the state vector smoothly so amplitudes can reinforce or cancel cleanly.</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+
+      <!-- Did You Know? H -> H Interference Callout -->
+      <div class="callout-dyk" role="note" aria-label="Did You Know quantum interference callout">
+        <div class="callout-dyk-copy">
+          <span class="callout-dyk-title">Did You Know? Why H &rarr; H Is NOT a Random Coin Flip</span>
+          <p class="callout-dyk-text">
+            Applying one Hadamard gate to <code>|0&#10217;</code> creates an equal 50/50 superposition <code>|+&#10217; = (|0&#10217; + |1&#10217;)/&#8730;2</code>. If this were a classical coin flip, applying a second randomizer would stay 50/50. Instead, applying a second <code>H</code> causes the <code>|1&#10217;</code> amplitudes (<code>+1/2</code> and <code>&minus;1/2</code>) to <strong>destructively cancel</strong> while <code>|0&#10217;</code> constructively interferes back to <strong>100% |0&#10217;</strong>!
+          </p>
+        </div>
+        <button type="button" id="btn-demo-hh" class="btn btn-amber" aria-label="Load Hadamard then Hadamard sequence in the live simulator below">
+          Try H &rarr; H Live &#8595;
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: The 7 Physics Laws Behind This Lab -->
+  <section id="physics-laws" class="band band-sky" aria-labelledby="laws-heading">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-kicker is-indigo">02 &middot; Fundamental Theory</span>
+        <h2 id="laws-heading" class="section-title">The 7 Physics Laws Behind This Lab</h2>
+        <p class="section-lead">
+          Every button, complex matrix step, 2D phase arrow, and 3D Bloch coordinate in the workbench below is governed directly by these seven postulates of single-qubit quantum mechanics.
+        </p>
+      </div>
+
+      <div class="laws-grid">
+        <article class="law-card">
+          <div class="law-head">
+            <span class="law-num">Law 01</span>
+          </div>
+          <h3 class="law-title">Hilbert Space Postulate</h3>
+          <div class="law-formula">|&#968;&#10217; = &#945;|0&#10217; + &#946;|1&#10217;, &nbsp; &#945;, &#946; &#8712; &#8450;</div>
+          <p class="law-desc">Every pure single-qubit state is represented by a unit column vector in a two-dimensional complex Hilbert space &#8450;&sup2; spanned by orthonormal basis kets |0&#10217; and |1&#10217;.</p>
+        </article>
+
+        <article class="law-card is-teal">
+          <div class="law-head">
+            <span class="law-num">Law 02</span>
+          </div>
+          <h3 class="law-title">Principle of Superposition</h3>
+          <div class="law-formula">H|0&#10217; = (|0&#10217; + |1&#10217;) / &#8730;2</div>
+          <p class="law-desc">Any normalized complex linear combination of valid basis states is itself a valid physical quantum state, placing the qubit simultaneously across |0&#10217; and |1&#10217;.</p>
+        </article>
+
+        <article class="law-card is-indigo">
+          <div class="law-head">
+            <span class="law-num">Law 03</span>
+          </div>
+          <h3 class="law-title">Unitary Evolution &amp; Conservation</h3>
+          <div class="law-formula">U&#8224;U = I, &nbsp; |&#945;|&sup2; + |&#946;|&sup2; = 1</div>
+          <p class="law-desc">Closed quantum gates act as reversible 2&times;2 unitary matrices that preserve vector length so total probability always remains exactly 1.0000.</p>
+        </article>
+
+        <article class="law-card is-amber">
+          <div class="law-head">
+            <span class="law-num">Law 04</span>
+          </div>
+          <h3 class="law-title">Born&rsquo;s Rule</h3>
+          <div class="law-formula">P(0) = |&#945;|&sup2;, &nbsp; P(1) = |&#946;|&sup2;</div>
+          <p class="law-desc">Measurement probabilities equal the squared modulus of each complex amplitude: |z|&sup2; = Re(z)&sup2; + Im(z)&sup2;, bridging complex wave mechanics to observable statistics.</p>
+        </article>
+
+        <article class="law-card">
+          <div class="law-head">
+            <span class="law-num">Law 05</span>
+          </div>
+          <h3 class="law-title">Wavefunction Collapse</h3>
+          <div class="law-formula">|&#968;&#10217; &#8594; |0&#10217; or |1&#10217; (Projective)</div>
+          <p class="law-desc">Measuring a qubit in the computational basis irreversibly projects the superposition onto either |0&#10217; or |1&#10217;; repeated 100-shot ensembles reveal Born&rsquo;s Rule statistically.</p>
+        </article>
+
+        <article class="law-card is-teal">
+          <div class="law-head">
+            <span class="law-num">Law 06</span>
+          </div>
+          <h3 class="law-title">Interference &amp; Relative Phase</h3>
+          <div class="law-formula">&#916;&#966; = arg(&#946;) &minus; arg(&#945;)</div>
+          <p class="law-desc">Global phase is unobservable, but the relative phase &#916;&#966; between &#945; and &#946; distinguishes |+&#10217;, |&minus;&#10217;, |+i&#10217;, and |&minus;i&#10217; and drives constructive or destructive interference.</p>
+        </article>
+
+        <article class="law-card is-indigo is-wide">
+          <div>
+            <div class="law-head">
+              <span class="law-num">Law 07 &middot; Geometric Unification</span>
+            </div>
+            <h3 class="law-title" style="margin-top: 4px;">Bloch Sphere Geometry</h3>
+            <p class="law-desc" style="margin-top: 6px;">
+              Any pure single-qubit state maps uniquely onto a point (x, y, z) on the surface of a unit 3D sphere via the Pauli expectation values &langle;&#968;|&#963;<sub>x,y,z</sub>|&#968;&rangle;. Polar angle &#952; encodes measurement probabilities while azimuthal angle &#966; encodes relative complex phase &#916;&#966;.
+            </p>
+          </div>
+          <div class="law-bloch-box" aria-label="Bloch vector expectation coordinate formulas">
+            <span><strong>x</strong> = 2 &middot; Re(&#945;*&#946;) = sin(&#952;) cos(&#966;)</span>
+            <span><strong>y</strong> = 2 &middot; Im(&#945;*&#946;) = sin(&#952;) sin(&#966;)</span>
+            <span><strong>z</strong> = |&#945;|&sup2; &minus; |&#946;|&sup2; = cos(&#952;)</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Meet the 6 Quantum Gates & Real-World Applications -->
+  <section id="gates" class="band band-white" aria-labelledby="gates-heading">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-kicker is-teal">03 &middot; Unitary Operators</span>
+        <h2 id="gates-heading" class="section-title">Meet the 6 Quantum Gates</h2>
+        <p class="section-lead">
+          Each gate in the simulator is a 2&times;2 complex unitary matrix that rotates the qubit state vector cleanly around an axis of the Bloch sphere.
+        </p>
+      </div>
+
+      <div class="gate-ref-grid">
+        <article class="gate-ref-card">
+          <div class="gate-ref-top">
+            <div class="gate-ref-id">
+              <span class="gate-ref-tile" aria-hidden="true">X</span>
+              <div>
+                <h3 class="gate-ref-name">Pauli-X</h3>
+                <div class="gate-ref-axis">180&deg; rotation about X-axis</div>
+              </div>
+            </div>
+            <div class="ref-mat-wrap" aria-label="Pauli X matrix 0 1, 1 0">
+              <div class="ref-mat-box"><span>0</span><span>1</span><span>1</span><span>0</span></div>
+            </div>
+          </div>
+          <p class="gate-ref-action">Quantum NOT (bit-flip) gate that swaps |0&#10217; and |1&#10217; amplitudes without altering phase alignment.</p>
+        </article>
+
+        <article class="gate-ref-card">
+          <div class="gate-ref-top">
+            <div class="gate-ref-id">
+              <span class="gate-ref-tile is-indigo" aria-hidden="true">Y</span>
+              <div>
+                <h3 class="gate-ref-name">Pauli-Y</h3>
+                <div class="gate-ref-axis">180&deg; rotation about Y-axis</div>
+              </div>
+            </div>
+            <div class="ref-mat-wrap" aria-label="Pauli Y matrix 0 minus i, i 0">
+              <div class="ref-mat-box"><span>0</span><span>&minus;i</span><span>i</span><span>0</span></div>
+            </div>
+          </div>
+          <p class="gate-ref-action">Simultaneous bit-flip and imaginary phase rotation: maps |0&#10217; &rarr; i|1&#10217; and |1&#10217; &rarr; &minus;i|0&#10217;.</p>
+        </article>
+
+        <article class="gate-ref-card">
+          <div class="gate-ref-top">
+            <div class="gate-ref-id">
+              <span class="gate-ref-tile is-indigo" aria-hidden="true">Z</span>
+              <div>
+                <h3 class="gate-ref-name">Pauli-Z</h3>
+                <div class="gate-ref-axis">180&deg; rotation about Z-axis</div>
+              </div>
+            </div>
+            <div class="ref-mat-wrap" aria-label="Pauli Z matrix 1 0, 0 minus 1">
+              <div class="ref-mat-box"><span>1</span><span>0</span><span>0</span><span>&minus;1</span></div>
+            </div>
+          </div>
+          <p class="gate-ref-action">Phase-flip gate leaving |0&#10217; intact while negating |1&#10217; (&Delta;&#966; shifts by 180&deg;: |+&#10217; &#8596; |&minus;&#10217;).</p>
+        </article>
+
+        <article class="gate-ref-card">
+          <div class="gate-ref-top">
+            <div class="gate-ref-id">
+              <span class="gate-ref-tile is-teal" aria-hidden="true">H</span>
+              <div>
+                <h3 class="gate-ref-name">Hadamard</h3>
+                <div class="gate-ref-axis">180&deg; about (X+Z)/&#8730;2</div>
+              </div>
+            </div>
+            <div class="ref-mat-wrap" aria-label="Hadamard matrix 1 over root 2 times 1 1, 1 minus 1">
+              <span class="ref-mat-scalar">1/&#8730;2</span>
+              <div class="ref-mat-box"><span>1</span><span>1</span><span>1</span><span>&minus;1</span></div>
+            </div>
+          </div>
+          <p class="gate-ref-action">Superposition engine transforming basis states into equal superpositions (|0&#10217; &rarr; |+&#10217;, |1&#10217; &rarr; |&minus;&#10217;) and interfering them back.</p>
+        </article>
+
+        <article class="gate-ref-card">
+          <div class="gate-ref-top">
+            <div class="gate-ref-id">
+              <span class="gate-ref-tile is-indigo" aria-hidden="true">S</span>
+              <div>
+                <h3 class="gate-ref-name">Phase Gate (S)</h3>
+                <div class="gate-ref-axis">+90&deg; (&pi;/2) about Z-axis</div>
+              </div>
+            </div>
+            <div class="ref-mat-wrap" aria-label="Phase S matrix 1 0, 0 i">
+              <div class="ref-mat-box"><span>1</span><span>0</span><span>0</span><span>i</span></div>
+            </div>
+          </div>
+          <p class="gate-ref-action">Quarter-turn complex phase gate multiplying |1&#10217; by +i, rotating |+&#10217; &rarr; |+i&#10217; (and S&sup2; = Z).</p>
+        </article>
+
+        <article class="gate-ref-card">
+          <div class="gate-ref-top">
+            <div class="gate-ref-id">
+              <span class="gate-ref-tile is-slate" aria-hidden="true">I</span>
+              <div>
+                <h3 class="gate-ref-name">Identity</h3>
+                <div class="gate-ref-axis">0&deg; (Null evolution)</div>
+              </div>
+            </div>
+            <div class="ref-mat-wrap" aria-label="Identity matrix 1 0, 0 1">
+              <div class="ref-mat-box"><span>1</span><span>0</span><span>0</span><span>1</span></div>
+            </div>
+          </div>
+          <p class="gate-ref-action">Leaves every amplitude and complex phase untouched; represents an idle quantum wire interval.</p>
+        </article>
+      </div>
+
+      <!-- Real-World Applications Strip -->
+      <div id="applications" class="apps-subhead">
+        <div class="section-head">
+          <span class="section-kicker">03B &middot; Real-World Impact</span>
+          <h2 class="section-title">Where This Matters in the Real World</h2>
+        </div>
+
+        <div class="apps-grid">
+          <!-- Application 1: Quantum Algorithms -->
+          <article class="app-card">
+            <div class="app-svg-wrap">
+              <svg viewBox="0 0 260 110" role="img" aria-label="Illustration of Grover amplitude amplification showing one quantum probability peak rising above others">
+                <line x1="16" y1="88" x2="244" y2="88" stroke="#94A3B8" stroke-width="1.4" />
+                <!-- Uniform superposition bars -->
+                <rect x="28" y="64" width="22" height="24" rx="3" fill="#BFDBFE" />
+                <rect x="64" y="64" width="22" height="24" rx="3" fill="#BFDBFE" />
+                <rect x="100" y="64" width="22" height="24" rx="3" fill="#BFDBFE" />
+                <!-- Amplified marked state -->
+                <rect x="144" y="18" width="28" height="70" rx="4" fill="#1D4ED8" />
+                <path d="M 118 46 Q 134 26 142 26" fill="none" stroke="#0891B2" stroke-width="2" stroke-dasharray="3 2" />
+                <rect x="188" y="72" width="22" height="16" rx="3" fill="#BFDBFE" />
+                <rect x="220" y="72" width="22" height="16" rx="3" fill="#BFDBFE" />
+                <text x="158" y="13" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#1D4ED8">Amplified</text>
+                <text x="130" y="104" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="#475569">H + Phase Flip &rarr; Interference Peak</text>
+              </svg>
+            </div>
+            <h3 class="app-card-title">Quantum Algorithms (Grover &amp; Shor)</h3>
+            <p class="app-card-desc">
+              Hadamard superposition paired with phase flips (Z, S) enables amplitude amplification in Grover&rsquo;s unstructured search and quantum Fourier period-finding in Shor&rsquo;s factoring algorithm.
+            </p>
+          </article>
+
+          <!-- Application 2: Quantum Cryptography (BB84 QKD) -->
+          <article class="app-card">
+            <div class="app-svg-wrap">
+              <svg viewBox="0 0 260 110" role="img" aria-label="Illustration of BB84 quantum key distribution using rectilinear ket 0, ket 1 and diagonal ket plus, ket minus polarization bases">
+                <!-- Rectilinear Basis + -->
+                <circle cx="56" cy="50" r="30" fill="#EFF6FF" stroke="#1D4ED8" stroke-width="1.6" />
+                <line x1="56" y1="26" x2="56" y2="74" stroke="#1D4ED8" stroke-width="2.4" stroke-linecap="round" />
+                <line x1="32" y1="50" x2="80" y2="50" stroke="#1D4ED8" stroke-width="2.4" stroke-linecap="round" />
+                <text x="56" y="96" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600" fill="#1D4ED8">|0&#10217;, |1&#10217; Basis</text>
+
+                <!-- Photon wave link -->
+                <path d="M 94 50 Q 108 36 122 50 T 150 50 T 166 50" fill="none" stroke="#0891B2" stroke-width="2.2" />
+                <polygon points="170,50 162,45 162,55" fill="#0891B2" />
+
+                <!-- Diagonal Basis X -->
+                <circle cx="204" cy="50" r="30" fill="#ECFEFF" stroke="#0891B2" stroke-width="1.6" />
+                <line x1="186" y1="32" x2="222" y2="68" stroke="#0891B2" stroke-width="2.4" stroke-linecap="round" />
+                <line x1="222" y1="32" x2="186" y2="68" stroke="#0891B2" stroke-width="2.4" stroke-linecap="round" />
+                <text x="204" y="96" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600" fill="#0E7490">|+&#10217;, |&minus;&#10217; Basis</text>
+              </svg>
+            </div>
+            <h3 class="app-card-title">Quantum Cryptography (BB84 QKD)</h3>
+            <p class="app-card-desc">
+              Encodes secret key bits across conjugate bases (|0&#10217;, |1&#10217; and |+&#10217;, |&minus;&#10217;). Any eavesdropper who measures in the wrong basis collapses the state and introduces detectable errors.
+            </p>
+          </article>
+
+          <!-- Application 3: Interactive STEM Physics Education -->
+          <article class="app-card">
+            <div class="app-svg-wrap">
+              <svg viewBox="0 0 260 110" role="img" aria-label="Illustration of interactive quantum physics learning connecting a circuit gate wire to a Bloch sphere and probability bars">
+                <!-- Mini circuit wire -->
+                <line x1="16" y1="52" x2="108" y2="52" stroke="#0F172A" stroke-width="2" />
+                <rect x="34" y="36" width="28" height="32" rx="5" fill="#0891B2" />
+                <text x="48" y="57" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="700" fill="#FFFFFF">H</text>
+                <rect x="70" y="36" width="28" height="32" rx="5" fill="#4338CA" />
+                <text x="84" y="57" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="700" fill="#FFFFFF">S</text>
+
+                <!-- Arrow to Bloch -->
+                <line x1="112" y1="52" x2="132" y2="52" stroke="#1D4ED8" stroke-width="2" />
+                <polygon points="136,52 128,47 128,57" fill="#1D4ED8" />
+
+                <!-- Mini Bloch -->
+                <circle cx="164" cy="52" r="24" fill="#EEF2FF" stroke="#4338CA" stroke-width="1.6" />
+                <ellipse cx="164" cy="52" rx="24" ry="8" fill="none" stroke="#4338CA" stroke-opacity="0.55" stroke-width="1.2" />
+                <line x1="164" y1="52" x2="181" y2="47" stroke="#0891B2" stroke-width="2.4" stroke-linecap="round" />
+
+                <!-- Mini bars -->
+                <rect x="202" y="38" width="42" height="10" rx="2" fill="#E2E8F0" />
+                <rect x="202" y="38" width="22" height="10" rx="2" fill="#0891B2" />
+                <rect x="202" y="56" width="42" height="10" rx="2" fill="#E2E8F0" />
+                <rect x="202" y="56" width="22" height="10" rx="2" fill="#1D4ED8" />
+                <text x="130" y="98" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="#475569">Circuit &rarr; Geometry &rarr; Collapse</text>
+              </svg>
+            </div>
+            <h3 class="app-card-title">Interactive STEM Physics Education</h3>
+            <p class="app-card-desc">
+              Bridges abstract linear algebra and Hilbert-space notation with live geometric intuition so physics and engineering students can verify unitary transformations hands-on.
+            </p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final Section (#simulator-lab): Complete Working Interactive Simulator -->
+  <section id="simulator-lab" class="band-lab" aria-labelledby="lab-banner-heading">
+    <div class="container">
+      <div class="lab-banner">
+        <div class="lab-banner-copy">
+          <span class="lab-banner-kicker">04 &middot; Practice &amp; Experiment</span>
+          <h2 id="lab-banner-heading" class="lab-banner-title">Hands-On Quantum Workbench &mdash; Try It Live</h2>
+          <p class="lab-banner-sub">
+            Prepare any of the 6 cardinal initial states, append complex unitary gates along the wire, drag the 3D Bloch sphere, inspect exact matrix algebra, and run 100-shot Born-rule collapse trials.
+          </p>
+        </div>
+        <div class="lab-banner-eq" aria-label="Complex single qubit normalization equation">|&#968;&#10217; = &#945;|0&#10217; + &#946;|1&#10217; &middot; |&#945;|&sup2; + |&#946;|&sup2; = 1</div>
+      </div>
+
+      <div class="app-shell">
+        <main id="simulator-main" aria-label="Single-Qubit Quantum Gate Simulator">
       <!-- 1. Quirk-Style Horizontal Qubit Wire Workbench -->
       <section class="circuit-workbench" aria-label="Quantum Circuit Wire and Gate Palette">
         <div class="palette-bar">
@@ -1315,33 +2975,86 @@
         </div>
       </section>
 
+      <!-- Side-by-Side Visualization Row: 2D State-Vector & Complex Phase Plot + 3D Bloch Sphere -->
+      <div class="viz-grid" style="margin-top: 10px;">
+        <!-- 3A. Interactive 2D State-Vector & Complex Phase Plot -->
+        <section class="panel" aria-labelledby="plot-heading">
+          <div class="panel-header">
+            <h2 id="plot-heading" class="panel-title">2D State-Vector &amp; Complex Phase Plot</h2>
+            <span id="plot-angle-readout" class="panel-meta">&#952; = 0&#176; &middot; &#916;&#966; = &#8212;</span>
+          </div>
+          <div class="panel-body">
+            <div class="canvas-stage">
+              <canvas
+                id="stateCanvas"
+                data-testid="state-vector-canvas"
+                role="img"
+                aria-label="Side-by-side 2D amplitude plot and complex relative phase plane"
+              ></canvas>
+            </div>
+            <div class="plot-legend">
+              <div class="legend-items">
+                <span class="legend-item"><span class="swatch-line" aria-hidden="true"></span>State / Relative Phase</span>
+                <span class="legend-item"><span class="swatch-dashed" aria-hidden="true"></span>Prior state &amp; projections</span>
+                <span class="legend-item"><span class="swatch-circle" aria-hidden="true"></span>Unit circle (|&#945;|&sup2;+|&#946;|&sup2;=1)</span>
+              </div>
+              <span class="panel-meta">0&#176;:+1 &middot; +90&#176;:+i &middot; 180&#176;:-1 &middot; -90&#176;:-i</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3B. Interactive 3D Bloch Sphere -->
+        <section class="panel" aria-labelledby="bloch-heading">
+          <div class="panel-header">
+            <h2 id="bloch-heading" class="panel-title">3D Bloch Sphere</h2>
+            <div class="panel-header-actions">
+              <span id="bloch-header-readout" class="panel-meta">&#952; = 0&#176; &middot; &#966; = &#8212;</span>
+              <button
+                type="button"
+                id="btn-bloch-reset"
+                class="btn btn-secondary btn-compact"
+                aria-label="Reset 3D Bloch sphere camera to default isometric angle"
+              >Reset View</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="canvas-stage">
+              <canvas
+                id="blochCanvas"
+                data-testid="bloch-sphere-canvas"
+                role="img"
+                aria-label="Interactive 3D Bloch sphere visualization of the single-qubit state"
+              ></canvas>
+            </div>
+            <div class="plot-legend">
+              <div class="legend-items">
+                <span class="legend-item"><span class="swatch-line" aria-hidden="true"></span>Bloch vector (x, y, z)</span>
+                <span class="legend-item"><span class="swatch-dashed" aria-hidden="true"></span>Equatorial projection</span>
+              </div>
+              <span class="panel-meta">Drag to rotate</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
       <!-- Main 2-Column Technical Workbench -->
       <div class="workbench-grid" style="margin-top: 10px;">
-        <!-- Left Column: State-Vector & Complex Phase Plot + Measurement Simulator -->
+        <!-- Left Column: Step-by-Step Matrix Calculation + Measurement Simulator -->
         <div class="col-stack">
-          <!-- 3. Interactive 2D State-Vector & Complex Phase Plot -->
-          <section class="panel" aria-labelledby="plot-heading">
+          <!-- 2. Step-by-Step Matrix Calculation Panel -->
+          <section class="panel" aria-labelledby="matrix-heading">
             <div class="panel-header">
-              <h2 id="plot-heading" class="panel-title">2D State-Vector &amp; Complex Phase Plot</h2>
-              <span id="plot-angle-readout" class="panel-meta">&#952; = 0&#176; &middot; &#916;&#966; = &#8212;</span>
+              <h2 id="matrix-heading" class="panel-title">Step-by-Step Complex Matrix Calculation</h2>
+              <span id="matrix-step-label" class="panel-meta">Initial state prepared</span>
             </div>
             <div class="panel-body">
-              <div class="canvas-stage">
-                <canvas
-                  id="stateCanvas"
-                  data-testid="state-vector-canvas"
-                  role="img"
-                  aria-label="2D state vector plot and complex phase indicators for alpha and beta"
-                ></canvas>
-              </div>
-              <div class="plot-legend">
-                <div class="legend-items">
-                  <span class="legend-item"><span class="swatch-line" aria-hidden="true"></span>State / Phasor</span>
-                  <span class="legend-item"><span class="swatch-dashed" aria-hidden="true"></span>Prior state &amp; projections</span>
-                  <span class="legend-item"><span class="swatch-circle" aria-hidden="true"></span>Unit circle (|&#945;|&sup2;+|&#946;|&sup2;=1)</span>
-                </div>
-                <span class="panel-meta">0&#176;:+1 &middot; 90&#176;:+i &middot; 180&#176;:-1 &middot; 270&#176;:-i</span>
-              </div>
+              <div
+                id="matrix-equation"
+                class="matrix-equation-wrap"
+                aria-live="polite"
+                aria-label="Complex matrix multiplication calculation"
+              ></div>
+              <div id="matrix-interpretation" class="step-note"></div>
             </div>
           </section>
 
@@ -1361,25 +3074,8 @@
           </section>
         </div>
 
-        <!-- Right Column: Step-by-Step Matrix Calculation + Output Amplitudes & Normalization -->
+        <!-- Right Column: Output, Amplitudes & Normalization -->
         <div class="col-stack">
-          <!-- 2. Step-by-Step Matrix Calculation Panel -->
-          <section class="panel" aria-labelledby="matrix-heading">
-            <div class="panel-header">
-              <h2 id="matrix-heading" class="panel-title">Step-by-Step Complex Matrix Calculation</h2>
-              <span id="matrix-step-label" class="panel-meta">Initial state prepared</span>
-            </div>
-            <div class="panel-body">
-              <div
-                id="matrix-equation"
-                class="matrix-equation-wrap"
-                aria-live="polite"
-                aria-label="Complex matrix multiplication calculation"
-              ></div>
-              <div id="matrix-interpretation" class="step-note"></div>
-            </div>
-          </section>
-
           <!-- 4. Output, Amplitudes & Normalization Panel -->
           <section class="panel" aria-labelledby="output-heading">
             <div class="panel-header">
@@ -1456,8 +3152,85 @@
           </section>
         </div>
       </div>
+
+      <!-- 6. Live Quantum vs. Classical Comparison Panel -->
+      <section class="panel" style="margin-top: 10px;" aria-labelledby="qvc-heading">
+        <div class="panel-header">
+          <h2 id="qvc-heading" class="panel-title">Quantum vs. Classical Comparison (Live State Analysis)</h2>
+          <span id="qvc-mode-meta" class="panel-meta">Computational Basis</span>
+        </div>
+        <div class="panel-body">
+          <div class="qvc-grid">
+            <div class="qvc-col is-quantum">
+              <div class="qvc-col-title">
+                <span>Live Qubit Behavior</span>
+                <span id="qvc-quantum-tag" class="panel-meta" style="color: var(--accent-hover);">|&#968;&#10217; = |0&#10217;</span>
+              </div>
+              <div id="qvc-quantum-metric" class="qvc-metric">P(0) = 100.0% &middot; P(1) = 0.0% &middot; &#916;&#966; = &#8212;</div>
+              <p id="qvc-quantum-desc" class="qvc-desc">
+                Currently aligned on a computational pole. Apply H to enter a coherent superposition, then S or Z to observe complex relative phase without altering Z-basis probabilities.
+              </p>
+            </div>
+            <div class="qvc-col is-classical">
+              <div class="qvc-col-title">
+                <span>Classical Bit Counterpart</span>
+                <span id="qvc-classical-tag" class="panel-meta" style="color: var(--amber-text);">Discrete {0, 1}</span>
+              </div>
+              <div id="qvc-classical-metric" class="qvc-metric">Classical Bit = 0 (Deterministic)</div>
+              <p id="qvc-classical-desc" class="qvc-desc">
+                A classical bit matches |0&#10217; and |1&#10217; at the poles, but cannot store complex phase (&#916;&#966;) or undergo reversible Hadamard interference back to a deterministic state.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
-  </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Clean Academic Footer -->
+  <footer class="academic-footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-institution">Jain (Deemed-to-be University)</div>
+          <div class="footer-unit">Faculty of Engineering &amp; Technology &middot; School of CSE &middot; Department of Physics</div>
+          <div class="footer-course">Applied Physics (Experiential Learning) &mdash; Semester I, 2026&ndash;2027</div>
+          <p class="footer-desc">
+            Interactive Single-Qubit Quantum Gate &amp; Superposition Simulator &mdash; built as a self-contained single-file educational web lab with exact complex-number linear algebra, 2D phase visualization, interactive 3D Bloch sphere, and Born-rule wavefunction collapse.
+          </p>
+        </div>
+
+        <div class="footer-credits-card" aria-label="Academic project team, faculty, and verification credits">
+          <div class="footer-credit-row">
+            <span class="footer-credit-label">Team Members &amp; USNs (Editable)</span>
+            <span class="footer-credit-val">[Student Name 1 &mdash; USN] &middot; [Student Name 2 &mdash; USN] &middot; [Student Name 3 &mdash; USN] &middot; [Student Name 4 &mdash; USN]</span>
+          </div>
+          <div class="footer-credit-row">
+            <span class="footer-credit-label">Faculty Guide (Editable)</span>
+            <span class="footer-credit-val">[Prof. / Dr. Faculty Name] &mdash; Department of Physics</span>
+          </div>
+          <div class="footer-credit-row">
+            <span class="footer-credit-label">Physics &amp; Phase Verification Credit</span>
+            <span class="footer-credit-val">Single-qubit gate matrices &amp; complex phase conventions verified against <a href="https://algassert.com/quirk" target="_blank" rel="noopener noreferrer">Quirk (algassert.com/quirk)</a>.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <nav class="footer-nav" aria-label="Footer section links">
+          <a href="#concepts" class="footer-nav-link">Concepts</a>
+          <a href="#physics-laws" class="footer-nav-link">Physics Laws</a>
+          <a href="#gates" class="footer-nav-link">Gates</a>
+          <a href="#applications" class="footer-nav-link">Applications</a>
+          <a href="#simulator-lab" class="footer-nav-link">Simulator Lab</a>
+          <a href="#top" class="footer-nav-link">Back to Top &#8593;</a>
+        </nav>
+        <div class="footer-copy-note">Applied Physics Experiential Learning &middot; Single-Qubit Quantum Lab</div>
+      </div>
+    </div>
+  </footer>
 
   <script>
     (function () {
@@ -1972,6 +3745,91 @@
         };
       }
 
+      function getPlotMetadata(state) {
+        var purelyReal = isPurelyRealState(state);
+        var vx = purelyReal ? state.alpha.re : cMag(state.alpha);
+        var vy = purelyReal ? state.beta.re : cMag(state.beta);
+        var isBasisState = cIsZero(state.alpha) || cIsZero(state.beta);
+        var ketInfo = formatKetNotation(state);
+        var rel = getRelativePhaseDeg(state);
+
+        var signedDeltaPhi = null;
+        if (rel !== null) {
+          signedDeltaPhi = rel > 180 ? rel - 360 : rel;
+        }
+
+        var phasePlaneLabel = 'No relative phase (Basis state)';
+        if (signedDeltaPhi !== null) {
+          if (signedDeltaPhi === 0) phasePlaneLabel = '\u0394\u03C6 = 0\u00B0 (+1)';
+          else if (signedDeltaPhi === 90) phasePlaneLabel = '\u0394\u03C6 = +90\u00B0 (+i)';
+          else if (signedDeltaPhi === 180 || signedDeltaPhi === -180) phasePlaneLabel = '\u0394\u03C6 = 180\u00B0 (-1)';
+          else if (signedDeltaPhi === -90) phasePlaneLabel = '\u0394\u03C6 = -90\u00B0 (-i)';
+          else phasePlaneLabel = '\u0394\u03C6 = ' + (signedDeltaPhi > 0 ? '+' : '') + signedDeltaPhi + '\u00B0';
+        }
+
+        var tipLabel = ketInfo.ket;
+        if (!isBasisState) {
+          var shortName = ketInfo.alias
+            ? ketInfo.alias.replace(/^[=\u2261]\s*/, '').split(' ')[0]
+            : '|\u03C8\u27E9';
+          if (purelyReal) {
+            var deg = getStateAngleDegrees(state);
+            var degStr = deg > 0 ? '+' + deg + '\u00B0' : deg + '\u00B0';
+            tipLabel = shortName + ' (' + degStr + ')';
+          } else if (signedDeltaPhi !== null) {
+            var phiStr =
+              signedDeltaPhi === 180
+                ? '180\u00B0'
+                : signedDeltaPhi > 0
+                  ? '+' + signedDeltaPhi + '\u00B0'
+                  : signedDeltaPhi + '\u00B0';
+            tipLabel = shortName + ' (\u0394\u03C6 = ' + phiStr + ')';
+          }
+        }
+
+        return {
+          purelyReal: purelyReal,
+          showRealDiagonals: purelyReal,
+          vx: vx,
+          vy: vy,
+          signedDeltaPhi: signedDeltaPhi,
+          tipLabel: tipLabel,
+          phasePlaneLabel: phasePlaneLabel,
+          isBasisState: isBasisState
+        };
+      }
+
+      function getBlochCoordinates(state) {
+        var alpha = state.alpha;
+        var beta = state.beta;
+        var reProd = alpha.re * beta.re + alpha.im * beta.im;
+        var imProd = alpha.re * beta.im - alpha.im * beta.re;
+
+        var x = snapReal(2 * reProd);
+        var y = snapReal(2 * imProd);
+        var z = snapReal(cMagSq(alpha) - cMagSq(beta));
+
+        var clampedZ = Math.max(-1, Math.min(1, z));
+        var rawTheta = (Math.acos(clampedZ) * 180) / Math.PI;
+        var roundedTheta = Math.round(rawTheta);
+        var thetaDeg = Math.abs(rawTheta - roundedTheta) < 1e-6 ? roundedTheta : Number(rawTheta.toFixed(1));
+
+        var phiDeg = null;
+        if (Math.hypot(x, y) > EPS) {
+          var rawPhi = (Math.atan2(y, x) * 180) / Math.PI;
+          if (rawPhi < -EPS) rawPhi += 360;
+          var roundedPhi = Math.round(rawPhi) % 360;
+          phiDeg =
+            Math.abs(rawPhi - roundedPhi) < 1e-6 || Math.abs(rawPhi - 360) < 1e-6
+              ? roundedPhi === 360
+                ? 0
+                : roundedPhi
+              : Number(rawPhi.toFixed(1));
+        }
+
+        return { x: x, y: y, z: z, thetaDeg: thetaDeg, phiDeg: phiDeg };
+      }
+
       /* Expose pure kernel for automated Node/unit verification */
       if (typeof window !== 'undefined') {
         window.__QUBIT_KERNEL__ = {
@@ -1984,6 +3842,8 @@
           cPhaseDeg: cPhaseDeg,
           getRelativePhaseDeg: getRelativePhaseDeg,
           getRelativePhaseStatus: getRelativePhaseStatus,
+          getPlotMetadata: getPlotMetadata,
+          getBlochCoordinates: getBlochCoordinates,
           formatComplexExact: formatComplexExact,
           formatComplexDecimal: formatComplexDecimal,
           getStateProbabilities: getStateProbabilities,
@@ -2063,8 +3923,20 @@
       var elNormCheck = document.getElementById('normalization-check');
 
       var elPlotAngle = document.getElementById('plot-angle-readout');
+      var elBlochHeader = document.getElementById('bloch-header-readout');
+      var btnBlochReset = document.getElementById('btn-bloch-reset');
       var elMeasureContainer = document.getElementById('measurement-container');
       var canvas = document.getElementById('stateCanvas');
+      var blochCanvas = document.getElementById('blochCanvas');
+
+      var btnDemoHH = document.getElementById('btn-demo-hh');
+      var elQvcModeMeta = document.getElementById('qvc-mode-meta');
+      var elQvcQuantumTag = document.getElementById('qvc-quantum-tag');
+      var elQvcQuantumMetric = document.getElementById('qvc-quantum-metric');
+      var elQvcQuantumDesc = document.getElementById('qvc-quantum-desc');
+      var elQvcClassicalTag = document.getElementById('qvc-classical-tag');
+      var elQvcClassicalMetric = document.getElementById('qvc-classical-metric');
+      var elQvcClassicalDesc = document.getElementById('qvc-classical-desc');
 
       function el(tag, className, text) {
         var node = document.createElement(tag);
@@ -2431,7 +4303,8 @@
       }
 
       /* =====================================================================
-       * Render: 2D State-Vector Plot + Dual Complex Phase Indicators (Canvas)
+       * Render: Two Side-by-Side 2D Unit Circles
+       * Left: Amplitude Plot (|0> vs |1>)   Right: Relative Phase Plane (Re vs Im)
        * ===================================================================== */
       function drawArrow(ctx, x1, y1, x2, y2, color, lineWidth, dashed, headScale) {
         ctx.save();
@@ -2462,114 +4335,48 @@
         ctx.restore();
       }
 
-      function drawPhaseDial(ctx, cx, cy, r, z, title, accentColor) {
-        var mag = cMag(z);
-        var deg = cPhaseDeg(z);
-
-        // Title above dial
-        ctx.save();
-        ctx.font = '600 10.5px "IBM Plex Sans", sans-serif';
-        ctx.fillStyle = '#1E293B';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText(title, cx, cy - r - 14);
-        ctx.restore();
-
-        // Crosshair axes (Re horizontal, Im vertical)
-        ctx.save();
-        ctx.strokeStyle = '#CBD5E1';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(cx - r - 5, cy);
-        ctx.lineTo(cx + r + 5, cy);
-        ctx.moveTo(cx, cy - r - 5);
-        ctx.lineTo(cx, cy + r + 5);
-        ctx.stroke();
-
-        // Outer unit-magnitude circle
-        ctx.strokeStyle = '#1E293B';
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Inner dashed 1/√2 magnitude reference ring
-        ctx.strokeStyle = 'rgba(30, 41, 59, 0.2)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([2, 3]);
-        ctx.beginPath();
-        ctx.arc(cx, cy, r * INV_SQRT2, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.restore();
-
-        // Cardinal complex markers (+1 / 0°, +i / 90°, -1 / 180°, -i / 270°)
-        ctx.save();
-        ctx.font = '600 9.5px "IBM Plex Mono", monospace';
-        ctx.fillStyle = '#475569';
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('+1', cx + r + 5, cy);
-        ctx.textAlign = 'right';
-        ctx.fillText('-1', cx - r - 5, cy);
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText('+i', cx, cy - r - 3);
-        ctx.textBaseline = 'top';
-        ctx.fillText('-i', cx, cy + r + 3);
-        ctx.restore();
-
-        if (mag > EPS && deg !== null) {
-          var rad = Math.atan2(z.im, z.re);
-          var tipX = cx + mag * r * Math.cos(rad);
-          var tipY = cy - mag * r * Math.sin(rad);
-
-          // Shaded phase wedge from 0° (+1) to arg(z)
-          if (deg !== 0) {
-            ctx.save();
-            ctx.fillStyle = 'rgba(15, 118, 110, 0.12)';
-            ctx.beginPath();
-            ctx.moveTo(cx, cy);
-            ctx.arc(cx, cy, r * 0.55, 0, -rad, true);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.strokeStyle = accentColor;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.arc(cx, cy, r * 0.55, 0, -rad, true);
-            ctx.stroke();
-            ctx.restore();
-          }
-
-          drawArrow(ctx, cx, cy, tipX, tipY, accentColor, 2.2, false, 0.78);
-
-          ctx.save();
-          ctx.fillStyle = '#FFFFFF';
-          ctx.strokeStyle = accentColor;
-          ctx.lineWidth = 1.6;
-          ctx.beginPath();
-          ctx.arc(tipX, tipY, 3, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.stroke();
-          ctx.restore();
-        }
-
-        // Center origin dot
-        ctx.save();
-        ctx.fillStyle = '#1E293B';
-        ctx.beginPath();
-        ctx.arc(cx, cy, 2.4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-
-        // Phase readout below dial
+      function drawDraftingTag(ctx, text, x, y, minX, maxX, minY, maxY, strokeColor, textColor) {
         ctx.save();
         ctx.font = '600 10px "IBM Plex Mono", monospace';
-        ctx.fillStyle = deg === null ? '#64748B' : accentColor;
+        var tw = ctx.measureText(text).width;
+        var padX = 5;
+        var boxW = tw + padX * 2;
+        var boxH = 18;
+        var bx = Math.max(minX, Math.min(maxX - boxW, x - boxW / 2));
+        var by = Math.max(minY, Math.min(maxY - boxH, y - boxH / 2));
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
+        ctx.strokeStyle = strokeColor || '#0891B2';
+        ctx.lineWidth = 1.1;
+        ctx.fillRect(bx, by, boxW, boxH);
+        ctx.strokeRect(bx, by, boxW, boxH);
+        ctx.fillStyle = textColor || '#0891B2';
         ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
-        var readoutStr = deg === null ? 'amp = 0' : formatPhaseCardinal(deg);
-        ctx.fillText(readoutStr, cx, cy + r + 15);
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, bx + boxW / 2, by + boxH / 2 + 0.5);
+        ctx.restore();
+      }
+
+      function drawSubGrid(ctx, x0, y0, w, h, cx, cy, step) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x0, y0, w, h);
+        ctx.clip();
+        ctx.strokeStyle = 'rgba(29, 78, 216, 0.05)';
+        ctx.lineWidth = 1;
+        var startX = x0 + (((cx - x0) % step) + step) % step;
+        for (var gx = startX; gx < x0 + w; gx += step) {
+          ctx.beginPath();
+          ctx.moveTo(gx, y0);
+          ctx.lineTo(gx, y0 + h);
+          ctx.stroke();
+        }
+        var startY = y0 + (((cy - y0) % step) + step) % step;
+        for (var gy = startY; gy < y0 + h; gy += step) {
+          ctx.beginPath();
+          ctx.moveTo(x0, gy);
+          ctx.lineTo(x0 + w, gy);
+          ctx.stroke();
+        }
         ctx.restore();
       }
 
@@ -2577,10 +4384,11 @@
         var ev = appState.evaluation;
         var current = ev.finalState;
         var previous = ev.previousState;
-        var purelyReal = isPurelyRealState(current);
+        var meta = getPlotMetadata(current);
+        var purelyReal = meta.purelyReal;
 
         var rect = canvas.getBoundingClientRect();
-        var width = Math.max(280, Math.round(rect.width || 580));
+        var width = Math.max(280, Math.round(rect.width || 740));
         var height = Math.max(240, Math.round(rect.height || 274));
         var dpr = window.devicePixelRatio || 1;
 
@@ -2593,95 +4401,106 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, width, height);
 
-        var stacked = width < 440;
-        var vecBoxW = stacked ? width : Math.round(width * 0.62);
-        var vecBoxH = stacked ? Math.round(height * 0.58) : height;
+        var stacked = width < 480;
+        var zoneW = stacked ? width : width / 2;
+        var zoneH = stacked ? height / 2 : height;
 
-        // Subtle drafting grid across the main state-vector zone
-        var cx = vecBoxW / 2;
-        var cy = vecBoxH / 2 + (stacked ? 4 : 0);
-        var radius = Math.min(vecBoxW * 0.31, vecBoxH * 0.345);
-        var axisExt = radius + (stacked ? 16 : 20);
+        var leftX0 = 0;
+        var leftY0 = 0;
+        var rightX0 = stacked ? 0 : zoneW;
+        var rightY0 = stacked ? zoneH : 0;
 
-        ctx.save();
-        ctx.strokeStyle = 'rgba(30, 41, 59, 0.055)';
-        ctx.lineWidth = 1;
-        var step = radius / 2;
-        for (var gx = cx % step; gx < vecBoxW; gx += step) {
-          ctx.beginPath();
-          ctx.moveTo(gx, 0);
-          ctx.lineTo(gx, vecBoxH);
-          ctx.stroke();
-        }
-        for (var gy = cy % step; gy < vecBoxH; gy += step) {
-          ctx.beginPath();
-          ctx.moveTo(0, gy);
-          ctx.lineTo(vecBoxW, gy);
-          ctx.stroke();
-        }
-        ctx.restore();
+        // Shared circle geometry for balanced side-by-side unit circles
+        var radius = Math.min(zoneW * 0.255, (zoneH - 70) * 0.385, stacked ? 56 : 72);
+        var axisExt = radius + (stacked ? 11 : 13);
 
-        // Divider between State-Vector Plane and Complex Phase Dials
+        var cx1 = leftX0 + zoneW / 2;
+        var cy1 = leftY0 + 24 + (zoneH - 28) / 2;
+        var cx2 = rightX0 + zoneW / 2;
+        var cy2 = rightY0 + 24 + (zoneH - 28) / 2;
+
+        // Drafting background grids for both halves
+        drawSubGrid(ctx, leftX0, leftY0, zoneW, zoneH, cx1, cy1, Math.max(18, radius / 2));
+        drawSubGrid(ctx, rightX0, rightY0, zoneW, zoneH, cx2, cy2, Math.max(18, radius / 2));
+
+        // Center divider between Left Circle and Right Circle
         ctx.save();
         ctx.strokeStyle = '#CBD5E1';
         ctx.lineWidth = 1;
         if (stacked) {
           ctx.beginPath();
-          ctx.moveTo(8, vecBoxH);
-          ctx.lineTo(width - 8, vecBoxH);
+          ctx.moveTo(10, zoneH);
+          ctx.lineTo(width - 10, zoneH);
           ctx.stroke();
         } else {
           ctx.beginPath();
-          ctx.moveTo(vecBoxW, 8);
-          ctx.lineTo(vecBoxW, height - 8);
+          ctx.moveTo(zoneW, 8);
+          ctx.lineTo(zoneW, height - 8);
           ctx.stroke();
         }
         ctx.restore();
 
-        // Reference ±45° superposition diagonals
+        /* -------------------------------------------------------------------
+         * 1. LEFT CIRCLE: Amplitude Plot (|0> vs |1>)
+         * ------------------------------------------------------------------- */
         ctx.save();
-        ctx.strokeStyle = 'rgba(15, 118, 110, 0.22)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([3, 4]);
-        var diagR = radius * 1.1;
-        var dOff = diagR * INV_SQRT2;
-        ctx.beginPath();
-        ctx.moveTo(cx - dOff, cy + dOff);
-        ctx.lineTo(cx + dOff, cy - dOff);
-        ctx.moveTo(cx - dOff, cy - dOff);
-        ctx.lineTo(cx + dOff, cy + dOff);
-        ctx.stroke();
+        ctx.font = '600 11px "Plus Jakarta Sans", sans-serif';
+        ctx.fillStyle = '#0F172A';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Amplitude Plot (|0\u27E9 vs |1\u27E9)', cx1, leftY0 + 13);
         ctx.restore();
 
-        // Superposition guide labels (+45° and -45°)
-        ctx.save();
-        ctx.font = '500 10px "IBM Plex Mono", monospace';
-        ctx.fillStyle = '#64748B';
-        var labelR = radius + 12;
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText('|+\u27E9 (+45\u00B0)', cx + labelR * INV_SQRT2 + 2, cy - labelR * INV_SQRT2 - 1);
-        ctx.textBaseline = 'top';
-        ctx.fillText('|-\u27E9 (-45\u00B0)', cx + labelR * INV_SQRT2 + 2, cy + labelR * INV_SQRT2 + 1);
-        ctx.restore();
+        // Real ±45° superposition diagonals and markers ONLY when state is purely real
+        if (meta.showRealDiagonals) {
+          ctx.save();
+          ctx.strokeStyle = 'rgba(8, 145, 178, 0.24)';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([3, 4]);
+          var diagR = radius * 1.08;
+          var dOff = diagR * INV_SQRT2;
+          ctx.beginPath();
+          ctx.moveTo(cx1 - dOff, cy1 + dOff);
+          ctx.lineTo(cx1 + dOff, cy1 - dOff);
+          ctx.moveTo(cx1 - dOff, cy1 - dOff);
+          ctx.lineTo(cx1 + dOff, cy1 + dOff);
+          ctx.stroke();
+          ctx.restore();
 
-        // Coordinate axes
+          // Muted +45° / -45° markers (skip whichever marker coincides with the active tip label)
+          var degNow = getStateAngleDegrees(current);
+          ctx.save();
+          ctx.font = '500 9.5px "IBM Plex Mono", monospace';
+          ctx.fillStyle = '#64748B';
+          var mR = radius + 8;
+          ctx.textAlign = 'left';
+          if (degNow !== 45) {
+            ctx.textBaseline = 'bottom';
+            ctx.fillText('+45\u00B0', cx1 + mR * INV_SQRT2 + 2, cy1 - mR * INV_SQRT2);
+          }
+          if (degNow !== -45) {
+            ctx.textBaseline = 'top';
+            ctx.fillText('-45\u00B0', cx1 + mR * INV_SQRT2 + 2, cy1 + mR * INV_SQRT2);
+          }
+          ctx.restore();
+        }
+
+        // Coordinate axes (|0> horizontal, |1> vertical)
         ctx.save();
         ctx.strokeStyle = '#334155';
-        ctx.lineWidth = 1.2;
+        ctx.lineWidth = 1.15;
         ctx.beginPath();
-        ctx.moveTo(cx - axisExt, cy);
-        ctx.lineTo(cx + axisExt, cy);
-        ctx.moveTo(cx, cy - axisExt);
-        ctx.lineTo(cx, cy + axisExt);
+        ctx.moveTo(cx1 - axisExt, cy1);
+        ctx.lineTo(cx1 + axisExt, cy1);
+        ctx.moveTo(cx1, cy1 - axisExt);
+        ctx.lineTo(cx1, cy1 + axisExt);
         ctx.stroke();
 
-        // Unit ticks
         [
-          [cx + radius, cy - 3.5, cx + radius, cy + 3.5],
-          [cx - radius, cy - 3.5, cx - radius, cy + 3.5],
-          [cx - 3.5, cy - radius, cx + 3.5, cy - radius],
-          [cx - 3.5, cy + radius, cx + 3.5, cy + radius]
+          [cx1 + radius, cy1 - 3, cx1 + radius, cy1 + 3],
+          [cx1 - radius, cy1 - 3, cx1 - radius, cy1 + 3],
+          [cx1 - 3, cy1 - radius, cx1 + 3, cy1 - radius],
+          [cx1 - 3, cy1 + radius, cx1 + 3, cy1 + radius]
         ].forEach(function (t) {
           ctx.beginPath();
           ctx.moveTo(t[0], t[1]);
@@ -2695,67 +4514,65 @@
         ctx.strokeStyle = '#1E293B';
         ctx.lineWidth = 1.3;
         ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.arc(cx1, cy1, radius, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
 
         // Axis labels
         ctx.save();
-        ctx.font = '600 11px "IBM Plex Mono", monospace';
+        ctx.font = '600 10.5px "IBM Plex Mono", monospace';
         ctx.fillStyle = '#1E293B';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText('+|0\u27E9', cx + axisExt + 4, cy);
+        ctx.fillText('+|0\u27E9', cx1 + axisExt + 4, cy1);
         ctx.textAlign = 'right';
-        ctx.fillText('-|0\u27E9', cx - axisExt - 4, cy);
+        ctx.fillText('-|0\u27E9', cx1 - axisExt - 4, cy1);
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
-        ctx.fillText('+|1\u27E9', cx, cy - axisExt - 3);
+        ctx.fillText('+|1\u27E9', cx1, cy1 - axisExt - 3);
         ctx.textBaseline = 'top';
-        ctx.fillText('-|1\u27E9', cx, cy + axisExt + 3);
+        ctx.fillText('-|1\u27E9', cx1, cy1 + axisExt + 3);
         ctx.restore();
 
-        // Compute plotted vector coordinates: signed real (Re α, Re β) when purely real, else magnitude (|α|, |β|)
-        var vx = purelyReal ? current.alpha.re : cMag(current.alpha);
-        var vy = purelyReal ? current.beta.re : cMag(current.beta);
-        var tipX = cx + vx * radius;
-        var tipY = cy - vy * radius;
+        // Vector tip coordinates
+        var vx = meta.vx;
+        var vy = meta.vy;
+        var tipX = cx1 + vx * radius;
+        var tipY = cy1 - vy * radius;
 
         // Prior state ghost vector & arc when previous state differs
         if (previous) {
-          var prevReal = isPurelyRealState(previous);
-          var pvx = prevReal ? previous.alpha.re : cMag(previous.alpha);
-          var pvy = prevReal ? previous.beta.re : cMag(previous.beta);
-          var sameVec = Math.abs(pvx - vx) < 1e-9 && Math.abs(pvy - vy) < 1e-9;
+          var prevMeta = getPlotMetadata(previous);
+          var sameVec = Math.abs(prevMeta.vx - vx) < 1e-9 && Math.abs(prevMeta.vy - vy) < 1e-9;
           if (!sameVec) {
-            drawArrow(ctx, cx, cy, cx + pvx * radius, cy - pvy * radius, '#94A3B8', 1.4, true, 0.9);
-            var a1 = Math.atan2(-pvy, pvx);
+            drawArrow(ctx, cx1, cy1, cx1 + prevMeta.vx * radius, cy1 - prevMeta.vy * radius, '#94A3B8', 1.4, true, 0.85);
+            var a1 = Math.atan2(-prevMeta.vy, prevMeta.vx);
             var a2 = Math.atan2(-vy, vx);
-            var diff = a2 - a1;
-            while (diff > Math.PI) diff -= Math.PI * 2;
-            while (diff < -Math.PI) diff += Math.PI * 2;
+            var diffA = a2 - a1;
+            while (diffA > Math.PI) diffA -= Math.PI * 2;
+            while (diffA < -Math.PI) diffA += Math.PI * 2;
             ctx.save();
-            ctx.strokeStyle = 'rgba(15, 118, 110, 0.45)';
-            ctx.lineWidth = 1.4;
+            ctx.strokeStyle = 'rgba(8, 145, 178, 0.45)';
+            ctx.lineWidth = 1.3;
             ctx.setLineDash([4, 3]);
             ctx.beginPath();
-            ctx.arc(cx, cy, radius * 0.42, a1, a1 + diff, diff < 0);
+            ctx.arc(cx1, cy1, radius * 0.42, a1, a1 + diffA, diffA < 0);
             ctx.stroke();
             ctx.restore();
           }
         }
 
-        // Projection drop lines
+        // Projection drop lines onto axes
         if (Math.abs(vx) > 1e-6 && Math.abs(vy) > 1e-6) {
           ctx.save();
-          ctx.strokeStyle = 'rgba(15, 118, 110, 0.55)';
+          ctx.strokeStyle = 'rgba(8, 145, 178, 0.55)';
           ctx.lineWidth = 1;
           ctx.setLineDash([3, 3]);
           ctx.beginPath();
           ctx.moveTo(tipX, tipY);
-          ctx.lineTo(tipX, cy);
+          ctx.lineTo(tipX, cy1);
           ctx.moveTo(tipX, tipY);
-          ctx.lineTo(cx, tipY);
+          ctx.lineTo(cx1, tipY);
           ctx.stroke();
           ctx.restore();
         }
@@ -2765,78 +4582,234 @@
         if (deg !== 0) {
           var canvasAng = Math.atan2(-vy, vx);
           ctx.save();
-          ctx.strokeStyle = '#0F766E';
+          ctx.strokeStyle = '#0891B2';
           ctx.lineWidth = 1.2;
           ctx.beginPath();
-          ctx.arc(cx, cy, 20, 0, canvasAng, canvasAng < 0);
+          ctx.arc(cx1, cy1, 18, 0, canvasAng, canvasAng < 0);
           ctx.stroke();
           ctx.restore();
         }
 
-        // State vector arrow
-        drawArrow(ctx, cx, cy, tipX, tipY, '#0F766E', 2.6, false, 1);
+        // Bold cyan-teal state vector arrow
+        drawArrow(ctx, cx1, cy1, tipX, tipY, '#0891B2', 2.8, false, 0.95);
 
-        // Origin & tip markers
+        // Origin & tip dots
         ctx.save();
-        ctx.fillStyle = '#1E293B';
+        ctx.fillStyle = '#0F172A';
         ctx.beginPath();
-        ctx.arc(cx, cy, 2.8, 0, Math.PI * 2);
+        ctx.arc(cx1, cy1, 2.6, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = '#FFFFFF';
-        ctx.strokeStyle = '#0F766E';
-        ctx.lineWidth = 1.9;
+        ctx.strokeStyle = '#0891B2';
+        ctx.lineWidth = 2.0;
         ctx.beginPath();
-        ctx.arc(tipX, tipY, 3.8, 0, Math.PI * 2);
+        ctx.arc(tipX, tipY, 4.0, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
         ctx.restore();
 
-        // Compact corner mode/coordinate box (never collides with +|1>)
-        var coordText = purelyReal
-          ? '(' + formatComplexExact(current.alpha) + ', ' + formatComplexExact(current.beta) + ')'
-          : '(|a|,|b|) = (' + formatRealExact(cMag(current.alpha)) + ', ' + formatRealExact(cMag(current.beta)) + ')';
-        if (stacked) {
-          coordText = purelyReal
-            ? '(' + formatComplexExact(current.alpha) + ',' + formatComplexExact(current.beta) + ')'
-            : '|a|,' + '|b|=' + formatRealExact(cMag(current.alpha)) + ',' + formatRealExact(cMag(current.beta));
+        // Dynamic tip label (never overlaps +|1>, axes, or divider)
+        var tagX = tipX;
+        var tagY = tipY;
+        if (Math.abs(vy) < 1e-6) {
+          // On horizontal axis (|0> or -|0>)
+          tagX = tipX + (vx >= 0 ? -18 : 18);
+          tagY = tipY - 19;
+        } else if (Math.abs(vx) < 1e-6) {
+          // On vertical axis (|1> or -|1>)
+          tagX = tipX + 34;
+          tagY = tipY + (vy >= 0 ? 14 : -14);
+        } else {
+          // Diagonal quadrant: offset cleanly outward along quadrant bisector
+          tagX = tipX + (vx >= 0 ? 36 : -36);
+          tagY = tipY + (vy >= 0 ? -16 : 16);
         }
+        drawDraftingTag(
+          ctx,
+          meta.tipLabel,
+          tagX,
+          tagY,
+          leftX0 + 6,
+          leftX0 + zoneW - 6,
+          leftY0 + 24,
+          leftY0 + zoneH - 6,
+          '#0891B2',
+          '#0E7490'
+        );
+
+        /* -------------------------------------------------------------------
+         * 2. RIGHT CIRCLE: Complex Relative Phase Plane (Re vs Im)
+         * ------------------------------------------------------------------- */
         ctx.save();
-        ctx.font = '600 10px "IBM Plex Mono", monospace';
-        var tw = ctx.measureText(coordText).width;
-        var boxW = tw + 10;
-        var boxH = 20;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
-        ctx.strokeStyle = '#0F766E';
-        ctx.lineWidth = 1;
-        ctx.fillRect(6, 6, boxW, boxH);
-        ctx.strokeRect(6, 6, boxW, boxH);
-        ctx.fillStyle = '#0F766E';
-        ctx.textAlign = 'left';
+        ctx.font = '600 11px "Plus Jakarta Sans", sans-serif';
+        ctx.fillStyle = '#0F172A';
+        ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(coordText, 11, 16.5);
+        ctx.fillText('Complex Relative Phase Plane (Re vs Im)', cx2, rightY0 + 13);
         ctx.restore();
 
-        // Right/Bottom Zone: Dual Complex Phase Dials for α and β
-        if (stacked) {
-          var dialY = vecBoxH + (height - vecBoxH) / 2;
-          var dialR = Math.min(width * 0.14, (height - vecBoxH) * 0.27, 36);
-          drawPhaseDial(ctx, width * 0.27, dialY, dialR, current.alpha, 'Phase of \u03B1 (|0\u27E9)', '#0F766E');
-          drawPhaseDial(ctx, width * 0.73, dialY, dialR, current.beta, 'Phase of \u03B2 (|1\u27E9)', '#1E293B');
+        // Re / Im axes
+        ctx.save();
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1.15;
+        ctx.beginPath();
+        ctx.moveTo(cx2 - axisExt, cy2);
+        ctx.lineTo(cx2 + axisExt, cy2);
+        ctx.moveTo(cx2, cy2 - axisExt);
+        ctx.lineTo(cx2, cy2 + axisExt);
+        ctx.stroke();
+
+        [
+          [cx2 + radius, cy2 - 3, cx2 + radius, cy2 + 3],
+          [cx2 - radius, cy2 - 3, cx2 - radius, cy2 + 3],
+          [cx2 - 3, cy2 - radius, cx2 + 3, cy2 - radius],
+          [cx2 - 3, cy2 + radius, cx2 + 3, cy2 + radius]
+        ].forEach(function (t) {
+          ctx.beginPath();
+          ctx.moveTo(t[0], t[1]);
+          ctx.lineTo(t[2], t[3]);
+          ctx.stroke();
+        });
+        ctx.restore();
+
+        // Unit circle
+        ctx.save();
+        ctx.strokeStyle = '#1E293B';
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        ctx.arc(cx2, cy2, radius, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+
+        // Axis labels: -1 (180°) left, +1 (0°) right, +i (+90°) top, -i (-90°) bottom
+        var narrowRight = zoneW < 310;
+        ctx.save();
+        ctx.font = '600 ' + (narrowRight ? '9px' : '9.5px') + ' "IBM Plex Mono", monospace';
+        ctx.fillStyle = '#0F172A';
+
+        // Top: +i (+90°) and Bottom: -i (-90°)
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('+i (+90\u00B0)', cx2, cy2 - axisExt - 3);
+        ctx.textBaseline = 'top';
+        ctx.fillText('-i (-90\u00B0)', cx2, cy2 + axisExt + 3);
+
+        // Right: +1 (0°) and Left: -1 (180°)
+        if (narrowRight) {
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'bottom';
+          ctx.fillText('+1', cx2 + axisExt + 4, cy2 - 1);
+          ctx.textBaseline = 'top';
+          ctx.fillStyle = '#475569';
+          ctx.fillText('(0\u00B0)', cx2 + axisExt + 4, cy2 + 1);
+
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'bottom';
+          ctx.fillStyle = '#0F172A';
+          ctx.fillText('-1', cx2 - axisExt - 4, cy2 - 1);
+          ctx.textBaseline = 'top';
+          ctx.fillStyle = '#475569';
+          ctx.fillText('(180\u00B0)', cx2 - axisExt - 4, cy2 + 1);
         } else {
-          var dialZoneW = width - vecBoxW;
-          var dialX = vecBoxW + dialZoneW / 2;
-          var dialRDesktop = Math.min(dialZoneW * 0.21, height * 0.145, 37);
-          drawPhaseDial(ctx, dialX, height * 0.265, dialRDesktop, current.alpha, 'Phase of \u03B1 (|0\u27E9)', '#0F766E');
-          drawPhaseDial(ctx, dialX, height * 0.745, dialRDesktop, current.beta, 'Phase of \u03B2 (|1\u27E9)', '#1E293B');
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('+1 (0\u00B0)', cx2 + axisExt + 4, cy2);
+          ctx.textAlign = 'right';
+          ctx.fillText('-1 (180\u00B0)', cx2 - axisExt - 4, cy2);
+        }
+        ctx.restore();
+
+        // Plot relative phase arrow OR basis-state centered dot
+        if (meta.isBasisState || meta.signedDeltaPhi === null) {
+          // Centered dot labeled "No relative phase (Basis state)"
+          ctx.save();
+          ctx.fillStyle = 'rgba(67, 56, 202, 0.16)';
+          ctx.beginPath();
+          ctx.arc(cx2, cy2, 9, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#4338CA';
+          ctx.strokeStyle = '#0F172A';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(cx2, cy2, 4.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+
+          drawDraftingTag(
+            ctx,
+            'No relative phase (Basis state)',
+            cx2,
+            cy2 + 28,
+            rightX0 + 6,
+            rightX0 + zoneW - 6,
+            rightY0 + 24,
+            rightY0 + zoneH - 6,
+            '#94A3B8',
+            '#475569'
+          );
+        } else {
+          var phiRad = (meta.signedDeltaPhi * Math.PI) / 180;
+          var pTipX = cx2 + radius * Math.cos(phiRad);
+          var pTipY = cy2 - radius * Math.sin(phiRad);
+
+          // Shaded phase arc wedge from 0° (+1) to Δφ
+          if (meta.signedDeltaPhi !== 0) {
+            var ccw = meta.signedDeltaPhi > 0;
+            ctx.save();
+            ctx.fillStyle = 'rgba(67, 56, 202, 0.12)';
+            ctx.beginPath();
+            ctx.moveTo(cx2, cy2);
+            ctx.arc(cx2, cy2, radius * 0.48, 0, -phiRad, ccw);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = '#4338CA';
+            ctx.lineWidth = 1.25;
+            ctx.beginPath();
+            ctx.arc(cx2, cy2, radius * 0.48, 0, -phiRad, ccw);
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          drawArrow(ctx, cx2, cy2, pTipX, pTipY, '#4338CA', 2.8, false, 0.95);
+
+          ctx.save();
+          ctx.fillStyle = '#0F172A';
+          ctx.beginPath();
+          ctx.arc(cx2, cy2, 2.6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#FFFFFF';
+          ctx.strokeStyle = '#4338CA';
+          ctx.lineWidth = 2.0;
+          ctx.beginPath();
+          ctx.arc(pTipX, pTipY, 4.0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+
+          // Clean relative phase readout box tucked in bottom-right corner of right zone
+          drawDraftingTag(
+            ctx,
+            meta.phasePlaneLabel,
+            rightX0 + zoneW - 56,
+            rightY0 + zoneH - 14,
+            rightX0 + 6,
+            rightX0 + zoneW - 6,
+            rightY0 + 24,
+            rightY0 + zoneH - 5,
+            '#4338CA',
+            '#4338CA'
+          );
         }
 
-        // Update header readout & accessible attributes
+        // Update panel header readout & accessible data attributes
         var pAlpha = cPhaseDeg(current.alpha);
         var pBeta = cPhaseDeg(current.beta);
         var rel = getRelativePhaseDeg(current);
         var degSign = deg > 0 ? '+' + deg + '\u00B0' : deg + '\u00B0';
-        var relText = rel === null ? '\u2014' : formatPhaseCardinal(rel);
-        elPlotAngle.textContent = (purelyReal ? '\u03B8 = ' + degSign : '|\u03B8| = ' + deg + '\u00B0') + ' \u00B7 \u0394\u03C6 = ' + relText;
+        var relHeader = meta.signedDeltaPhi === null ? '\u2014' : meta.phasePlaneLabel.replace(/^\u0394\u03C6 = /, '');
+        elPlotAngle.textContent = (purelyReal ? '\u03B8 = ' + degSign : '|\u03B8| = ' + deg + '\u00B0') + ' \u00B7 \u0394\u03C6 = ' + relHeader;
 
         canvas.setAttribute('data-alpha', formatComplexExact(current.alpha));
         canvas.setAttribute('data-beta', formatComplexExact(current.beta));
@@ -2844,19 +4817,415 @@
         canvas.setAttribute('data-phase-alpha-deg', pAlpha === null ? 'none' : String(pAlpha));
         canvas.setAttribute('data-phase-beta-deg', pBeta === null ? 'none' : String(pBeta));
         canvas.setAttribute('data-rel-phase-deg', rel === null ? 'none' : String(rel));
+        canvas.setAttribute('data-signed-rel-phase-deg', meta.signedDeltaPhi === null ? 'none' : String(meta.signedDeltaPhi));
+        canvas.setAttribute('data-tip-label', meta.tipLabel);
+        canvas.setAttribute('data-phase-plane-label', meta.phasePlaneLabel);
+        canvas.setAttribute('data-show-real-diagonals', meta.showRealDiagonals ? 'true' : 'false');
         canvas.setAttribute('data-is-complex', purelyReal ? 'false' : 'true');
         canvas.setAttribute('data-ket', formatKetNotation(current).ket);
         canvas.setAttribute(
           'aria-label',
-          'State vector and complex phase plot: final state ' +
-            formatKetNotation(current).ket +
-            ', alpha phase ' +
-            formatPhaseCardinal(pAlpha) +
-            ', beta phase ' +
-            formatPhaseCardinal(pBeta) +
-            ', relative phase ' +
-            relText
+          '2D amplitude plot showing ' + meta.tipLabel + ' and complex relative phase plane showing ' + meta.phasePlaneLabel
         );
+      }
+
+      /* =====================================================================
+       * Render: Interactive 3D Bloch Sphere (Pure HTML5 Canvas 3D Projection)
+       * ===================================================================== */
+      var DEFAULT_BLOCH_YAW = (35 * Math.PI) / 180;
+      var DEFAULT_BLOCH_PITCH = (22 * Math.PI) / 180;
+      var blochCamera = {
+        yaw: DEFAULT_BLOCH_YAW,
+        pitch: DEFAULT_BLOCH_PITCH,
+        dragging: false,
+        pointerId: null,
+        lastX: 0,
+        lastY: 0
+      };
+
+      function projectBlochPoint(x, y, z, yaw, pitch, cx, cy, R) {
+        var cosY = Math.cos(yaw);
+        var sinY = Math.sin(yaw);
+        var cosP = Math.cos(pitch);
+        var sinP = Math.sin(pitch);
+
+        var xr = x * cosY + y * sinY;
+        var yr = -x * sinY + y * cosY;
+        var zr = z;
+
+        var sx = yr;
+        var sy = zr * cosP - xr * sinP;
+        var depth = xr * cosP + zr * sinP;
+        var camDist = 4.6;
+        var persp = camDist / (camDist - depth);
+
+        return {
+          x: cx + sx * R * persp,
+          y: cy - sy * R * persp,
+          depth: depth,
+          persp: persp
+        };
+      }
+
+      function drawBlochRing(ctx, pointFn, steps, yaw, pitch, cx, cy, R, frontStyle, backStyle, frontWidth, backWidth) {
+        var pts = [];
+        for (var i = 0; i <= steps; i += 1) {
+          var t = (i / steps) * Math.PI * 2;
+          var p3 = pointFn(t);
+          pts.push(projectBlochPoint(p3[0], p3[1], p3[2], yaw, pitch, cx, cy, R));
+        }
+
+        // Back segments (dashed)
+        ctx.save();
+        ctx.strokeStyle = backStyle;
+        ctx.lineWidth = backWidth;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        for (var b = 0; b < steps; b += 1) {
+          if ((pts[b].depth + pts[b + 1].depth) / 2 < 0) {
+            ctx.moveTo(pts[b].x, pts[b].y);
+            ctx.lineTo(pts[b + 1].x, pts[b + 1].y);
+          }
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        // Front segments (solid)
+        ctx.save();
+        ctx.strokeStyle = frontStyle;
+        ctx.lineWidth = frontWidth;
+        ctx.beginPath();
+        for (var f = 0; f < steps; f += 1) {
+          if ((pts[f].depth + pts[f + 1].depth) / 2 >= 0) {
+            ctx.moveTo(pts[f].x, pts[f].y);
+            ctx.lineTo(pts[f + 1].x, pts[f + 1].y);
+          }
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function formatBlochCoord(v) {
+        var snapped = Math.abs(v) < 1e-6 ? 0 : v;
+        return snapped.toFixed(2);
+      }
+
+      function renderBlochSphere() {
+        var current = appState.evaluation.finalState;
+        var bloch = getBlochCoordinates(current);
+        var yaw = blochCamera.yaw;
+        var pitch = blochCamera.pitch;
+
+        var rect = blochCanvas.getBoundingClientRect();
+        var width = Math.max(260, Math.round(rect.width || 460));
+        var height = Math.max(240, Math.round(rect.height || 274));
+        var dpr = window.devicePixelRatio || 1;
+
+        if (blochCanvas.width !== Math.round(width * dpr) || blochCanvas.height !== Math.round(height * dpr)) {
+          blochCanvas.width = Math.round(width * dpr);
+          blochCanvas.height = Math.round(height * dpr);
+        }
+
+        var ctx = blochCanvas.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+
+        var cx = width * 0.54;
+        if (width < 380) cx = width * 0.5;
+        var cy = height * 0.52;
+        var R = Math.min(width * 0.28, height * 0.34, 94);
+
+        // Subtle drafting grid matching the 2D workbench sheet
+        drawSubGrid(ctx, 0, 0, width, height, cx, cy, 24);
+
+        var origin = projectBlochPoint(0, 0, 0, yaw, pitch, cx, cy, R);
+
+        // Faint equatorial plane fill for immediate 3D depth cue
+        ctx.save();
+        ctx.beginPath();
+        for (var e = 0; e <= 72; e += 1) {
+          var ea = (e / 72) * Math.PI * 2;
+          var ep = projectBlochPoint(Math.cos(ea), Math.sin(ea), 0, yaw, pitch, cx, cy, R);
+          if (e === 0) ctx.moveTo(ep.x, ep.y);
+          else ctx.lineTo(ep.x, ep.y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(67, 56, 202, 0.055)';
+        ctx.fill();
+        ctx.restore();
+
+        // Latitude rings at z = ±0.5 (±30°)
+        var latR = Math.sqrt(1 - 0.25);
+        drawBlochRing(
+          ctx,
+          function (t) { return [latR * Math.cos(t), latR * Math.sin(t), 0.5]; },
+          64, yaw, pitch, cx, cy, R,
+          'rgba(29, 78, 216, 0.22)', 'rgba(29, 78, 216, 0.10)', 0.9, 0.85
+        );
+        drawBlochRing(
+          ctx,
+          function (t) { return [latR * Math.cos(t), latR * Math.sin(t), -0.5]; },
+          64, yaw, pitch, cx, cy, R,
+          'rgba(29, 78, 216, 0.22)', 'rgba(29, 78, 216, 0.10)', 0.9, 0.85
+        );
+
+        // Prime meridian (XZ, y=0) & secondary meridian (YZ, x=0)
+        drawBlochRing(
+          ctx,
+          function (t) { return [Math.cos(t), 0, Math.sin(t)]; },
+          72, yaw, pitch, cx, cy, R,
+          'rgba(29, 78, 216, 0.34)', 'rgba(29, 78, 216, 0.14)', 1.0, 0.9
+        );
+        drawBlochRing(
+          ctx,
+          function (t) { return [0, Math.cos(t), Math.sin(t)]; },
+          72, yaw, pitch, cx, cy, R,
+          'rgba(29, 78, 216, 0.34)', 'rgba(29, 78, 216, 0.14)', 1.0, 0.9
+        );
+
+        // Equator ring (XY, z=0)
+        drawBlochRing(
+          ctx,
+          function (t) { return [Math.cos(t), Math.sin(t), 0]; },
+          80, yaw, pitch, cx, cy, R,
+          '#4338CA', 'rgba(67, 56, 202, 0.30)', 1.35, 1.0
+        );
+
+        // Outer sphere silhouette (exact tangent radius under perspective projection)
+        var camDist = 4.6;
+        var silhouetteR = R * (camDist / Math.sqrt(camDist * camDist - 1));
+        ctx.save();
+        ctx.strokeStyle = '#1D4ED8';
+        ctx.lineWidth = 1.35;
+        ctx.beginPath();
+        ctx.arc(cx, cy, silhouetteR, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+
+        // Three orthogonal axes (+X/-X, +Y/-Y, +Z/-Z)
+        var axes = [
+          { vec: [1, 0, 0], posLabel: '+X: |+\u27E9', negLabel: '-X: |-\u27E9' },
+          { vec: [0, 1, 0], posLabel: '+Y: |+i\u27E9', negLabel: '-Y: |-i\u27E9' },
+          { vec: [0, 0, 1], posLabel: '+Z: |0\u27E9', negLabel: '-Z: |1\u27E9' }
+        ];
+
+        for (var a = 0; a < axes.length; a += 1) {
+          var v = axes[a].vec;
+          var pNeg = projectBlochPoint(-v[0] * 1.12, -v[1] * 1.12, -v[2] * 1.12, yaw, pitch, cx, cy, R);
+          var pPos = projectBlochPoint(v[0] * 1.12, v[1] * 1.12, v[2] * 1.12, yaw, pitch, cx, cy, R);
+          var pUnitPos = projectBlochPoint(v[0], v[1], v[2], yaw, pitch, cx, cy, R);
+          var pUnitNeg = projectBlochPoint(-v[0], -v[1], -v[2], yaw, pitch, cx, cy, R);
+
+          // Negative axis dashed
+          ctx.save();
+          ctx.strokeStyle = '#94A3B8';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([3, 3]);
+          ctx.beginPath();
+          ctx.moveTo(origin.x, origin.y);
+          ctx.lineTo(pNeg.x, pNeg.y);
+          ctx.stroke();
+          ctx.restore();
+
+          // Positive axis solid with subtle head
+          drawArrow(ctx, origin.x, origin.y, pPos.x, pPos.y, '#475569', 1.15, false, 0.55);
+
+          // Unit intersection ticks on sphere surface
+          ctx.save();
+          ctx.fillStyle = '#475569';
+          ctx.beginPath();
+          ctx.arc(pUnitPos.x, pUnitPos.y, 2.2, 0, Math.PI * 2);
+          ctx.arc(pUnitNeg.x, pUnitNeg.y, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          // Labels cleanly positioned outside axis tips with crisp readability halo
+          var lblPos = projectBlochPoint(v[0] * 1.35, v[1] * 1.35, v[2] * 1.26, yaw, pitch, cx, cy, R);
+          var lblNeg = projectBlochPoint(-v[0] * 1.35, -v[1] * 1.35, -v[2] * 1.26, yaw, pitch, cx, cy, R);
+
+          var drawAxisText = function (pt, text, isPos) {
+            ctx.save();
+            ctx.font = (isPos ? '600 ' : '500 ') + '10px "IBM Plex Mono", monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            var halfTw = ctx.measureText(text).width / 2 + 5;
+            var lx = Math.max(halfTw, Math.min(width - halfTw, pt.x));
+            var ly = Math.max(10, Math.min(height - 10, pt.y));
+            ctx.lineWidth = 3;
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
+            ctx.strokeText(text, lx, ly);
+            ctx.fillStyle = pt.depth >= -0.15 ? '#0F172A' : '#64748B';
+            ctx.fillText(text, lx, ly);
+            ctx.restore();
+          };
+          drawAxisText(lblPos, axes[a].posLabel, true);
+          drawAxisText(lblNeg, axes[a].negLabel, false);
+        }
+
+        // Bloch state vector & equatorial plane projection
+        var tip = projectBlochPoint(bloch.x, bloch.y, bloch.z, yaw, pitch, cx, cy, R);
+        var eqMag = Math.hypot(bloch.x, bloch.y);
+        if (eqMag > EPS) {
+          var eqPt = projectBlochPoint(bloch.x, bloch.y, 0, yaw, pitch, cx, cy, R);
+
+          // Dashed radial line on equatorial plane from origin to (x, y, 0)
+          ctx.save();
+          ctx.strokeStyle = 'rgba(67, 56, 202, 0.55)';
+          ctx.lineWidth = 1.15;
+          ctx.setLineDash([3, 3]);
+          ctx.beginPath();
+          ctx.moveTo(origin.x, origin.y);
+          ctx.lineTo(eqPt.x, eqPt.y);
+          if (Math.abs(bloch.z) > EPS) {
+            ctx.moveTo(tip.x, tip.y);
+            ctx.lineTo(eqPt.x, eqPt.y);
+          }
+          ctx.stroke();
+          ctx.restore();
+
+          // Azimuthal arc on equatorial plane from +X to φ
+          if (bloch.phiDeg !== null && bloch.phiDeg !== 0) {
+            var phiEnd = Math.atan2(bloch.y, bloch.x);
+            if (phiEnd < 0) phiEnd += Math.PI * 2;
+            var arcSteps = 24;
+            ctx.save();
+            ctx.strokeStyle = 'rgba(67, 56, 202, 0.72)';
+            ctx.lineWidth = 1.25;
+            ctx.beginPath();
+            for (var s = 0; s <= arcSteps; s += 1) {
+              var ang = (s / arcSteps) * phiEnd;
+              var ap = projectBlochPoint(0.36 * Math.cos(ang), 0.36 * Math.sin(ang), 0, yaw, pitch, cx, cy, R);
+              if (s === 0) ctx.moveTo(ap.x, ap.y);
+              else ctx.lineTo(ap.x, ap.y);
+            }
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          // Equatorial projection dot
+          if (Math.abs(bloch.z) > EPS) {
+            ctx.save();
+            ctx.fillStyle = '#4338CA';
+            ctx.beginPath();
+            ctx.arc(eqPt.x, eqPt.y, 2.7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        }
+
+        // Bold vibrant teal 3D Bloch state vector arrow
+        drawArrow(ctx, origin.x, origin.y, tip.x, tip.y, '#0891B2', 3.0, false, 1.0);
+
+        // Origin dot & highlighted vector tip
+        ctx.save();
+        ctx.fillStyle = '#0F172A';
+        ctx.beginPath();
+        ctx.arc(origin.x, origin.y, 2.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(8, 145, 178, 0.24)';
+        ctx.beginPath();
+        ctx.arc(tip.x, tip.y, 7.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.strokeStyle = '#0891B2';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.arc(tip.x, tip.y, 4.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+
+        // Corner monospace readout badge: (x, y, z) and (θ, φ)
+        var xyzLine =
+          '(x,y,z)=(' +
+          formatBlochCoord(bloch.x) +
+          ', ' +
+          formatBlochCoord(bloch.y) +
+          ', ' +
+          formatBlochCoord(bloch.z) +
+          ')';
+        var phiDisplay = bloch.phiDeg === null ? '\u2014' : bloch.phiDeg + '\u00B0';
+        var angleLine = '\u03B8 = ' + bloch.thetaDeg + '\u00B0 \u00B7 \u03C6 = ' + phiDisplay;
+
+        ctx.save();
+        ctx.font = '600 9.5px "IBM Plex Mono", monospace';
+        var w1 = ctx.measureText(xyzLine).width;
+        var w2 = ctx.measureText(angleLine).width;
+        var badgeW = Math.max(w1, w2) + 14;
+        var badgeH = 32;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
+        ctx.strokeStyle = '#C7D2FE';
+        ctx.lineWidth = 1.1;
+        ctx.fillRect(6, 6, badgeW, badgeH);
+        ctx.strokeRect(6, 6, badgeW, badgeH);
+
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#0F172A';
+        ctx.fillText(xyzLine, 12, 15.5);
+        ctx.fillStyle = '#4338CA';
+        ctx.fillText(angleLine, 12, 29);
+        ctx.restore();
+
+        // Sync panel header readout & accessible attributes
+        elBlochHeader.textContent = angleLine;
+        blochCanvas.setAttribute('data-bloch-x', formatBlochCoord(bloch.x));
+        blochCanvas.setAttribute('data-bloch-y', formatBlochCoord(bloch.y));
+        blochCanvas.setAttribute('data-bloch-z', formatBlochCoord(bloch.z));
+        blochCanvas.setAttribute('data-bloch-theta', String(bloch.thetaDeg));
+        blochCanvas.setAttribute('data-bloch-phi', bloch.phiDeg === null ? 'none' : String(bloch.phiDeg));
+        blochCanvas.setAttribute('data-yaw-deg', String(Math.round((yaw * 180) / Math.PI)));
+        blochCanvas.setAttribute('data-pitch-deg', String(Math.round((pitch * 180) / Math.PI)));
+        blochCanvas.setAttribute(
+          'aria-label',
+          '3D Bloch sphere at coordinates ' + xyzLine + ', polar angle theta ' + bloch.thetaDeg + ' degrees, azimuth phi ' + phiDisplay
+        );
+      }
+
+      /* =====================================================================
+       * Render: Live Quantum vs. Classical Comparison Panel
+       * ===================================================================== */
+      function renderQuantumVsClassical() {
+        if (!elQvcQuantumTag) return;
+        var current = appState.evaluation.finalState;
+        var probs = getStateProbabilities(current);
+        var ketInfo = formatKetNotation(current);
+        var phaseStatus = getRelativePhaseStatus(current);
+        var nextH = applyGate(current, 'H').output;
+        var nextHProbs = getStateProbabilities(nextH);
+
+        elQvcQuantumTag.textContent = '|\u03C8\u27E9 = ' + ketInfo.ket;
+        var phiTxt = phaseStatus.deltaPhi === null ? '\u2014' : phaseStatus.deltaPhi + '\u00B0';
+        elQvcQuantumMetric.textContent =
+          'P(0) = ' + (probs.p0 * 100).toFixed(1) + '% \u00B7 P(1) = ' + (probs.p1 * 100).toFixed(1) + '% \u00B7 \u0394\u03C6 = ' + phiTxt;
+
+        if (!phaseStatus.isSuperposition) {
+          var basisBit = probs.p0 > 0.5 ? '0' : '1';
+          elQvcModeMeta.textContent = 'Computational Basis |' + basisBit + '\u27E9';
+          elQvcClassicalTag.textContent = 'Discrete Bit = ' + basisBit;
+          elQvcClassicalMetric.textContent = 'Deterministic Classical Bit: ' + basisBit;
+          elQvcQuantumDesc.textContent =
+            'Currently aligned on a computational pole (|' + basisBit + '\u27E9). Applying H next rotates it to a 50/50 superposition; applying X flips the bit.';
+          elQvcClassicalDesc.textContent =
+            'A classical bit can represent ' + basisBit + ' at the poles, but cannot hold complex phase (\u0394\u03C6) or enter coherent superposition.';
+        } else {
+          elQvcModeMeta.textContent = 'Coherent Superposition';
+          elQvcClassicalTag.textContent = 'Classical Coin (No Phase)';
+          elQvcClassicalMetric.textContent = 'Classical Random Coin: 50% / 50% (Incoherent)';
+          var nextHDesc =
+            nextHProbs.p0 > 0.99
+              ? 'Applying H next interferes constructively back to 100% |0\u27E9.'
+              : nextHProbs.p1 > 0.99
+                ? 'Applying H next interferes constructively back to 100% |1\u27E9.'
+                : 'Applying H next rotates this complex phase state into P(0) = ' + (nextHProbs.p0 * 100).toFixed(0) + '% / P(1) = ' + (nextHProbs.p1 * 100).toFixed(0) + '%.';
+          elQvcQuantumDesc.textContent =
+            phaseStatus.label + '. ' + nextHDesc;
+          elQvcClassicalDesc.textContent =
+            'A classical 50/50 coin has no phase angle (\u0394\u03C6) and cannot distinguish |+\u27E9, |-\u27E9, |+i\u27E9, or |-i\u27E9; shaking it again stays 50/50 forever.';
+        }
       }
 
       /* =====================================================================
@@ -2878,6 +5247,8 @@
         renderOutputAndProbabilities();
         renderMeasurement();
         renderCanvas();
+        renderBlochSphere();
+        renderQuantumVsClassical();
         if (scrollWireToEnd) {
           elWireScroll.scrollLeft = elWireScroll.scrollWidth;
         }
@@ -2942,6 +5313,57 @@
         renderMeasurement();
       }
 
+      function handleResetBlochView() {
+        blochCamera.yaw = DEFAULT_BLOCH_YAW;
+        blochCamera.pitch = DEFAULT_BLOCH_PITCH;
+        renderBlochSphere();
+      }
+
+      /* Bloch Sphere Drag-to-Rotate Pointer Controls */
+      blochCanvas.addEventListener('pointerdown', function (evt) {
+        blochCamera.dragging = true;
+        blochCamera.pointerId = evt.pointerId;
+        blochCamera.lastX = evt.clientX;
+        blochCamera.lastY = evt.clientY;
+        blochCanvas.classList.add('is-dragging');
+        if (blochCanvas.setPointerCapture) {
+          try {
+            blochCanvas.setPointerCapture(evt.pointerId);
+          } catch (e) {
+            // Ignore synthetic pointer capture errors
+          }
+        }
+      });
+
+      blochCanvas.addEventListener('pointermove', function (evt) {
+        if (!blochCamera.dragging) return;
+        var dx = evt.clientX - blochCamera.lastX;
+        var dy = evt.clientY - blochCamera.lastY;
+        blochCamera.lastX = evt.clientX;
+        blochCamera.lastY = evt.clientY;
+        blochCamera.yaw -= dx * 0.01;
+        blochCamera.pitch = Math.max(-1.42, Math.min(1.42, blochCamera.pitch + dy * 0.01));
+        renderBlochSphere();
+      });
+
+      function endBlochDrag(evt) {
+        if (!blochCamera.dragging) return;
+        blochCamera.dragging = false;
+        blochCanvas.classList.remove('is-dragging');
+        if (blochCanvas.releasePointerCapture && blochCamera.pointerId !== null) {
+          try {
+            blochCanvas.releasePointerCapture(evt.pointerId);
+          } catch (e) {
+            // Ignore synthetic pointer release errors
+          }
+        }
+        blochCamera.pointerId = null;
+      }
+
+      blochCanvas.addEventListener('pointerup', endBlochDrag);
+      blochCanvas.addEventListener('pointercancel', endBlochDrag);
+      btnBlochReset.addEventListener('click', handleResetBlochView);
+
       /* Wire Event Listeners */
       btnToggleInit.addEventListener('click', handleCycleInitialState);
       for (var k = 0; k < cardinalBtns.length; k += 1) {
@@ -2962,8 +5384,22 @@
       btnReset.addEventListener('click', handleResetCircuit);
       btnSimulate.addEventListener('click', handleSimulateShots);
 
+      if (btnDemoHH) {
+        btnDemoHH.addEventListener('click', function () {
+          appState.initialId = '0';
+          appState.gateSequence = ['H', 'H'];
+          appState.inspectedIndex = 1;
+          recomputeAndRender(true, true);
+          var lab = document.getElementById('simulator-lab');
+          if (lab && lab.scrollIntoView) {
+            lab.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      }
+
       window.addEventListener('resize', function () {
         renderCanvas();
+        renderBlochSphere();
       });
 
       /* Initial Paint */

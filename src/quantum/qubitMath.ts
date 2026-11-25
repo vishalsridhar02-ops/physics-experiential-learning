@@ -543,6 +543,112 @@ export function getStateAngleDegrees(state: QubitState): number {
   return Math.abs(deg - rounded) < 1e-9 ? (rounded === 0 ? 0 : rounded) : Number(deg.toFixed(1));
 }
 
+export interface PlotMetadata {
+  purelyReal: boolean;
+  showRealDiagonals: boolean;
+  vx: number;
+  vy: number;
+  signedDeltaPhi: number | null;
+  tipLabel: string;
+  phasePlaneLabel: string;
+  isBasisState: boolean;
+}
+
+export function getPlotMetadata(state: QubitState): PlotMetadata {
+  const purelyReal = isPurelyRealState(state);
+  const vx = purelyReal ? state.alpha.re : cMag(state.alpha);
+  const vy = purelyReal ? state.beta.re : cMag(state.beta);
+  const aZero = cIsZero(state.alpha);
+  const bZero = cIsZero(state.beta);
+  const isBasisState = aZero || bZero;
+  const ketInfo = formatKetNotation(state);
+  const rel = getRelativePhaseDeg(state);
+
+  let signedDeltaPhi: number | null = null;
+  if (rel !== null) {
+    signedDeltaPhi = rel > 180 ? rel - 360 : rel;
+  }
+
+  let phasePlaneLabel = 'No relative phase (Basis state)';
+  if (signedDeltaPhi !== null) {
+    if (signedDeltaPhi === 0) phasePlaneLabel = 'Δφ = 0° (+1)';
+    else if (signedDeltaPhi === 90) phasePlaneLabel = 'Δφ = +90° (+i)';
+    else if (signedDeltaPhi === 180 || signedDeltaPhi === -180) phasePlaneLabel = 'Δφ = 180° (-1)';
+    else if (signedDeltaPhi === -90) phasePlaneLabel = 'Δφ = -90° (-i)';
+    else phasePlaneLabel = `Δφ = ${signedDeltaPhi > 0 ? '+' : ''}${signedDeltaPhi}°`;
+  }
+
+  let tipLabel = ketInfo.ket;
+  if (!isBasisState) {
+    const shortName = ketInfo.alias
+      ? ketInfo.alias.replace(/^[=≡]\s*/, '').split(' ')[0]
+      : '|ψ⟩';
+    if (purelyReal) {
+      const deg = getStateAngleDegrees(state);
+      const degStr = deg > 0 ? `+${deg}°` : `${deg}°`;
+      tipLabel = `${shortName} (${degStr})`;
+    } else if (signedDeltaPhi !== null) {
+      const phiStr =
+        signedDeltaPhi === 180
+          ? '180°'
+          : signedDeltaPhi > 0
+            ? `+${signedDeltaPhi}°`
+            : `${signedDeltaPhi}°`;
+      tipLabel = `${shortName} (Δφ = ${phiStr})`;
+    }
+  }
+
+  return {
+    purelyReal,
+    showRealDiagonals: purelyReal,
+    vx,
+    vy,
+    signedDeltaPhi,
+    tipLabel,
+    phasePlaneLabel,
+    isBasisState,
+  };
+}
+
+export interface BlochCoordinates {
+  x: number;
+  y: number;
+  z: number;
+  thetaDeg: number;
+  phiDeg: number | null;
+}
+
+export function getBlochCoordinates(state: QubitState): BlochCoordinates {
+  const { alpha, beta } = state;
+  // conj(alpha) * beta = (a.re - i*a.im)(b.re + i*b.im)
+  const reProd = alpha.re * beta.re + alpha.im * beta.im;
+  const imProd = alpha.re * beta.im - alpha.im * beta.re;
+
+  const x = snapReal(2 * reProd);
+  const y = snapReal(2 * imProd);
+  const z = snapReal(cMagSq(alpha) - cMagSq(beta));
+
+  const clampedZ = Math.max(-1, Math.min(1, z));
+  const rawTheta = (Math.acos(clampedZ) * 180) / Math.PI;
+  const roundedTheta = Math.round(rawTheta);
+  const thetaDeg = Math.abs(rawTheta - roundedTheta) < 1e-6 ? roundedTheta : Number(rawTheta.toFixed(1));
+
+  let phiDeg: number | null = null;
+  if (Math.hypot(x, y) > EPS) {
+    let rawPhi = (Math.atan2(y, x) * 180) / Math.PI;
+    if (rawPhi < -EPS) rawPhi += 360;
+    const roundedPhi = Math.round(rawPhi) % 360;
+    phiDeg =
+      Math.abs(rawPhi - roundedPhi) < 1e-6 || Math.abs(rawPhi - 360) < 1e-6
+        ? roundedPhi === 360
+          ? 0
+          : roundedPhi
+        : Number(rawPhi.toFixed(1));
+  }
+
+  return { x, y, z, thetaDeg, phiDeg };
+}
+
 function describeStep(gateId: GateId, input: QubitState, output: QubitState): string {
   const inInfo = formatKetNotation(input);
   const outInfo = formatKetNotation(output);

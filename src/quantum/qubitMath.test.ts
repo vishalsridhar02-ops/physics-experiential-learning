@@ -13,6 +13,8 @@ import {
   formatComplexDecimal,
   formatComplexExact,
   formatKetNotation,
+  getBlochCoordinates,
+  getPlotMetadata,
   getRelativePhaseDeg,
   getRelativePhaseStatus,
   getStateAngleDegrees,
@@ -175,6 +177,21 @@ test('Self-contained index.html inline vanilla JS complex kernel matches all Cli
     cPhaseDeg: (z: unknown) => number | null;
     getRelativePhaseDeg: (s: unknown) => number | null;
     getRelativePhaseStatus: (s: unknown) => { deltaPhi: number | null; label: string; isSuperposition: boolean };
+    getPlotMetadata: (s: unknown) => {
+      purelyReal: boolean;
+      showRealDiagonals: boolean;
+      signedDeltaPhi: number | null;
+      tipLabel: string;
+      phasePlaneLabel: string;
+      isBasisState: boolean;
+    };
+    getBlochCoordinates: (s: unknown) => {
+      x: number;
+      y: number;
+      z: number;
+      thetaDeg: number;
+      phiDeg: number | null;
+    };
     getStateProbabilities: (s: unknown) => { p0: number; p1: number; sum: number };
     simulateMeasurements: (s: unknown, n: number) => { count0: number; count1: number };
   };
@@ -193,11 +210,23 @@ test('Self-contained index.html inline vanilla JS complex kernel matches all Cli
   assert.equal(kernel.getRelativePhaseStatus(hs.finalState).label, 'Positive imaginary phase (Δφ = 90° / +i)');
   assert.equal(kernel.getStateProbabilities(hs.finalState).sum.toFixed(4), '1.0000');
 
+  // Verify 2D PlotMetadata & 3D Bloch coordinates on inline kernel
+  const metaPlusI = kernel.getPlotMetadata(hs.finalState);
+  assert.equal(metaPlusI.showRealDiagonals, false);
+  assert.equal(metaPlusI.tipLabel, '|+i⟩ (Δφ = +90°)');
+  assert.equal(metaPlusI.phasePlaneLabel, 'Δφ = +90° (+i)');
+  assert.equal(metaPlusI.signedDeltaPhi, 90);
+
+  const blochPlusI = { ...kernel.getBlochCoordinates(hs.finalState) };
+  assert.deepEqual(blochPlusI, { x: 0, y: 1, z: 0, thetaDeg: 90, phiDeg: 90 });
+
   // Y|0> = i|1> -> basis state (no superposition)
   const y0 = kernel.evaluateCircuit('0', ['Y']);
   assert.equal(kernel.formatKetNotation(y0.finalState).ket, 'i|1⟩');
   assert.equal(kernel.cPhaseDeg(y0.finalState.beta), 90);
   assert.equal(kernel.getRelativePhaseStatus(y0.finalState).label, 'Basis state (no superposition)');
+  assert.equal(kernel.getPlotMetadata(y0.finalState).phasePlaneLabel, 'No relative phase (Basis state)');
+  assert.deepEqual({ ...kernel.getBlochCoordinates(y0.finalState) }, { x: 0, y: 0, z: -1, thetaDeg: 180, phiDeg: null });
 
   // Z|+i> = |-i> -> Negative imaginary phase (Δφ = 270° / -i)
   const zpi = kernel.evaluateCircuit('+i', ['Z']);
@@ -205,19 +234,44 @@ test('Self-contained index.html inline vanilla JS complex kernel matches all Cli
   assert.equal(kernel.formatKetNotation(zpi.finalState).alias, '= |-i⟩');
   assert.equal(kernel.getRelativePhaseDeg(zpi.finalState), 270);
   assert.equal(kernel.getRelativePhaseStatus(zpi.finalState).label, 'Negative imaginary phase (Δφ = 270° / -i)');
+  assert.equal(kernel.getPlotMetadata(zpi.finalState).tipLabel, '|-i⟩ (Δφ = -90°)');
+  assert.equal(kernel.getPlotMetadata(zpi.finalState).phasePlaneLabel, 'Δφ = -90° (-i)');
+  assert.deepEqual({ ...kernel.getBlochCoordinates(zpi.finalState) }, { x: 0, y: -1, z: 0, thetaDeg: 90, phiDeg: 270 });
 
   // H|1> = |-> -> Phase-flipped superposition (Δφ = 180°)
   const h1 = kernel.evaluateCircuit('1', ['H']);
   assert.equal(kernel.formatKetNotation(h1.finalState).ket, '(|0⟩ - |1⟩)/√2');
   assert.equal(kernel.getRelativePhaseStatus(h1.finalState).label, 'Phase-flipped superposition (Δφ = 180°)');
+  assert.equal(kernel.getPlotMetadata(h1.finalState).showRealDiagonals, true);
+  assert.equal(kernel.getPlotMetadata(h1.finalState).tipLabel, '|-⟩ (-45°)');
+  assert.deepEqual({ ...kernel.getBlochCoordinates(h1.finalState) }, { x: -1, y: 0, z: 0, thetaDeg: 90, phiDeg: 180 });
 
-  // H|+i> normalized
+  // H|+i> normalized & maps to -Y (|-i>) on Bloch sphere
   const hpi = kernel.evaluateCircuit('+i', ['H']);
   assert.equal(kernel.getStateProbabilities(hpi.finalState).sum.toFixed(4), '1.0000');
   assert.equal(kernel.getRelativePhaseDeg(hpi.finalState), 270);
   assert.equal(kernel.getRelativePhaseStatus(hpi.finalState).label, 'Negative imaginary phase (Δφ = 270° / -i)');
+  assert.deepEqual({ ...kernel.getBlochCoordinates(hpi.finalState) }, { x: 0, y: -1, z: 0, thetaDeg: 90, phiDeg: 270 });
 
   // 100 shots sum to 100
   const shots = kernel.simulateMeasurements(hs.finalState, 100);
   assert.equal(shots.count0 + shots.count1, 100);
+});
+
+test('2D PlotMetadata and 3D Bloch coordinates are exact for all 6 cardinal states', () => {
+  assert.deepEqual(getBlochCoordinates(createCardinalState('0')), { x: 0, y: 0, z: 1, thetaDeg: 0, phiDeg: null });
+  assert.deepEqual(getBlochCoordinates(createCardinalState('1')), { x: 0, y: 0, z: -1, thetaDeg: 180, phiDeg: null });
+  assert.deepEqual(getBlochCoordinates(createCardinalState('+')), { x: 1, y: 0, z: 0, thetaDeg: 90, phiDeg: 0 });
+  assert.deepEqual(getBlochCoordinates(createCardinalState('-')), { x: -1, y: 0, z: 0, thetaDeg: 90, phiDeg: 180 });
+  assert.deepEqual(getBlochCoordinates(createCardinalState('+i')), { x: 0, y: 1, z: 0, thetaDeg: 90, phiDeg: 90 });
+  assert.deepEqual(getBlochCoordinates(createCardinalState('-i')), { x: 0, y: -1, z: 0, thetaDeg: 90, phiDeg: 270 });
+
+  assert.equal(getPlotMetadata(createCardinalState('0')).phasePlaneLabel, 'No relative phase (Basis state)');
+  assert.equal(getPlotMetadata(createCardinalState('+')).tipLabel, '|+⟩ (+45°)');
+  assert.equal(getPlotMetadata(createCardinalState('+')).showRealDiagonals, true);
+  assert.equal(getPlotMetadata(createCardinalState('-')).tipLabel, '|-⟩ (-45°)');
+  assert.equal(getPlotMetadata(createCardinalState('+i')).tipLabel, '|+i⟩ (Δφ = +90°)');
+  assert.equal(getPlotMetadata(createCardinalState('+i')).showRealDiagonals, false);
+  assert.equal(getPlotMetadata(createCardinalState('-i')).tipLabel, '|-i⟩ (Δφ = -90°)');
+  assert.equal(getPlotMetadata(createCardinalState('-i')).showRealDiagonals, false);
 });
